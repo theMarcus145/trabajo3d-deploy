@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3DSOULSCHOOL - VISOR 3D</title>
+    <link rel="icon" href="src/images/cropped-favicon-3dsoul-32x32.png">
+    <link rel="stylesheet" href="/src/index.css">
+    <script src="/src/importmap.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="https://www.3dsoulschool.es/"><img src="src/images/3dsoulschool.png" alt="Logo" class="logo"></a>
+            <h1><strong>EXPLORA LOS PROYECTOS DE NUESTROS ALUMNOS</strong></h1>
+        </header>
+        <div id="render-container" class="render-container"></div>
+        
+        <!-- menú de configuraciones -->
+        <br>
+        <div class="model-navigation">
+            <button id="prev-model" class="nav-arrow left-arrow">&lt;</button>
+            <div id="model-list" class="model-list">
+                <!-- Aquí se añaden los botones de los modelos 3d dinámicamente--> 
+            </div>
+            <button id="next-model" class="nav-arrow right-arrow">&gt;</button>
+        </div>
+    </div>
+    <script type="module" src="/src/app.js"></script>
+</body>
+</html>
