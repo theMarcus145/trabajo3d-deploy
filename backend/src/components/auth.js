@@ -12,7 +12,7 @@ const USERS = [
 ];
 
 // Función para verificar credenciales
-export const verifyCredentials = async (username, password) => {
+export const verifyCredentials = async (username, passwordHash) => {
     console.log(`Verificando credenciales para: ${username}`);
     
     const user = USERS.find(user => user.username === username);
@@ -22,7 +22,9 @@ export const verifyCredentials = async (username, password) => {
     }
     
     try {
-        const isMatch = await bcrypt.compare(password, user.passwordHash);
+        // Comparar los hashes directamente
+        // La contraseña ya viene hasheada desde el frontend
+        const isMatch = (passwordHash === user.passwordHash);
         console.log(`Resultado de verificación de contraseña: ${isMatch}`);
         return isMatch;
     } catch (error) {
