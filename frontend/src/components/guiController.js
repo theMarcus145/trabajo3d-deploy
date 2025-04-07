@@ -9,7 +9,7 @@ const guiParams = {
     rotationX: 0,
     rotationY: 0,
     rotationZ: 0,
-    ambientLightIntensity: 2.5,
+    ambientLightIntensity: 4,
     directionalLightIntensity: 0,
     directionalLightX: 20,
     directionalLightY: 0,
