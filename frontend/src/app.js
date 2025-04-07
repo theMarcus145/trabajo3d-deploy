@@ -49,7 +49,7 @@ const textureLoader = new THREE.TextureLoader();
 
 // Cargar la textura matcap usando textureLoader
 function loadMatcapTexture() {
-    matcapTexture = textureLoader.load('/src/textures/matcap.jpg');
+    matcapTexture = textureLoader.load('/textures/matcap.jpg');
 }
 
 // cargar la textura al inicializar
