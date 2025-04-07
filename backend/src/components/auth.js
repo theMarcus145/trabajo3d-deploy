@@ -7,12 +7,12 @@ const JWT_SECRET = process.env.JWT_SECRET || 'desarrollo_secreto_inseguro';
 const USERS = [
     {
         username: 'admin',
-        passwordHash: '$2a$10$8pB.S0jGM9/mnbhuxnEctuEkdaMOCrYfaN6EN8LbmgdWQYUm3P9t6'
+        passwordHash: '$2a$10$ZbuKJxKvp/u62wnAdjEwlukJ51HIXARTaX392coc18Kez9lHeolqu'
     }
 ];
 
-// Función para verificar credenciales
-export const verifyCredentials = async (username, passwordHash) => {
+// Verificar las credenciales
+export const verifyCredentials = async (username, plainPassword) => {
     console.log(`Verificando credenciales para: ${username}`);
     
     const user = USERS.find(user => user.username === username);
@@ -20,11 +20,9 @@ export const verifyCredentials = async (username, passwordHash) => {
         console.log('Usuario no encontrado');
         return false;
     }
-    
+
     try {
-        // Comparar los hashes directamente
-        // La contraseña ya viene hasheada desde el frontend
-        const isMatch = (passwordHash === user.passwordHash);
+        const isMatch = await bcrypt.compare(plainPassword, user.passwordHash);
         console.log(`Resultado de verificación de contraseña: ${isMatch}`);
         return isMatch;
     } catch (error) {
@@ -32,6 +30,7 @@ export const verifyCredentials = async (username, passwordHash) => {
         return false;
     }
 };
+
 
 // Generar token JWT
 export const generateToken = (username) => {
