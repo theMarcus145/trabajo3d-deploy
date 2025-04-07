@@ -1,7 +1,7 @@
 import * as THREE from '/node_modules/three/build/three.module.js';
 
 // Crear una luz de ambiente
-const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+const ambientLight = new THREE.AmbientLight(0xffffff, 4);
 
 // Crear una luz direccional
 const directionalLight = new THREE.DirectionalLight(0xffffff, 0);
