@@ -14,7 +14,7 @@ const __dirname = path.dirname(__filename);
 
 // Middleware con opciones de CORS mejoradas
 app.use(cors({
-    origin: ['https://trabajo-3d-backend.onrender.com', 'https://trabajo-3d.onrender.com' ],
+    origin: ['https://trabajo-3d-backend.onrender.com', 'https://3dsoulschoolvisor.netlify.app' ],
     methods: ['GET', 'POST', 'OPTIONS, DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
