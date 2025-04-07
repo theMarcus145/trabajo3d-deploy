@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="src/images/cropped-favicon-3dsoul-32x32.png">
+    <title>3DSOULSCHOOL - UPLOADER</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+        body {
+            background-color: #021f0d;
+            margin: 0;
+            font-family: 'Orbitron', sans-serif;
+            color: #e0e0ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 800px;
+            width: 90%;
+            padding: 20px;
+        }
+
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #13c10d;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(13, 201, 41, 0.766);
+        }
+
+        h2 {
+            color: #13c10d;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px rgba(13, 201, 41, 0.5);
+        }
+
+        .hidden { 
+            display: none; 
+        }
+
+        .message { 
+            margin: 10px 0; 
+            padding: 10px; 
+            border-radius: 8px; 
+        }
+
+        .error { 
+            background-color: rgba(198, 40, 40, 0.2); 
+            color: #ff5252; 
+            border: 1px solid #ff5252;
+        }
+
+        .success { 
+            background-color: rgba(46, 125, 50, 0.2); 
+            color: #13c10d; 
+            border: 1px solid #13c10d;
+        }
+
+        .preview-image { 
+            max-width: 200px; 
+            max-height: 200px; 
+            display: none; 
+            margin: 10px auto;
+            border: 2px solid #13c10d;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(13, 201, 41, 0.7);
+        }
+
+        .form-group { 
+            margin-bottom: 20px;
+            text-align: left; 
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #13c10d;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            background-color: #0a2f16;
+            border: 2px solid #13c10d;
+            color: #e0e0ff;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .form-group input[type="file"] {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        button {
+            font-size: 16px;
+            background-color: #0a2f16;
+            border: 2px solid #13c10d;
+            color: #13c10d;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #13c10d;
+            color: #021f0d;
+            box-shadow: 0 0 15px rgba(13, 201, 41, 0.7);
+        }
+
+        .login-container, .upload-container {
+            background-color: rgba(10, 47, 22, 0.6);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(5, 249, 50, 0.5), inset 0 0 50px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
+        }
+
+        .logout-btn {
+            margin-top: 30px;
+        }
+
+        .preview-container {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+        }
+
+        /* Estilos para la zona de eliminación */
+        .model-list-container {
+            margin-top: 2rem;
+            border-top: 1px solid #46f003;
+            padding-top: 1rem;
+        }
+        .model-list {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+        .model-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+        }
+        .model-name {
+            font-weight: 500;
+        }
+        .model-preview {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 1rem;
+        }
+        .delete-btn {
+            background-color: #e74c3c;
+            color: #ffffff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        .model-flex {
+            display: flex;
+            align-items: center;
+        }
+        .refresh-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 1rem;
+        }
+        .refresh-btn:hover {
+            background-color: #2980b9;
+        }
+        .confirmation-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .confirmation-box {
+            background-color: #021f0d !important;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 400px;
+            text-align: center;
+        }
+        .confirmation-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .confirm-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .cancel-btn {
+            background-color: #7f8c8d;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="https://www.3dsoulschool.es/"><img src="/src/images/3dsoulschool.png" alt="Logo" class="logo"></a>
+            <h1><strong>SUBIDA DE MODELOS 3D</strong></h1>
+        </header>
+
+        <!-- Contenedor de login -->
+        <div id="login-container" class="login-container">
+            <h2>Iniciar Sesión</h2>
+            <div class="form-group">
+                <label for="username">Usuario:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button id="login-button">Iniciar Sesión</button>
+            <div id="login-message" class="message"></div>
+        </div>
+
+        <!-- Contenedor de subida de modelos (inicialmente oculto) -->
+        <div id="upload-container" class="upload-container hidden">
+            <h2>Subir Modelo 3D</h2>
+            <form id="upload-form">
+                <div class="form-group">
+                    <label for="model-name">Nombre del Modelo:</label>
+                    <input type="text" id="model-name" name="modelName" required>
+                </div>
+                <div class="form-group">
+                    <label for="model-file">Archivo 3D (.glb):</label>
+                    <input type="file" id="model-file" name="model" accept=".glb" required>
+                </div>
+                <div class="form-group">
+                    <label for="preview-file">Imagen de Preview:</label>
+                    <input type="file" id="preview-file" name="preview" accept="image/png, image/jpeg, image/webp" required>
+                    <div class="preview-container">
+                        <img id="preview-image" class="preview-image" alt="Preview">
+                    </div>
+                </div>
+                <button type="submit">Subir Modelo</button>
+            </form>
+            <div id="upload-message" class="message"></div>
+            
+            <!-- Lista de modelos y gestión -->
+            <div class="model-list-container">
+                <h2>Gestión de Modelos 3D <button id="refresh-models-btn" class="refresh-btn">Actualizar</button></h2>
+                <div id="model-list-message" class="message"></div>
+                <ul id="model-list" class="model-list">
+                    <!-- La lista de modelos se cargará dinámicamente -->
+                </ul>
+            </div>
+            
+            <button id="logout-button" class="logout-btn">Cerrar Sesión</button>
+        </div>
+    </div>
+    
+    <!-- Diálogo de confirmación para eliminar modelo -->
+    <div id="confirmation-dialog" class="confirmation-dialog hidden">
+        <div class="confirmation-box">
+            <h3>Confirmar Eliminación</h3>
+            <p>¿Estás seguro de que deseas eliminar el modelo <span id="model-to-delete">nombre del modelo</span>?</p>
+            <p>Esta acción eliminará el modelo 3D, la imagen de preview y sus datos relacionados.</p>
+            <div class="confirmation-actions">
+                <button id="confirm-delete-btn" class="confirm-btn">Eliminar</button>
+                <button id="cancel-delete-btn" class="cancel-btn">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Elementos DOM
+        const loginContainer = document.getElementById('login-container');
+        const uploadContainer = document.getElementById('upload-container');
+        const loginButton = document.getElementById('login-button');
+        const loginMessage = document.getElementById('login-message');
+        const uploadForm = document.getElementById('upload-form');
+        const uploadMessage = document.getElementById('upload-message');
+        const previewFile = document.getElementById('preview-file');
+        const previewImage = document.getElementById('preview-image');
+        const logoutButton = document.getElementById('logout-button');
+        const modelList = document.getElementById('model-list');
+        const modelListMessage = document.getElementById('model-list-message');
+        const refreshModelsBtn = document.getElementById('refresh-models-btn');
+        const confirmationDialog = document.getElementById('confirmation-dialog');
+        const modelToDeleteSpan = document.getElementById('model-to-delete');
+        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+        const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+
+        // Variables para eliminar modelo
+        let currentModelToDelete = null;
+
+        // URL base para las peticiones API - esta debería coincidir con la del backend
+        const API_URL = 'https://trabajo-3d-backend.onrender.com'
+            
+        console.log('API URL:', API_URL);
+
+        // Función de ayuda para mostrar mensajes
+        function showMessage(element, text, type) {
+            element.textContent = text;
+            element.className = `message ${type}`;
+        }
+
+        // Verificar si hay un token guardado al cargar la página
+        window.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('authToken');
+            console.log('Token found:', token ? 'Yes' : 'No');
+            
+            if (token) {
+                // Verificar que el token aún es válido
+                console.log('Verifying token validity...');
+                fetch(`${API_URL}/verify-token`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => {
+                    console.log('Token verification response:', response.status);
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Token no válido');
+                    }
+                })
+                .then(data => {
+                    console.log('Token verification data:', data);
+                    if (data.valid) {
+                        showUploadForm();
+                        loadModels();
+                    } else {
+                        throw new Error('Token no válido');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error verificando token:', error);
+                    localStorage.removeItem('authToken');
+                    showMessage(loginMessage, 'Sesión expirada, por favor inicie sesión de nuevo', 'error');
+                });
+            }
+        });
+
+        // Manejo de la autenticación
+        loginButton.addEventListener('click', function() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                showMessage(loginMessage, 'Por favor, introduce usuario y contraseña', 'error');
+                return;
+            }
+
+            showMessage(loginMessage, 'Autenticando...', '');
+            
+            console.log('Attempting login with username:', username);
+            
+            // Enviar credenciales al backend
+            fetch(`${API_URL}/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => {
+                console.log('Login response status:', response.status);
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(err.error || 'Credenciales inválidas');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Login successful, token received');
+                if (data.token) {
+                    // Guardar token en localStorage
+                    localStorage.setItem('authToken', data.token);
+                    showMessage(loginMessage, 'Login exitoso', 'success');
+                    setTimeout(() => {
+                        showUploadForm();
+                        loadModels();
+                        loginMessage.textContent = '';
+                    }, 1000);
+                } else {
+                    throw new Error(data.error || 'Error de autenticación');
+                }
+            })
+            .catch(error => {
+                console.error('Login error:', error);
+                showMessage(loginMessage, error.message || 'Usuario o contraseña incorrectos', 'error');
+            });
+        });
+
+        // Mostrar formulario de subida
+        function showUploadForm() {
+            loginContainer.classList.add('hidden');
+            uploadContainer.classList.remove('hidden');
+        }
+
+        // Cargar lista de modelos desde el servidor
+        async function loadModels() {
+            try {
+                showMessage(modelListMessage, 'Cargando modelos...', '');
+                
+                const response = await fetch(`${API_URL}/models.json`);
+                if (!response.ok) {
+                    throw new Error('Error al cargar la lista de modelos');
+                }
+                
+                const data = await response.json();
+                console.log('Models loaded:', data);
+                
+                if (!data.models || data.models.length === 0) {
+                    modelList.innerHTML = '<li class="model-item">No hay modelos disponibles</li>';
+                    showMessage(modelListMessage, '', '');
+                    return;
+                }
+                
+                // Limpiar lista actual
+                modelList.innerHTML = '';
+                
+                // Añadir cada modelo a la lista
+                data.models.forEach(model => {
+                    const li = document.createElement('li');
+                    li.className = 'model-item';
+                    li.innerHTML = `
+                        <div class="model-flex">
+                            <img src="${API_URL}/${model.imagePath}" alt="${model.name}" class="model-preview">
+                            <span class="model-name">${model.name}</span>
+                        </div>
+                        <button class="delete-btn" data-model-name="${model.name}" data-model-path="${model.modelPath}" data-image-path="${model.imagePath}">Eliminar</button>
+                    `;
+                    modelList.appendChild(li);
+                });
+                
+                // Añadir event listeners a los botones de eliminar
+                document.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', handleDeleteClick);
+                });
+                
+                showMessage(modelListMessage, '', '');
+            } catch (error) {
+                console.error('Error loading models:', error);
+                showMessage(modelListMessage, `Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Manejar clic en botón de eliminar
+        function handleDeleteClick(event) {
+            const button = event.target;
+            const modelName = button.getAttribute('data-model-name');
+            const modelPath = button.getAttribute('data-model-path');
+            const imagePath = button.getAttribute('data-image-path');
+            
+            // Guardar datos del modelo a eliminar
+            currentModelToDelete = {
+                name: modelName,
+                modelPath: modelPath,
+                imagePath: imagePath
+            };
+            
+            // Mostrar diálogo de confirmación
+            modelToDeleteSpan.textContent = modelName;
+            confirmationDialog.classList.remove('hidden');
+        }
+
+        // Confirmar eliminación
+        confirmDeleteBtn.addEventListener('click', async function() {
+            if (!currentModelToDelete) {
+                confirmationDialog.classList.add('hidden');
+                return;
+            }
+            
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    showMessage(modelListMessage, 'Sesión expirada. Por favor, inicia sesión nuevamente.', 'error');
+                    confirmationDialog.classList.add('hidden');
+                    uploadContainer.classList.add('hidden');
+                    loginContainer.classList.remove('hidden');
+                    return;
+                }
+                
+                console.log('Deleting model:', currentModelToDelete.name);
+                
+                const response = await fetch(`${API_URL}/delete-model`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        modelName: currentModelToDelete.name,
+                        modelPath: currentModelToDelete.modelPath,
+                        imagePath: currentModelToDelete.imagePath
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || errorData.error || 'Error al eliminar el modelo');
+                }
+                
+                const data = await response.json();
+                console.log('Delete response:', data);
+                
+                // Ocultar diálogo y recargar lista
+                confirmationDialog.classList.add('hidden');
+                showMessage(modelListMessage, data.message || 'Modelo eliminado correctamente', 'success');
+                loadModels();
+                
+            } catch (error) {
+                console.error('Error deleting model:', error);
+                confirmationDialog.classList.add('hidden');
+                showMessage(modelListMessage, `Error: ${error.message}`, 'error');
+                
+                // Si es error de autenticación, volver al login
+                if (error.message.includes('no autorizado') || 
+                    error.message.includes('token') ||
+                    error.message.includes('inválido') ||
+                    error.message.includes('expirado')) {
+                    localStorage.removeItem('authToken');
+                    setTimeout(() => {
+                        uploadContainer.classList.add('hidden');
+                        loginContainer.classList.remove('hidden');
+                    }, 2000);
+                }
+            } finally {
+                currentModelToDelete = null;
+            }
+        });
+
+        // Cancelar eliminación
+        cancelDeleteBtn.addEventListener('click', function() {
+            confirmationDialog.classList.add('hidden');
+            currentModelToDelete = null;
+        });
+
+        // Refrescar lista de modelos
+        refreshModelsBtn.addEventListener('click', loadModels);
+
+        // Cerrar sesión
+        logoutButton.addEventListener('click', function() {
+            localStorage.removeItem('authToken');
+            uploadContainer.classList.add('hidden');
+            loginContainer.classList.remove('hidden');
+            uploadForm.reset();
+            previewImage.style.display = 'none';
+        });
+
+        // Mostrar preview de la imagen seleccionada
+        previewFile.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewImage.style.display = 'none';
+            }
+        });
+
+        // Manejar el envío del formulario
+        uploadForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                showMessage(uploadMessage, 'Sesión expirada. Por favor, inicia sesión nuevamente.', 'error');
+                uploadContainer.classList.add('hidden');
+                loginContainer.classList.remove('hidden');
+                return;
+            }
+            
+            const modelName = document.getElementById('model-name').value;
+            const modelFile = document.getElementById('model-file').files[0];
+            const previewFile = document.getElementById('preview-file').files[0];
+            
+            if (!modelName || !modelFile || !previewFile) {
+                showMessage(uploadMessage, 'Por favor, complete todos los campos', 'error');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('modelName', modelName);
+            formData.append('model', modelFile);
+            formData.append('preview', previewFile);
+            
+            showMessage(uploadMessage, 'Subiendo modelo...', '');
+            
+            try {
+                console.log('Enviando datos al servidor:', API_URL + '/upload');
+                console.log('Model name:', modelName);
+                console.log('Model file:', modelFile.name);
+                console.log('Preview file:', previewFile.name);
+                
+                const response = await fetch(`${API_URL}/upload`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+                
+                console.log('Upload response status:', response.status);
+                
+                const responseData = await response.json();
+                console.log('Upload response:', responseData);
+                
+                if (!response.ok) {
+                    throw new Error(responseData.message || responseData.error || 'Error en la respuesta del servidor');
+                }
+                
+                showMessage(uploadMessage, responseData.message || 'Modelo subido correctamente', 'success');
+                uploadForm.reset();
+                previewImage.style.display = 'none';
+                
+                // Recargar lista de modelos
+                loadModels();
+                
+            } catch (error) {
+                console.error('Error al subir:', error);
+                showMessage(uploadMessage, `Error: ${error.message}`, 'error');
+                
+                // Si es error de autenticación, volver al login
+                if (error.message.includes('no autorizado') || 
+                    error.message.includes('token') ||
+                    error.message.includes('inválido') ||
+                    error.message.includes('expirado')) {
+                    localStorage.removeItem('authToken');
+                    setTimeout(() => {
+                        uploadContainer.classList.add('hidden');
+                        loginContainer.classList.remove('hidden');
+                    }, 2000);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
