@@ -3,13 +3,11 @@ import bcrypt from 'bcryptjs';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'desarrollo_secreto_inseguro';
 
-// Credenciales hardcoded (en producción deberían estar en base de datos)
-// Nota: En un entorno de producción, estas credenciales deberían estar en una base de datos
-// y las contraseñas deberían estar hasheadas con bcrypt
+// Contraseña hasheada con bcrypt
 const USERS = [
     {
         username: 'admin',
-        passwordHash: 'marco'  // En producción esto debería ser un hash generado con bcrypt
+        passwordHash: '$2a$10$8pB.S0jGM9/mnbhuxnEctuEkdaMOCrYfaN6EN8LbmgdWQYUm3P9t6'
     }
 ];
 
@@ -24,9 +22,7 @@ export const verifyCredentials = async (username, password) => {
     }
     
     try {
-        // Comparación directa para entorno de desarrollo
-        // En producción, usar bcrypt.compare(password, user.passwordHash)
-        const isMatch = (password === user.passwordHash);
+        const isMatch = await bcrypt.compare(password, user.passwordHash);
         console.log(`Resultado de verificación de contraseña: ${isMatch}`);
         return isMatch;
     } catch (error) {
@@ -55,7 +51,6 @@ export const verifyToken = (req, res, next) => {
         const token = authHeader.split(' ')[1];
         const decoded = jwt.verify(token, JWT_SECRET);
         
-        // Añadir información del usuario al request
         req.user = decoded;
         next();
     } catch (error) {
