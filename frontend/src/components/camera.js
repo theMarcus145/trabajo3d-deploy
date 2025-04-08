@@ -1,6 +1,5 @@
 import * as THREE from '/node_modules/three/build/three.module.js';
 
-// Get render container dimensions after the DOM is loaded
 function getCameraAspect() {
     const renderContainer = document.getElementById('render-container');
     return renderContainer ? 

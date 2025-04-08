@@ -1,11 +1,11 @@
 import { GUI } from 'dat.gui';
 
-// Create GUI parameters
+// Estos son los parámetros de la GUI junto con todos sus valores por defecto
 const guiParams = {
     backgroundColor: '#000000',
     wireframe: false,
     modelOpacity: false,
-    useMatcap: false,     // Option to enable/disable MatCap
+    useMatcap: false, 
     rotationX: 0,
     rotationY: 0,
     rotationZ: 0,
@@ -16,7 +16,7 @@ const guiParams = {
     directionalLightZ: 0,
 };
 
-// Initialize GUI
+// Inicializar la GUI
 function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     const { ambientLight, directionalLight } = lights;
     
@@ -26,14 +26,13 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
 
     gui.width = 200;
 
-    // Background color control
+    // Ajustar el color del fondo
     const folderBackground = gui.addFolder("Fondo");
     folderBackground.addColor(guiParams, 'backgroundColor').name("Color").onChange((value) => {
-        // Update the renderer's clear color
         meshUpdateCallback('backgroundColor', { value });
     });
 
-    // Model Controls folder
+    // Carpeta para los controles del modelo
     const folderModel = gui.addFolder("Controles de Modelo");
     folderModel.add(guiParams, 'rotationX', -Math.PI, Math.PI, 0.01).name("X").onChange(() => {
         meshUpdateCallback('rotation', { axis: 'x', value: guiParams.rotationX });
@@ -55,20 +54,17 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
         meshUpdateCallback('modelOpacity', { value });
     });
     
-    // MatCap toggle - simple on/off without type selector
     folderModel.add(guiParams, 'useMatcap').name('MatCap').onChange((value) => {
         meshUpdateCallback('matcap', { enabled: value });
     });
     
-    // Light Controls folder
+    // Carpeta de controles de iluminación
     const folderLights = gui.addFolder("Iluminación ambiental");
     
-    // Ambient light
     folderLights.add(guiParams, 'ambientLightIntensity', 0, 4, 0.1).name("Intensidad").onChange((value) => {
         ambientLight.intensity = value;
     });
     
-    // Directional light
     const directionalFolder = gui.addFolder("Iluminación direccional");
     directionalFolder.add(guiParams, 'directionalLightIntensity', 0, 4, 0.1).name("Intensidad").onChange((value) => {
         directionalLight.intensity = value;

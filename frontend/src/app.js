@@ -149,12 +149,13 @@ function loadModel(modelFolder) {
         child.isMesh && child.material instanceof THREE.ShadowMaterial
     );
     
-    // Limpiar materiales guardados
+    // Limpiar materiales originales guardados de otros modelos
     originalMaterials.clear();
     
     // Establecer mesh a null mientras se carga
     mesh = null;
 
+    // Contactar con el backend para obtener los modelos
     const loader = new GLTFLoader().setPath(`${API_URL}/models/${modelFolder}/`);
     loader.load('scene.glb', (gltf) => {
         mesh = gltf.scene;  
@@ -173,7 +174,7 @@ function loadModel(modelFolder) {
         // Aplicar rotación inicial
         mesh.rotation.set(guiParams.rotationX, guiParams.rotationY, guiParams.rotationZ);
 
-        // Aplicar configuraciones actuales
+        // Aplicar las configuraciones activadas en la GUI
         updateModelAppearance();
 
         // Agregar el modelo a la escena
@@ -183,7 +184,7 @@ function loadModel(modelFolder) {
     });
 }
 
-// Manejo de redimensionamiento
+// Manejar el redimensionamiento
 function onWindowResize() {
     camera.aspect = renderContainer.clientWidth / renderContainer.clientHeight;
     camera.updateProjectionMatrix();
