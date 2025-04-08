@@ -59,22 +59,23 @@ function loadMatcapTexture() {
 // cargar la textura al inicializar
 loadMatcapTexture();
 
-// Guardar referencias de los wireframes en un map
-let wireframes = new Map();
-
 // Función para manejar el wireframe
 function updateWireframe(meshObject) {
-    if (!guiParams.wireframe) return;
-
-    const edges = new THREE.EdgesGeometry(meshObject.geometry);
-    const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
-    const wireframe = new THREE.LineSegments(edges, lineMaterial);
-
-    wireframe.name = 'dynamic-wireframe';
-    meshObject.add(wireframe);
-    wireframes.set(meshObject.uuid, wireframe);
+    // Eliminar wireframe existente si hay alguno
+    meshObject.children = meshObject.children.filter(child => !child.isLineSegments);
+    
+    // Crear nuevo wireframe si está activado
+    if (guiParams.wireframe) {
+        const edges = new THREE.EdgesGeometry(meshObject.geometry);
+        const lineMaterial = new THREE.LineBasicMaterial({ 
+            color: 0xffffff,
+            linewidth: 1,
+            depthTest: true
+        });
+        const wireframe = new THREE.LineSegments(edges, lineMaterial);
+        meshObject.add(wireframe);
+    }
 }
-
 
 // Funcion para actualizar la apariencia del modelo según los ajustes
 function updateModelAppearance() {
@@ -208,32 +209,11 @@ function animate() {
     requestAnimationFrame(animate);
     
     const delta = clock.getDelta();
-    if (mixer) mixer.update(delta);
-
-    // Actualizar wireframes
-    if (guiParams.wireframe && mesh) {
-        mesh.traverse(child => {
-            if (child.isMesh && !child.isLineSegments) {
-                const oldWire = wireframes.get(child.uuid);
-                if (oldWire) {
-                    child.remove(oldWire);
-                    wireframes.delete(child.uuid);
-                }
-                const newEdges = new THREE.EdgesGeometry(child.geometry);
-                const newLine = new THREE.LineSegments(
-                    newEdges,
-                    new THREE.LineBasicMaterial({ color: 0xffffff })
-                );
-                child.add(newLine);
-                wireframes.set(child.uuid, newLine);
-            }
-        });
-    }
+    if (mixer) mixer.update(delta); // Actualizar las animaciones
 
     controls.update();
     renderer.render(scene, camera);
 }
-
 
 
 initializeModelNavigation(loadModel);
