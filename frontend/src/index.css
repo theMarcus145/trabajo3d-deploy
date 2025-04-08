@@ -84,6 +84,7 @@ body {
     100% { opacity: 0.4; transform: scale(1.2); }
 }
 
+
 .container {
     text-align: center;
     max-width: 1200px;
@@ -300,10 +301,11 @@ canvas {
     display: flex;
     justify-content: center;
     overflow: hidden;
-    width: 300px;  /* Increased from 250px */
-    height: 270px;
+    width: 400px;
+    height: 300px;
     position: relative;
-}
+    padding: 5px;
+  }
 
 .model-button {
     display: none;
@@ -329,7 +331,9 @@ canvas {
     color: var(--main-bg-color);
     box-shadow: 0 0 20px var(--accent-glow);
     transform: scale(1.02);
-}
+    border-radius:90px;
+    margin:10px;
+  }
 
 .model-button span {
     margin-bottom: 10px;
@@ -338,13 +342,13 @@ canvas {
 }
 
 .model-button .button-image {
-    width: 180px;
-    height: 180px;
+    width: 190px;
+    height: 190px;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 10px;
     align-self: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease;
+    box-shadow: 0 5px 15px #0000004d;
+    transition: transform .3s ease;
 }
 
 .model-button:hover .button-image {
