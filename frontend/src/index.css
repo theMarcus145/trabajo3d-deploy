@@ -256,10 +256,11 @@ h1 {
     display: flex;
     justify-content: center;
     gap: 30px;
-    margin-top: 10px;
+    margin-top: 10px;   
     font-size: 0.9em;
     color: var(--text-color);
     opacity: 0.8;
+    margin-top: -20px;
 }
 
 .hint-item {
@@ -503,4 +504,15 @@ canvas {
         flex-direction: column;
         text-align: center;
     }
+}
+
+
+p a {
+    color: inherit;
+    text-decoration: none;
+}
+  
+p a:hover {
+    box-shadow: 0 0 15px 5px white;
+    transition: box-shadow 0.3s ease;
 }
