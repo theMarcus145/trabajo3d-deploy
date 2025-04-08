@@ -15,7 +15,6 @@ const renderer = new THREE.WebGLRenderer({
 // Reloj y Mixer para las animaciones
 const clock = new THREE.Clock();
 let mixer = null;
-let isAnimated = false; // Flag to track if model is animated
 
 // Sombras
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -47,7 +46,6 @@ scene.add(directionalLight);
 
 let mesh = null; // Variable global para almacenar el modelo cargado
 let originalMaterials = new Map(); // Guardar materiales originales
-let meshesWithWireframe = new Set(); // Track meshes that need wireframes
 
 // Definir el matcap
 let matcapTexture = null;
@@ -61,46 +59,21 @@ function loadMatcapTexture() {
 // cargar la textura al inicializar
 loadMatcapTexture();
 
-// Function to clear all wireframes from scene
-function clearAllWireframes() {
-    scene.children = scene.children.filter(child => !child.isWireframeHelper);
-    meshesWithWireframe.clear();
-}
-
-// Function to update or create wireframes
-function updateWireframes() {
-    if (!mesh || !guiParams.wireframe) return;
+// Función para manejar el wireframe
+function updateWireframe(meshObject) {
+    // Eliminar wireframe existente si hay alguno
+    meshObject.children = meshObject.children.filter(child => !child.isLineSegments);
     
-    // First remove all existing wireframes
-    scene.children = scene.children.filter(child => !child.isWireframeHelper);
-    
-    // If there are animated models, recreate wireframes each frame
-    if (isAnimated) {
-        mesh.traverse((child) => {
-            if (child.isMesh && meshesWithWireframe.has(child.uuid)) {
-                // Create new wireframe from current geometry state
-                const wireGeometry = new THREE.WireframeGeometry(child.geometry);
-                const wireMaterial = new THREE.LineBasicMaterial({ 
-                    color: 0xffffff,
-                    linewidth: 1
-                });
-                const wireframe = new THREE.LineSegments(wireGeometry, wireMaterial);
-                
-                // Copy transform from mesh
-                wireframe.position.copy(child.position);
-                wireframe.quaternion.copy(child.quaternion);
-                wireframe.scale.copy(child.scale);
-                
-                // Apply world matrix from mesh
-                wireframe.applyMatrix4(child.matrixWorld);
-                
-                // Mark as wireframe helper for later filtering
-                wireframe.isWireframeHelper = true;
-                
-                // Add to scene
-                scene.add(wireframe);
-            }
+    // Crear nuevo wireframe si está activado
+    if (guiParams.wireframe) {
+        const edges = new THREE.EdgesGeometry(meshObject.geometry);
+        const lineMaterial = new THREE.LineBasicMaterial({ 
+            color: 0xffffff,
+            linewidth: 1,
+            depthTest: true
         });
+        const wireframe = new THREE.LineSegments(edges, lineMaterial);
+        meshObject.add(wireframe);
     }
 }
 
@@ -108,47 +81,44 @@ function updateWireframes() {
 function updateModelAppearance() {
     if (!mesh) return;
     
-    // Clear any existing wireframes
-    clearAllWireframes();
-    
     mesh.traverse((child) => {
         if (child.isMesh) {
-            // Recuperar el material original
-            const originalMaterial = originalMaterials.get(child.uuid);
-            
-            // Decidir qué material aplicar basado en las opciones de la GUI
-            if (guiParams.useMatcap && matcapTexture) {
-                // Usar material MatCap
-                const matcapMaterial = new THREE.MeshMatcapMaterial({
-                    matcap: matcapTexture,
-                    transparent: guiParams.modelOpacity,
-                    opacity: guiParams.modelOpacity ? 0.6 : 1.0
-                });
+            // Si no es un wireframe (líneas)
+            if (!child.isLineSegments) {
                 
-                child.material = matcapMaterial;
-            } else {
-                // Usar material original con posible opacidad
-                child.material = originalMaterial.clone();
                 
-                if (guiParams.modelOpacity) {
-                    child.material.transparent = true;
-                    child.material.opacity = 0.6;
+                // Recuperar el material original
+                const originalMaterial = originalMaterials.get(child.uuid);
+                
+                // Decidir qué material aplicar basado en las opciones de la GUI
+                if (guiParams.useMatcap && matcapTexture) {
+                    // Usar material MatCap
+                    const matcapMaterial = new THREE.MeshMatcapMaterial({
+                        matcap: matcapTexture,
+                        transparent: guiParams.modelOpacity,
+                        opacity: guiParams.modelOpacity ? 0.6 : 1.0
+                    });
+                    
+                    child.material = matcapMaterial;
+                } else {
+                    // Usar material original con posible opacidad
+                    child.material = originalMaterial.clone();
+                    
+                    if (guiParams.modelOpacity) {
+                        child.material.transparent = true;
+                        child.material.opacity = 0.6;
+                    }
                 }
-            }
-            
-            // Ensure shadows are enabled
-            child.castShadow = true;
-            child.receiveShadow = true;
-            
-            // Add to set if wireframe is enabled
-            if (guiParams.wireframe) {
-                meshesWithWireframe.add(child.uuid);
+                
+                // Ensure shadows are enabled
+                child.castShadow = true;
+                child.receiveShadow = true;
+                
+                // Manejar wireframes
+                updateWireframe(child);
             }
         }
     });
-    
-    // Initial creation of wireframes
-    updateWireframes();
 }
 
 // Funcion para manejar el callback de las actualizaciones del mesh
@@ -159,19 +129,6 @@ function handleMeshUpdate(type, data) {
     } else if (type === 'rotation' && mesh) { 
         mesh.rotation[data.axis] = data.value;
     } else if (type === 'wireframe') {
-        if (data.value) {
-            // Wireframe enabled
-            if (mesh) {
-                mesh.traverse(child => {
-                    if (child.isMesh) {
-                        meshesWithWireframe.add(child.uuid);
-                    }
-                });
-            }
-        } else {
-            // Wireframe disabled
-            clearAllWireframes();
-        }
         updateModelAppearance();
     } else if (type === 'modelOpacity') {
         updateModelAppearance();
@@ -196,16 +153,11 @@ function loadModel(modelFolder) {
         child.isMesh && child.material instanceof THREE.ShadowMaterial
     );
     
-    // Limpiar wireframes
-    clearAllWireframes();
-    
     // Limpiar materiales originales guardados de otros modelos
     originalMaterials.clear();
     
     // Establecer mesh a null mientras se carga
     mesh = null;
-    mixer = null;
-    isAnimated = false;
 
     // Contactar con el backend para obtener los modelos
     const loader = new GLTFLoader().setPath(`${API_URL}/models/${modelFolder}/`);
@@ -230,10 +182,7 @@ function loadModel(modelFolder) {
               const action = mixer.clipAction(clip);
               action.play(); // Reproduce la animación
             });
-            
-            isAnimated = true; // Mark as animated
         }
-        
         // Aplicar rotación inicial
         mesh.rotation.set(guiParams.rotationX, guiParams.rotationY, guiParams.rotationZ);
 
@@ -262,14 +211,10 @@ function animate() {
     const delta = clock.getDelta();
     if (mixer) mixer.update(delta); // Actualizar las animaciones
 
-    // If model is animated and wireframe is enabled, update wireframes
-    if (isAnimated && guiParams.wireframe) {
-        updateWireframes();
-    }
-
     controls.update();
     renderer.render(scene, camera);
 }
+
 
 initializeModelNavigation(loadModel);
 animate();
