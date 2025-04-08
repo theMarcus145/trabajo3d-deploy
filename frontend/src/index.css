@@ -209,12 +209,7 @@ h1 {
     font-size: 0.9em;
 }
 
-.viewer-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}
+/* Removed .viewer-section class here */
 
 .viewer-info {
     margin-bottom: 5px;
