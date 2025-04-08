@@ -12,6 +12,10 @@ const renderer = new THREE.WebGLRenderer({
     alpha: true 
 });
 
+// Reloj y Mixer para las animaciones
+const clock = new THREE.Clock();
+let mixer = null;
+
 // Sombras
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.shadowMap.enabled = true;
@@ -55,23 +59,22 @@ function loadMatcapTexture() {
 // cargar la textura al inicializar
 loadMatcapTexture();
 
+// Guardar referencias de los wireframes en un map
+let wireframes = new Map();
+
 // Función para manejar el wireframe
 function updateWireframe(meshObject) {
-    // Eliminar wireframe existente si hay alguno
-    meshObject.children = meshObject.children.filter(child => !child.isLineSegments);
-    
-    // Crear nuevo wireframe si está activado
-    if (guiParams.wireframe) {
-        const edges = new THREE.EdgesGeometry(meshObject.geometry);
-        const lineMaterial = new THREE.LineBasicMaterial({ 
-            color: 0xffffff,
-            linewidth: 1,
-            depthTest: true
-        });
-        const wireframe = new THREE.LineSegments(edges, lineMaterial);
-        meshObject.add(wireframe);
-    }
+    if (!guiParams.wireframe) return;
+
+    const edges = new THREE.EdgesGeometry(meshObject.geometry);
+    const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
+    const wireframe = new THREE.LineSegments(edges, lineMaterial);
+
+    wireframe.name = 'dynamic-wireframe';
+    meshObject.add(wireframe);
+    wireframes.set(meshObject.uuid, wireframe);
 }
+
 
 // Funcion para actualizar la apariencia del modelo según los ajustes
 function updateModelAppearance() {
@@ -172,7 +175,7 @@ function loadModel(modelFolder) {
         });
 
         if (gltf.animations && gltf.animations.length) {
-            mixer = new THREE.AnimationMixer(model);
+            mixer = new THREE.AnimationMixer(mesh);
             
             gltf.animations.forEach((clip) => {
               const action = mixer.clipAction(clip);
@@ -203,9 +206,35 @@ window.addEventListener('resize', onWindowResize);
 // Animación
 function animate() {
     requestAnimationFrame(animate);
+    
+    const delta = clock.getDelta();
+    if (mixer) mixer.update(delta);
+
+    // Actualizar wireframes
+    if (guiParams.wireframe && mesh) {
+        mesh.traverse(child => {
+            if (child.isMesh && !child.isLineSegments) {
+                const oldWire = wireframes.get(child.uuid);
+                if (oldWire) {
+                    child.remove(oldWire);
+                    wireframes.delete(child.uuid);
+                }
+                const newEdges = new THREE.EdgesGeometry(child.geometry);
+                const newLine = new THREE.LineSegments(
+                    newEdges,
+                    new THREE.LineBasicMaterial({ color: 0xffffff })
+                );
+                child.add(newLine);
+                wireframes.set(child.uuid, newLine);
+            }
+        });
+    }
+
     controls.update();
     renderer.render(scene, camera);
 }
+
+
 
 initializeModelNavigation(loadModel);
 animate();
