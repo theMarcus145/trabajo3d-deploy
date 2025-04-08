@@ -171,6 +171,14 @@ function loadModel(modelFolder) {
             }
         });
 
+        if (gltf.animations && gltf.animations.length) {
+            mixer = new THREE.AnimationMixer(model);
+            
+            gltf.animations.forEach((clip) => {
+              const action = mixer.clipAction(clip);
+              action.play(); // Reproduce la animación
+            });
+        }
         // Aplicar rotación inicial
         mesh.rotation.set(guiParams.rotationX, guiParams.rotationY, guiParams.rotationZ);
 
