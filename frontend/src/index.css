@@ -237,34 +237,94 @@ h1 {
     border: 2px solid var(--accent-color);
 }
 
-.loading-indicator {
+/* New Loading Overlay Styles */
+.loading-overlay {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: none;
+    justify-content: center;
     align-items: center;
-    gap: 15px;
-    opacity: 0;
+    z-index: 100;
+    border-radius: 15px;
     transition: opacity 0.3s ease;
 }
 
-.loading-indicator.active {
-    opacity: 1;
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    color: var(--text-color);
+    width: 80%;
+    max-width: 400px;
 }
 
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 3px solid rgba(19, 193, 13, 0.3);
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(19, 193, 13, 0.1);
     border-radius: 50%;
     border-top-color: var(--accent-color);
-    animation: spin 1s ease-in-out infinite;
+    animation: spin 1s ease infinite;
+    box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.loading-bar-container {
+    width: 100%;
+    height: 12px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    border: 2px solid var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.loading-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, 
+        rgba(19, 193, 13, 0.7) 0%, 
+        rgba(19, 193, 13, 1) 100%);
+    border-radius: 8px;
+    transition: width 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.loading-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.2), 
+        transparent);
+    animation: shimmer 1.5s infinite;
+}
+
+.loading-text {
+    font-size: 1.2em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px var(--accent-glow);
+    color: var(--accent-color);
 }
 
 @keyframes spin {
     to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+    100% { left: 100%; }
 }
 
 .controls-hint {
@@ -517,5 +577,9 @@ canvas {
     .main-footer {
         flex-direction: column;
         text-align: center;
+    }
+    
+    .loading-content {
+        width: 90%;
     }
 }

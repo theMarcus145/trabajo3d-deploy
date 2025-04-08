@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3DSOULSCHOOL - VISOR 3D</title>
-    <link rel="icon" href="/assets/cropped-favicon-3dsoul-32x32-CAUEzSyg.png">
-
+    <link rel="icon" href="/assets/cropped-favicon-3dsoul-32x32-CAUEzSyg.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <script type="module" crossorigin src="/assets/index-nhPJJZ-e.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-DeSCgaBU.css">
+  <script type="module" crossorigin src="/assets/index-C8AltCTh.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DhvjBp9Q.css">
 </head>
 <body>
     <div class="background-effects">
@@ -48,11 +47,12 @@
             
             <div id="render-container" class="render-container">
             </div>
-
-            <div class="progress-bar-container">
-                <label for="prog"></label>
-            </div>
             
+            <div class="progress-bar-container">
+                <label for="progress-bar">Cargando...</label>
+                <progress id="progress-bar" value="0" max="100"></progress>
+            </div>
+
             <div class="controls-hint">
                 <div class="hint-item"><i class="fas fa-mouse"></i> Click y arrastrar para rotar</div>
                 <div class="hint-item"><i class="fas fa-search-plus"></i> Rueda para zoom</div>
@@ -78,7 +78,6 @@
                 <a href="https://www.instagram.com/3dsoulschool/?hl=es" class="social-icon"><i class="fab fa-instagram"></i></a>
             </div>
         </footer>
-    </div>
-
+    </div>
 </body>
 </html>
