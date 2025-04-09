@@ -59,14 +59,15 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     folderModel.add(guiParams, 'useMatcap').name('MatCap').onChange((value) => {
         meshUpdateCallback('matcap', { enabled: value });
     });
-    
+
+    folderModel.add(guiParams, 'vertexNormals').name('Normales').onChange((value) => {
+        meshUpdateCallback('vertexNormals', { value });
+    });
+
     folderModel.add(guiParams, 'animation').name('Animación').onChange((value) => {
         meshUpdateCallback('animation', value);
     });
 
-    folderModel.add(guiParams, 'vertexNormals').name('Vertex Normals').onChange((value) => {
-        meshUpdateCallback('vertexNormals', { value });
-    });
     
     // Carpeta de controles de iluminación
     const folderLights = gui.addFolder("Iluminación ambiental");

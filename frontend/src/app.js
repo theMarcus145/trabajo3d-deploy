@@ -85,7 +85,7 @@ function updateWireframe(meshObject) {
 function updateModelAppearance() {
     if (!mesh) return;
     
-    // First clean up any existing vertex normals
+    // Primero, limpiar cualquier normal de vértices existente
     cleanupVertexNormals();
     
     mesh.traverse((child) => {
@@ -114,7 +114,6 @@ function updateModelAppearance() {
                     child.material.transparent = guiParams.modelOpacity > 0;
                     child.material.opacity = guiParams.modelOpacity ? 0.6 : 1.0;
                 }
-
                 // Dibujar normales de los vértices si está habilitado
                 if (guiParams.vertexNormals) {
                     const geometry = child.geometry;
@@ -124,8 +123,8 @@ function updateModelAppearance() {
                     const positions = geometry.attributes.position;
                     const normals = geometry.attributes.normal;
             
-                    // Definir un máximo de normales a cargar
-                    const stride = Math.max(1, Math.floor(positions.count / 50000)); // Limitar a 50.000 normales
+                    // Eliminar el límite de normales a cargar, procesamos todas las normales
+                    const stride = 1; // No limitar la cantidad de normales
             
                     // Crear segmentos de línea
                     const normalPoints = [];
@@ -146,7 +145,6 @@ function updateModelAppearance() {
                 
                         normalPoints.push(start, end);
                     }
-                    
                     // Crear segmentos de línea por cada normal
                     const normalGeometry = new THREE.BufferGeometry().setFromPoints(normalPoints);
                     const normalMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
@@ -154,7 +152,6 @@ function updateModelAppearance() {
                     
                     vertexNormalsGroup.add(normalLines);
                 }
-
                 // Asegurar que las sombras estén habilitadas
                 child.castShadow = true;
                 child.receiveShadow = true;
