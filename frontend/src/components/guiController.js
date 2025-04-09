@@ -5,7 +5,8 @@ const guiParams = {
     backgroundColor: '#000000',
     wireframe: false,
     modelOpacity: false,
-    useMatcap: false, 
+    useMatcap: false,
+    animation: false,
     rotationX: 0,
     rotationY: 0,
     rotationZ: 0,
@@ -56,6 +57,10 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     
     folderModel.add(guiParams, 'useMatcap').name('MatCap').onChange((value) => {
         meshUpdateCallback('matcap', { enabled: value });
+    });
+    
+    folderModel.add(guiParams, 'animation').name('Animación').onChange((value) => {
+        meshUpdateCallback('animation', value);
     });
     
     // Carpeta de controles de iluminación
