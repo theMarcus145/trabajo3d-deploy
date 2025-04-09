@@ -138,8 +138,22 @@ function handleMeshUpdate(type, data) {
         }
         updateModelAppearance();
     } else if (type === 'animation') {
-        updateModelAppearance();
         enableAnimation = data;
+        
+        // Si hay animaciones disponibles, activarlas o pausarlas
+        if (mixer) {
+            const actions = mixer.getRoot().animations;
+            if (actions && actions.length > 0) {
+                // Pausar o activar todas las acciones según el estado
+                mixer._actions.forEach(action => {
+                    if (enableAnimation) {
+                        action.paused = false;
+                    } else {
+                        action.paused = true;
+                    }
+                });
+            }
+        }
     }
 }
 
@@ -158,6 +172,9 @@ function loadModel(modelFolder) {
     
     // Limpiar materiales originales guardados de otros modelos
     originalMaterials.clear();
+    
+    // Resetear mixer
+    mixer = null;
     
     // Establecer mesh a null mientras se carga
     mesh = null;
@@ -178,14 +195,20 @@ function loadModel(modelFolder) {
             }
         });
 
+        // Manejar animaciones
         if (gltf.animations && gltf.animations.length) {
             mixer = new THREE.AnimationMixer(mesh);
             
             gltf.animations.forEach((clip) => {
-              const action = mixer.clipAction(clip);
-              action.play(); // Reproduce la animación
+                const action = mixer.clipAction(clip);
+                action.play();
+                // Pausar la acción si la animación no está habilitada
+                if (!enableAnimation) {
+                    action.paused = true;
+                }
             });
         }
+        
         // Aplicar rotación inicial
         mesh.rotation.set(guiParams.rotationX, guiParams.rotationY, guiParams.rotationZ);
 
@@ -209,13 +232,14 @@ window.addEventListener('resize', onWindowResize);
 
 // Animación
 function animate() {
-    if (enableAnimation === true){
-        requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
 
-        const delta = clock.getDelta();
-        if (mixer) mixer.update(delta); // Actualizar las animaciones
-    }
+    const delta = clock.getDelta();
     
+    // Solo actualizar las animaciones si están habilitadas
+    if (enableAnimation) {
+        mixer.update(delta);
+    }
 
     controls.update();
     renderer.render(scene, camera);
