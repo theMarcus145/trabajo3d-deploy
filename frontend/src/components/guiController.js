@@ -7,6 +7,7 @@ const guiParams = {
     modelOpacity: false,
     useMatcap: false,
     animation: false,
+    vertexNormals: false,
     rotationX: 0,
     rotationY: 0,
     rotationZ: 0,
@@ -61,6 +62,10 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     
     folderModel.add(guiParams, 'animation').name('Animación').onChange((value) => {
         meshUpdateCallback('animation', value);
+    });
+
+    folderModel.add(guiParams, 'vertexNormals').name('Vertex Normals').onChange((value) => {
+        meshUpdateCallback('vertexNormals', { value });
     });
     
     // Carpeta de controles de iluminación

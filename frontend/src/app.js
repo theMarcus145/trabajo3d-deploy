@@ -16,6 +16,10 @@ const renderer = new THREE.WebGLRenderer({
 const clock = new THREE.Clock();
 let mixer = null;
 
+// Crear grupo para las vertexNormals
+let vertexNormalsGroup = new THREE.Group();
+scene.add(vertexNormalsGroup);
+
 // Sombras
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.shadowMap.enabled = true;
@@ -77,9 +81,12 @@ function updateWireframe(meshObject) {
     }
 }
 
-// Funcion para actualizar la apariencia del modelo según los ajustes
+// Función para actualizar la apariencia del modelo según los ajustes
 function updateModelAppearance() {
     if (!mesh) return;
+    
+    // First clean up any existing vertex normals
+    cleanupVertexNormals();
     
     mesh.traverse((child) => {
         if (child.isMesh) {
@@ -103,13 +110,54 @@ function updateModelAppearance() {
                     // Usar material original con posible opacidad
                     child.material = originalMaterial.clone();
                     
-                    if (guiParams.modelOpacity) {
-                        child.material.transparent = true;
-                        child.material.opacity = 0.6;
-                    }
+                    // Aplicar opacidad si está habilitada en la GUI
+                    child.material.transparent = guiParams.modelOpacity > 0;
+                    child.material.opacity = guiParams.modelOpacity ? 0.6 : 1.0;
                 }
+
+                // Dibujar normales de los vértices si está habilitado
+                if (guiParams.vertexNormals) {
+                    const geometry = child.geometry;
+                    geometry.computeVertexNormals();
+            
+                    // Get position and normal attributes
+                    const positions = geometry.attributes.position;
+                    const normals = geometry.attributes.normal;
+            
+                    // For performance, limit the number of normals displayed
+                    // Sample a subset of vertices instead of showing all
+                    const stride = Math.max(1, Math.floor(positions.count / 500)); // Limit to ~500 normals
+            
+                    // Create line segments for better performance instead of individual lines
+                    const normalPoints = [];
+            
+                    // World matrix to transform normals correctly
+                    const worldMatrix = child.matrixWorld;
+            
+                    for (let i = 0; i < positions.count; i += stride) {
+                        // Start point (vertex position)
+                        const start = new THREE.Vector3();
+                        start.fromBufferAttribute(positions, i);
+                        start.applyMatrix4(worldMatrix);
                 
-                // Ensure shadows are enabled
+                        // End point (vertex position + normal direction)
+                        const end = new THREE.Vector3();
+                        end.fromBufferAttribute(normals, i);
+                        end.multiplyScalar(0.1); // Scale normal length
+                        end.add(start);
+                
+                        normalPoints.push(start, end);
+                    }
+                    
+                    // Create single line segments geometry for all normals
+                    const normalGeometry = new THREE.BufferGeometry().setFromPoints(normalPoints);
+                    const normalMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
+                    const normalLines = new THREE.LineSegments(normalGeometry, normalMaterial);
+                    
+                    vertexNormalsGroup.add(normalLines);
+                }
+
+                // Asegurar que las sombras estén habilitadas
                 child.castShadow = true;
                 child.receiveShadow = true;
                 
@@ -119,6 +167,29 @@ function updateModelAppearance() {
         }
     });
 }
+
+// Function to clean up vertex normals
+function cleanupVertexNormals() {
+    // Remove all children
+    while (vertexNormalsGroup.children.length > 0) {
+        const object = vertexNormalsGroup.children[0];
+        
+        // Dispose of geometries and materials
+        if (object.geometry) {
+            object.geometry.dispose();
+        }
+        if (object.material) {
+            if (Array.isArray(object.material)) {
+                object.material.forEach(material => material.dispose());
+            } else {
+                object.material.dispose();
+            }
+        }
+        
+        vertexNormalsGroup.remove(object);
+    }
+}
+
 
 let enableAnimation = false;
 // Funcion para manejar el callback de las actualizaciones del mesh
@@ -147,6 +218,8 @@ function handleMeshUpdate(type, data) {
             });
         }
         
+    } else if (type === 'vertexNormals') {
+        updateModelAppearance();
     }
 }
 
@@ -166,6 +239,7 @@ function loadModel(modelFolder) {
         child === ambientLight || 
         child === directionalLight || 
         child === camera ||
+        child === vertexNormalsGroup ||
         child.isMesh && child.material instanceof THREE.ShadowMaterial
     );
     
