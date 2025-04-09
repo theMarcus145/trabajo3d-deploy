@@ -12,6 +12,15 @@ const renderer = new THREE.WebGLRenderer({
     alpha: true 
 });
 
+// Crear la escena
+const scene = new THREE.Scene();
+scene.add(camera);
+
+// Controles de cámara
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enablePan = false;
+controls.enableDamping = true;
+
 // Reloj y Mixer para las animaciones
 const clock = new THREE.Clock();
 let mixer = null;
@@ -34,15 +43,6 @@ renderContainer.appendChild(renderer.domElement);
 
 // URL base para las peticiones API
 const API_URL = 'https://trabajo-3d-backend.onrender.com'
-
-// Crear la escena
-const scene = new THREE.Scene();
-scene.add(camera);
-
-// Controles de cámara
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enablePan = false;
-controls.enableDamping = true;
 
 // Añadir luces
 scene.add(ambientLight);
@@ -120,36 +120,34 @@ function updateModelAppearance() {
                     const geometry = child.geometry;
                     geometry.computeVertexNormals();
             
-                    // Get position and normal attributes
+                    // Obtener la posición y atributos de la normal
                     const positions = geometry.attributes.position;
                     const normals = geometry.attributes.normal;
             
-                    // For performance, limit the number of normals displayed
-                    // Sample a subset of vertices instead of showing all
-                    const stride = Math.max(1, Math.floor(positions.count / 500)); // Limit to ~500 normals
+                    // Definir un máximo de normales a cargar
+                    const stride = Math.max(1, Math.floor(positions.count / 50000)); // Limitar a 50.000 normales
             
-                    // Create line segments for better performance instead of individual lines
+                    // Crear segmentos de línea
                     const normalPoints = [];
             
-                    // World matrix to transform normals correctly
                     const worldMatrix = child.matrixWorld;
             
                     for (let i = 0; i < positions.count; i += stride) {
-                        // Start point (vertex position)
+                        // Punto de comienzo
                         const start = new THREE.Vector3();
                         start.fromBufferAttribute(positions, i);
                         start.applyMatrix4(worldMatrix);
                 
-                        // End point (vertex position + normal direction)
+                        // Punto final (vertex position + normal direction)
                         const end = new THREE.Vector3();
                         end.fromBufferAttribute(normals, i);
-                        end.multiplyScalar(0.1); // Scale normal length
+                        end.multiplyScalar(0.1); // Longitud de la normal
                         end.add(start);
                 
                         normalPoints.push(start, end);
                     }
                     
-                    // Create single line segments geometry for all normals
+                    // Crear segmentos de línea por cada normal
                     const normalGeometry = new THREE.BufferGeometry().setFromPoints(normalPoints);
                     const normalMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
                     const normalLines = new THREE.LineSegments(normalGeometry, normalMaterial);
