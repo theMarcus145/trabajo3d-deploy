@@ -120,7 +120,7 @@ function updateModelAppearance() {
     });
 }
 
-let enableAnimation = true;
+let enableAnimation = false;
 // Funcion para manejar el callback de las actualizaciones del mesh
 function handleMeshUpdate(type, data) {
     if (type === 'backgroundColor') {
@@ -139,26 +139,25 @@ function handleMeshUpdate(type, data) {
         updateModelAppearance();
     } else if (type === 'animation') {
         enableAnimation = data;
-        
-        // Si hay animaciones disponibles, activarlas o pausarlas
-        if (mixer) {
-            const actions = mixer.getRoot().animations;
-            if (actions && actions.length > 0) {
-                // Pausar o activar todas las acciones según el estado
-                mixer._actions.forEach(action => {
-                    if (enableAnimation) {
-                        action.paused = false;
-                    } else {
-                        action.paused = true;
-                    }
-                });
-            }
+
+        // Si existe el mixer y el modelo tiene animaciones (ya que el array es mayor que 0), entonces pausa o reanuda la animación
+        if (mixer && animationActions.length > 0) {
+            animationActions.forEach(action => {
+                action.paused = !enableAnimation;
+            });
         }
+        
     }
 }
 
 // Inicializar la GUI
 initializeGUI(renderContainer, handleMeshUpdate, { ambientLight, directionalLight });
+
+// Esta variable almacena si el modelo tiene una animación o no
+let hasAnimation = false;
+
+// Este array almacena todas las acciones de las animaciones del modelo actualmente cargado
+let animationActions = []; 
 
 // Función para cargar modelos
 function loadModel(modelFolder) {
@@ -179,10 +178,6 @@ function loadModel(modelFolder) {
     // Establecer mesh a null mientras se carga
     mesh = null;
 
-
-    // Esta variable almacena si el modelo tiene una animación o no
-    hasAnimation = false;
-    
     // Contactar con el backend para obtener los modelos
     const loader = new GLTFLoader().setPath(`${API_URL}/models/${modelFolder}/`);
     loader.load('scene.glb', (gltf) => {
@@ -204,16 +199,16 @@ function loadModel(modelFolder) {
         // Manejar animaciones
         if (gltf.animations && gltf.animations.length) {
             mixer = new THREE.AnimationMixer(mesh);
-            
+            animationActions = []; // Reiniciar 
+        
             gltf.animations.forEach((clip) => {
                 const action = mixer.clipAction(clip);
                 action.play();
-                // Pausar la acción si la animación no está habilitada
-                if (!enableAnimation) {
-                    action.paused = true;
-                }
+                action.paused = !enableAnimation; // Pausar si está desactivado
+                animationActions.push(action); // Guardar acción
             });
         }
+        
         
         // Aplicar rotación inicial
         mesh.rotation.set(guiParams.rotationX, guiParams.rotationY, guiParams.rotationZ);
