@@ -61,10 +61,13 @@ loadMatcapTexture();
 
 // Función para manejar el wireframe
 function updateWireframe(meshObject) {
-    // Eliminar wireframe existente si hay alguno
-    meshObject.children = meshObject.children.filter(child => !child.isLineSegments);
-    
-    // Crear nuevo wireframe si está activado
+    // Eliminar wireframes anteriores del hijo directamente
+    meshObject.children.forEach((child) => {
+        if (child.isLineSegments) {
+            meshObject.remove(child);
+        }
+    });
+
     if (guiParams.wireframe) {
         const edges = new THREE.EdgesGeometry(meshObject.geometry);
         const lineMaterial = new THREE.LineBasicMaterial({ 
@@ -72,10 +75,13 @@ function updateWireframe(meshObject) {
             linewidth: 1,
             depthTest: true
         });
+        
         const wireframe = new THREE.LineSegments(edges, lineMaterial);
-        meshObject.add(wireframe);
+        meshObject.add(wireframe); // Se añade como hijo del meshObject
     }
 }
+
+
 
 // Funcion para actualizar la apariencia del modelo según los ajustes
 function updateModelAppearance() {
