@@ -86,7 +86,6 @@ function updateModelAppearance() {
             // Si no es un wireframe (líneas)
             if (!child.isLineSegments) {
                 
-                
                 // Recuperar el material original
                 const originalMaterial = originalMaterials.get(child.uuid);
                 
@@ -121,6 +120,7 @@ function updateModelAppearance() {
     });
 }
 
+let enableAnimation = false;
 // Funcion para manejar el callback de las actualizaciones del mesh
 function handleMeshUpdate(type, data) {
     if (type === 'backgroundColor') {
@@ -137,6 +137,9 @@ function handleMeshUpdate(type, data) {
             guiParams.useMatcap = data.enabled;
         }
         updateModelAppearance();
+    } else if (type === 'animation') {
+        updateModelAppearance();
+        enableAnimation = data;
     }
 }
 
@@ -206,10 +209,13 @@ window.addEventListener('resize', onWindowResize);
 
 // Animación
 function animate() {
-    requestAnimationFrame(animate);
+    if (enableAnimation === true){
+        requestAnimationFrame(animate);
+
+        const delta = clock.getDelta();
+        if (mixer) mixer.update(delta); // Actualizar las animaciones
+    }
     
-    const delta = clock.getDelta();
-    if (mixer) mixer.update(delta); // Actualizar las animaciones
 
     controls.update();
     renderer.render(scene, camera);
