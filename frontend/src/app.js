@@ -120,7 +120,7 @@ function updateModelAppearance() {
     });
 }
 
-let enableAnimation = false;
+let enableAnimation = true;
 // Funcion para manejar el callback de las actualizaciones del mesh
 function handleMeshUpdate(type, data) {
     if (type === 'backgroundColor') {
@@ -179,6 +179,10 @@ function loadModel(modelFolder) {
     // Establecer mesh a null mientras se carga
     mesh = null;
 
+
+    // Esta variable almacena si el modelo tiene una animación o no
+    hasAnimation = false;
+    
     // Contactar con el backend para obtener los modelos
     const loader = new GLTFLoader().setPath(`${API_URL}/models/${modelFolder}/`);
     loader.load('scene.glb', (gltf) => {
@@ -194,6 +198,8 @@ function loadModel(modelFolder) {
                 originalMaterials.set(child.uuid, child.material.clone());
             }
         });
+        // Si el modelo tiene una animación, entonces la longitud será mayor a 0
+        hasAnimation = gltf.animations && gltf.animations.length > 0;
 
         // Manejar animaciones
         if (gltf.animations && gltf.animations.length) {
@@ -237,7 +243,7 @@ function animate() {
     const delta = clock.getDelta();
     
     // Solo actualizar las animaciones si están habilitadas
-    if (enableAnimation) {
+    if (enableAnimation && hasAnimation) {
         mixer.update(delta);
     }
 
