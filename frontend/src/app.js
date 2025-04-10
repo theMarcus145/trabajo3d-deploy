@@ -221,14 +221,70 @@ function handleMeshUpdate(type, data) {
 // Inicializar la GUI
 initializeGUI(renderContainer, handleMeshUpdate, { ambientLight, directionalLight });
 
+function createLoadingScreen() {
+    // Create container for loading screen
+    const loadingScreen = document.createElement('div');
+    loadingScreen.className = 'loading-screen';
+    loadingScreen.style.display = 'none';
+    
+    // Create progress container
+    const progressContainer = document.createElement('div');
+    progressContainer.className = 'progress-container';
+    
+    // Add loading text
+    const loadingText = document.createElement('div');
+    loadingText.className = 'loading-text';
+    loadingText.textContent = 'Cargando modelo...';
+    
+    // Create progress bar
+    const progressBar = document.createElement('div');
+    progressBar.className = 'progress-bar-container';
+    
+    const progressFill = document.createElement('div');
+    progressFill.className = 'progress-bar-fill';
+    progressFill.style.width = '0%';
+    
+    const progressText = document.createElement('div');
+    progressText.className = 'progress-text';
+    progressText.textContent = '0%';
+    
+    // Assemble the components
+    progressBar.appendChild(progressFill);
+    progressBar.appendChild(progressText);
+    
+    progressContainer.appendChild(loadingText);
+    progressContainer.appendChild(progressBar);
+    loadingScreen.appendChild(progressContainer);
+    
+    // Add to render container
+    const renderContainer = document.getElementById('render-container');
+    renderContainer.appendChild(loadingScreen);
+    
+    return {
+        show: () => {
+            loadingScreen.style.display = 'flex';
+        },
+        hide: () => {
+            loadingScreen.style.display = 'none';
+        },
+        updateProgress: (percent) => {
+            progressFill.style.width = `${percent}%`;
+            progressText.textContent = `${Math.round(percent)}%`;
+        }
+    };
+}
+
 // Esta variable almacena si el modelo tiene una animación o no
 let hasAnimation = false;
 
 // Este array almacena todas las acciones de las animaciones del modelo actualmente cargado
 let animationActions = []; 
 
-// Función para cargar modelos
 function loadModel(modelFolder) {
+    // Show loading screen
+    const loadingUI = createLoadingScreen();
+    loadingUI.show();
+    
     // Limpiar la escena
     scene.children = scene.children.filter(child => 
         child === ambientLight || 
@@ -247,8 +303,30 @@ function loadModel(modelFolder) {
     // Establecer mesh a null mientras se carga
     mesh = null;
 
+    // Create a loading manager to track progress
+    const loadingManager = new THREE.LoadingManager();
+    
+    // Track loading progress
+    loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
+        const progress = (itemsLoaded / itemsTotal) * 100;
+        loadingUI.updateProgress(progress);
+    };
+    
+    // Hide loading screen when complete
+    loadingManager.onLoad = () => {
+        setTimeout(() => {
+            loadingUI.hide();
+        }, 500); // Short delay to ensure the UI updates completely
+    };
+    
+    // Handle loading errors
+    loadingManager.onError = (url) => {
+        console.error(`Error loading: ${url}`);
+        loadingUI.hide();
+    };
+
     // Contactar con el backend para obtener los modelos
-    const loader = new GLTFLoader().setPath(`${API_URL}/models/${modelFolder}/`);
+    const loader = new GLTFLoader(loadingManager).setPath(`${API_URL}/models/${modelFolder}/`);
     loader.load('scene.glb', (gltf) => {
         mesh = gltf.scene;  
 
@@ -278,7 +356,6 @@ function loadModel(modelFolder) {
             });
         }
         
-        
         // Aplicar rotación inicial
         mesh.rotation.set(guiParams.rotationX, guiParams.rotationY, guiParams.rotationZ);
 
@@ -287,8 +364,17 @@ function loadModel(modelFolder) {
 
         // Agregar el modelo a la escena
         scene.add(mesh);
-    }, undefined, (error) => {
+    }, 
+    // Progress callback for individual file
+    (xhr) => {
+        if (xhr.lengthComputable) {
+            const percentComplete = (xhr.loaded / xhr.total) * 100;
+            loadingUI.updateProgress(percentComplete);
+        }
+    }, 
+    (error) => {
         console.error(`Error loading model from ${modelFolder}:`, error);
+        loadingUI.hide();
     });
 }
 
