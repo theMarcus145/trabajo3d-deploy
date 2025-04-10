@@ -61,13 +61,23 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     });
 
     folderModel.add(guiParams, 'vertexNormals').name('Normales').onChange((value) => {
+        if (value && guiParams.animation) {
+            // Si se activan las normales y está la animacion activada, esta se para
+            guiParams.animation = false;
+            meshUpdateCallback('animation', false);
+        }
         meshUpdateCallback('vertexNormals', { value });
     });
 
+    // Add animation control with mutual exclusivity with vertexNormals
     folderModel.add(guiParams, 'animation').name('Animación').onChange((value) => {
+        if (value && guiParams.vertexNormals) {
+            // If enabling animation and normales is already on, disable normales
+            guiParams.vertexNormals = false;
+            meshUpdateCallback('vertexNormals', { value: false });
+        }
         meshUpdateCallback('animation', value);
     });
-
     
     // Carpeta de controles de iluminación
     const folderLights = gui.addFolder("Iluminación ambiental");

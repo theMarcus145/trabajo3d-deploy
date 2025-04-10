@@ -206,6 +206,13 @@ function handleMeshUpdate(type, data) {
     } else if (type === 'animation') {
         enableAnimation = data;
 
+        // Si estamos activando la animación, asegurarnos de que las normales estén desactivadas
+        if (enableAnimation && guiParams.vertexNormals) {
+            guiParams.vertexNormals = false;
+            // Limpiar las normales que podrían estar mostradas
+            cleanupVertexNormals();
+        }
+
         // Si existe el mixer y el modelo tiene animaciones (ya que el array es mayor que 0), entonces pausa o reanuda la animación
         if (mixer && animationActions.length > 0) {
             animationActions.forEach(action => {
@@ -214,6 +221,16 @@ function handleMeshUpdate(type, data) {
         }
         
     } else if (type === 'vertexNormals') {
+        // Si estamos activando las normales, asegurarnos de que la animación esté desactivada
+        if (data.value && enableAnimation) {
+            enableAnimation = false;
+            // Pausar todas las animaciones si existen
+            if (mixer && animationActions.length > 0) {
+                animationActions.forEach(action => {
+                    action.paused = true;
+                });
+            }
+        }
         updateModelAppearance();
     }
 }
