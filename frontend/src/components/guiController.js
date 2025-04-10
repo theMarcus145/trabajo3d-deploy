@@ -12,6 +12,7 @@ const guiParams = {
     rotationY: 0,
     rotationZ: 0,
     ambientLightIntensity: 4,
+    ambientLightColor: 0xffffff,
     directionalLightIntensity: 0,
     directionalLightColor: 0xffffff,
     directionalLightX: 20,
@@ -92,7 +93,7 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     // Carpeta de controles de iluminación ambiental
     const folderLights = gui.addFolder("Iluminación ambiental");
 
-    directionalFolder.addColor(guiParams, 'backgroundColor').name("Color").onChange((value) => {
+    folderLights.addColor(guiParams, 'ambientLightColor').name("Color").onChange((value) => {
         ambientLight.color.set(value);
     });
     
@@ -103,7 +104,7 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     // Carpeta de controles de iluminacón direccional
     const directionalFolder = gui.addFolder("Iluminación direccional");
 
-    directionalFolder.addColor(guiParams, 'backgroundColor').name("Color").onChange((value) => {
+    directionalFolder.addColor(guiParams, 'directionalLightColor').name("Color").onChange((value) => {
         directionalLight.color.set(value);
     });
     
