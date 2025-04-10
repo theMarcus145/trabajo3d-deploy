@@ -230,8 +230,8 @@ h1 {
         0 0 30px var(--accent-glow), 
         inset 0 0 50px var(--dark-bg);
     width: 100%;
-    max-width: 900px; 
-    height: 550px;    
+    max-width: 990px; 
+    height: 605px;    
     margin: 0 auto;
     overflow: hidden;
     position: relative;

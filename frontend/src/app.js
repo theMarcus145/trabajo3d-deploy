@@ -77,6 +77,23 @@ function updateWireframe(meshObject) {
             depthTest: true
         });
         const wireframe = new THREE.LineSegments(edges, lineMaterial);
+
+        let position = child.position;
+        let rotation = child.rotation;
+        let scale = child.scale;
+
+        wireframe.position.x = position.x;
+        wireframe.position.y = position.y;
+        wireframe.position.z = position.z;
+
+        wireframe.rotation.x = rotation.x;
+        wireframe.rotation.y = rotation.y;
+        wireframe.rotation.z = rotation.z;
+
+        wireframe.scale.x = scale.x;
+        wireframe.scale.y = scale.y;
+        wireframe.scale.z = scale.z;
+        
         meshObject.add(wireframe);
     }
 }
@@ -90,7 +107,7 @@ function updateModelAppearance() {
     
     mesh.traverse((child) => {
         if (child.isMesh) {
-            // Si no es un wireframe (líneas)
+            // Si no es un wireframe
             if (!child.isLineSegments) {
                 
                 // Recuperar el material original
