@@ -163,13 +163,13 @@ function updateModelAppearance() {
     });
 }
 
-// Function to clean up vertex normals
+// Limpiar las normales
 function cleanupVertexNormals() {
-    // Remove all children
+    // Eliminar todos los children
     while (vertexNormalsGroup.children.length > 0) {
         const object = vertexNormalsGroup.children[0];
         
-        // Dispose of geometries and materials
+        // Eliminar geometría y materiales
         if (object.geometry) {
             object.geometry.dispose();
         }
@@ -222,21 +222,21 @@ function handleMeshUpdate(type, data) {
 initializeGUI(renderContainer, handleMeshUpdate, { ambientLight, directionalLight });
 
 function createLoadingScreen() {
-    // Create container for loading screen
+    // Crear el contenedor de la pantalla de carga
     const loadingScreen = document.createElement('div');
     loadingScreen.className = 'loading-screen';
     loadingScreen.style.display = 'none';
     
-    // Create progress container
+    // Contenedor de la barra de carga
     const progressContainer = document.createElement('div');
     progressContainer.className = 'progress-container';
     
-    // Add loading text
+    // Texto de cargando
     const loadingText = document.createElement('div');
     loadingText.className = 'loading-text';
     loadingText.textContent = 'Cargando modelo...';
     
-    // Create progress bar
+    // Barra de progreso
     const progressBar = document.createElement('div');
     progressBar.className = 'progress-bar-container';
     
@@ -248,7 +248,7 @@ function createLoadingScreen() {
     progressText.className = 'progress-text';
     progressText.textContent = '0%';
     
-    // Assemble the components
+    // Juntar los componentes
     progressBar.appendChild(progressFill);
     progressBar.appendChild(progressText);
     
@@ -256,10 +256,11 @@ function createLoadingScreen() {
     progressContainer.appendChild(progressBar);
     loadingScreen.appendChild(progressContainer);
     
-    // Add to render container
+    // Añadir al render container
     const renderContainer = document.getElementById('render-container');
     renderContainer.appendChild(loadingScreen);
     
+    // Los 2 modos: show, hide, y actualizar el progreso
     return {
         show: () => {
             loadingScreen.style.display = 'flex';
@@ -281,11 +282,11 @@ let hasAnimation = false;
 let animationActions = []; 
 
 function loadModel(modelFolder) {
-    // Show loading screen
+    // 1- Mostrar pantalla de carga
     const loadingUI = createLoadingScreen();
     loadingUI.show();
     
-    // Limpiar la escena
+    // 2- Limpiar la escena por completo
     scene.children = scene.children.filter(child => 
         child === ambientLight || 
         child === directionalLight || 
@@ -294,43 +295,44 @@ function loadModel(modelFolder) {
         child.isMesh && child.material instanceof THREE.ShadowMaterial
     );
     
-    // Limpiar materiales originales guardados de otros modelos
+    // 2.1 - Limpiar materiales originales guardados de otros modelos
     originalMaterials.clear();
+
+    // 2.2 - Establecer mesh a null mientras se carga (ya que el anterior mesh sigue cargado)
+    mesh = null;
     
-    // Resetear mixer
+    // 2.3 - Resetear mixer (para las animaciones)
     mixer = null;
     
-    // Establecer mesh a null mientras se carga
-    mesh = null;
 
-    // Create a loading manager to track progress
+    // 3 - Crear el LoadingManager para seguir el progreso de carga
     const loadingManager = new THREE.LoadingManager();
-    
-    // Track loading progress
+    // 3.1 - Seguir el progreso de carga (el progreso es igual a los items cargados/total de items), este progreso 
+    // se pasa a update progress para actualizar la barra
     loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
         const progress = (itemsLoaded / itemsTotal) * 100;
         loadingUI.updateProgress(progress);
     };
     
-    // Hide loading screen when complete
+    // 3.2 - Cuando se termina de cargar, ocultar el LoadingManager
     loadingManager.onLoad = () => {
         setTimeout(() => {
             loadingUI.hide();
-        }, 500); // Short delay to ensure the UI updates completely
+        }, 500); // Pequeño delay
     };
     
-    // Handle loading errors
+    // 3.3 - Manejar errores durante la carga
     loadingManager.onError = (url) => {
         console.error(`Error loading: ${url}`);
         loadingUI.hide();
     };
 
-    // Contactar con el backend para obtener los modelos
+    // 4 - Contactar con el backend para obtener los modelos
     const loader = new GLTFLoader(loadingManager).setPath(`${API_URL}/models/${modelFolder}/`);
     loader.load('scene.glb', (gltf) => {
         mesh = gltf.scene;  
 
-        // Guardar materiales originales y configurar sombras
+        // 4.1 - Guardar materiales originales y configurar sombras
         mesh.traverse((child) => {
             if (child.isMesh) {
                 // Enable shadows
@@ -340,10 +342,10 @@ function loadModel(modelFolder) {
                 originalMaterials.set(child.uuid, child.material.clone());
             }
         });
-        // Si el modelo tiene una animación, entonces la longitud será mayor a 0
+        // 4.2 - Si el modelo tiene una animación, entonces la longitud será mayor a 0
         hasAnimation = gltf.animations && gltf.animations.length > 0;
 
-        // Manejar animaciones
+        // 4.3 - Manejar animaciones
         if (gltf.animations && gltf.animations.length) {
             mixer = new THREE.AnimationMixer(mesh);
             animationActions = []; // Reiniciar 
@@ -356,26 +358,17 @@ function loadModel(modelFolder) {
             });
         }
         
-        // Aplicar rotación inicial
+        // 4.4 - Aplicar rotación inicial
         mesh.rotation.set(guiParams.rotationX, guiParams.rotationY, guiParams.rotationZ);
 
-        // Aplicar las configuraciones activadas en la GUI
+        // 4.5 - Aplicar las configuraciones activadas en la GUI
         updateModelAppearance();
 
-        // Agregar el modelo a la escena
+        // 4.6 - Agregar el modelo a la escena
         scene.add(mesh);
     }, 
     // Progress callback for individual file
-    (xhr) => {
-        if (xhr.lengthComputable) {
-            const percentComplete = (xhr.loaded / xhr.total) * 100;
-            loadingUI.updateProgress(percentComplete);
-        }
-    }, 
-    (error) => {
-        console.error(`Error loading model from ${modelFolder}:`, error);
-        loadingUI.hide();
-    });
+   );
 }
 
 // Manejar el redimensionamiento
