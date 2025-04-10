@@ -517,7 +517,7 @@ p a:hover {
     transition: box-shadow 0.3s ease;
 }
 
-/* Add this to your index.css file */
+/* Estilos de la loading screen*/
 
 .loading-screen {
     position: absolute;
@@ -534,7 +534,7 @@ p a:hover {
 }
 
 .progress-container {
-    background-color: rgba(20, 20, 20, 0.8);
+    background-color: rgba(10, 47, 22, 0.7); /* Color oscuro para coincidir con el fondo principal */
     border-radius: 10px;
     padding: 20px;
     width: 80%;
@@ -542,16 +542,17 @@ p a:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
-    box-shadow: 0 0 20px rgba(0, 123, 255, 0.5);
-    border: 1px solid rgba(0, 123, 255, 0.3);
+    box-shadow: 0 0 20px var(--accent-glow); /* Efecto de resplandor acorde a tu tema */
+    border: 1px solid var(--accent-color); /* Borde acorde al color de acento */
 }
 
 .loading-text {
-    color: white;
+    color: var(--text-color);
     font-size: 1.2rem;
     margin-bottom: 15px;
     font-weight: bold;
     text-align: center;
+    text-shadow: 0 0 10px var(--accent-glow); /* Agrega un resplandor sutil al texto */
 }
 
 .progress-bar-container {
@@ -565,7 +566,7 @@ p a:hover {
 
 .progress-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #007bff, #00c6ff);
+    background: linear-gradient(90deg, var(--accent-color), #00c6ff); /* Usar el color de acento */
     transition: width 0.3s ease;
     border-radius: 10px;
 }
@@ -581,16 +582,16 @@ p a:hover {
     justify-content: center;
     color: white;
     font-weight: bold;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); /* Efecto de sombra para el texto */
 }
 
-/* Add a nice loading animation */
+/* Animación de resplandor para la barra de progreso */
 @keyframes pulseGlow {
-    0% { box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); }
-    50% { box-shadow: 0 0 20px rgba(0, 123, 255, 0.8); }
-    100% { box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); }
+    0% { box-shadow: 0 0 5px rgba(19, 193, 13, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(19, 193, 13, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(19, 193, 13, 0.5); }
 }
 
-.progress-container {
-    animation: pulseGlow 2s infinite;
+.progress-bar-fill {
+    animation: pulseGlow 1.5s infinite alternate; /* Añadir animación de resplandor */
 }

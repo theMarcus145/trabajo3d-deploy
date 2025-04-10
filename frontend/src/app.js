@@ -367,8 +367,17 @@ function loadModel(modelFolder) {
         // 4.6 - Agregar el modelo a la escena
         scene.add(mesh);
     }, 
-    // Progress callback for individual file
-   );
+    // Manejar el progreso de carga de cada archivo
+    (xhr) => {
+        if (xhr.lengthComputable) {
+            const percentComplete = (xhr.loaded / xhr.total) * 100;
+            loadingUI.updateProgress(percentComplete);
+        }
+    }, 
+    (error) => {
+        console.error(`Error loading model from ${modelFolder}:`, error);
+        loadingUI.hide();
+    });
 }
 
 // Manejar el redimensionamiento
