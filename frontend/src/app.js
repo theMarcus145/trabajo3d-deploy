@@ -63,15 +63,32 @@ function loadMatcapTexture() {
 // cargar la textura al inicializar
 loadMatcapTexture();
 
+// Improved wireframe handling
 function updateWireframe(rootObject) {
-    // Eliminar wireframes previos
-    rootObject.traverse(child => {
-        child.children = child.children.filter(c => !c.isLineSegments);
+    // First, remove all existing wireframes
+    scene.traverse(obj => {
+        // Check if this is a wireframe we created earlier
+        if (obj.isLineSegments && obj.userData.isWireframe) {
+            // Remove from parent
+            if (obj.parent) {
+                obj.parent.remove(obj);
+            }
+            // Dispose of geometry and material
+            if (obj.geometry) obj.geometry.dispose();
+            if (obj.material) {
+                if (Array.isArray(obj.material)) {
+                    obj.material.forEach(mat => mat.dispose());
+                } else {
+                    obj.material.dispose();
+                }
+            }
+        }
     });
 
+    // If wireframe is disabled, just exit after removing existing wireframes
     if (!guiParams.wireframe) return;
 
-    // Crear nuevo wireframe
+    // Create new wireframes
     rootObject.traverse(child => {
         if (child.isMesh && child.geometry) {
             const edges = new THREE.EdgesGeometry(child.geometry);
@@ -81,12 +98,18 @@ function updateWireframe(rootObject) {
             });
             const wireframe = new THREE.LineSegments(edges, lineMaterial);
             
-            // Añadir el wireframe al mismo padre que el mesh
-            child.parent.add(wireframe);
+            // Mark this as a wireframe for future cleanup
+            wireframe.userData.isWireframe = true;
+            
+            // Make the wireframe a child of the mesh itself
+            // This ensures it will follow animations correctly
+            child.add(wireframe);
+            
+            // Reset position to origin of parent
+            wireframe.position.set(0, 0, 0);
         }
     });
 }
-
 
 // Función para actualizar la apariencia del modelo según los ajustes
 function updateModelAppearance() {
