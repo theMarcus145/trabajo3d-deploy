@@ -6,13 +6,14 @@ const guiParams = {
     wireframe: false,
     modelOpacity: false,
     useMatcap: false,
-    animation: false,
     vertexNormals: false,
+    animation: false,
     rotationX: 0,
     rotationY: 0,
     rotationZ: 0,
     ambientLightIntensity: 4,
     directionalLightIntensity: 0,
+    directionalLightColor: 0xffffff,
     directionalLightX: 20,
     directionalLightY: 0,
     directionalLightZ: 0,
@@ -88,17 +89,24 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
         meshUpdateCallback('animation', value);
     });
     
-    // Carpeta de controles de iluminación
+    // Carpeta de controles de iluminación ambiental
     const folderLights = gui.addFolder("Iluminación ambiental");
     
     folderLights.add(guiParams, 'ambientLightIntensity', 0, 4, 0.1).name("Intensidad").onChange((value) => {
         ambientLight.intensity = value;
     });
     
+    // Carpeta de controles de iluminacón direccional
     const directionalFolder = gui.addFolder("Iluminación direccional");
+    
+    directionalFolder.addColor(guiParams, 'backgroundColor').name("Color").onChange((value) => {
+        directionalLight.color.set(value);
+    });
+    
     directionalFolder.add(guiParams, 'directionalLightIntensity', 0, 4, 0.1).name("Intensidad").onChange((value) => {
         directionalLight.intensity = value;
     });
+
     
     directionalFolder.add(guiParams, 'directionalLightX', -30, 30, 1).name("X").onChange((value) => {
         directionalLight.position.x = value;
