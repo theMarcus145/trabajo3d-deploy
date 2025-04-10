@@ -531,6 +531,7 @@ p a:hover {
     align-items: center;
     z-index: 1000;
     backdrop-filter: blur(5px);
+    font-family: 'Orbitron', sans-serif;
 }
 
 .progress-container {
@@ -544,9 +545,11 @@ p a:hover {
     align-items: center;
     box-shadow: 0 0 20px var(--accent-glow); /* Efecto de resplandor acorde a tu tema */
     border: 1px solid var(--accent-color); /* Borde acorde al color de acento */
+    font-family: 'Orbitron', sans-serif;
 }
 
 .loading-text {
+    font-family: 'Orbitron', sans-serif;
     color: var(--text-color);
     font-size: 1.2rem;
     margin-bottom: 15px;
