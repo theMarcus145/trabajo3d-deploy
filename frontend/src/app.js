@@ -80,14 +80,9 @@ function updateWireframe(rootObject) {
                 depthTest: true
             });
             const wireframe = new THREE.LineSegments(edges, lineMaterial);
-
-            // Obtener posición global y orientación
-            child.updateWorldMatrix(true, false); // importante para que el worldMatrix esté actualizado
-            child.getWorldPosition(wireframe.position);
-            child.getWorldQuaternion(wireframe.quaternion);
-            wireframe.scale.copy(child.getWorldScale());
-
-            scene.add(wireframe);
+            
+            // Añadir el wireframe al mismo padre que el mesh
+            child.parent.add(wireframe);
         }
     });
 }
