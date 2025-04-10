@@ -18,24 +18,7 @@ const guiParams = {
     directionalLightZ: 0,
 };
 
-// Función para manejar la activación de las opciones de "exclusión mutua"
-function handleExclusiveOptionChange(changedOption) {
-    // Desactivar todas las opciones y activar solo la seleccionada
-    ['wireframe', 'modelOpacity', 'useMatcap', 'vertexNormals', 'animation'].forEach(option => {
-        guiParams[option] = false;  // Desactivar todas
-    });
-    guiParams[changedOption] = true;  // Activar la opción seleccionada
-}
-
-// Función para asegurar que la animación y las normales no estén activadas simultáneamente
-function handleAnimationAndNormalsChange(changedOption) {
-    if (changedOption === 'animation') {
-        guiParams['vertexNormals'] = false;  // Desactivar normales si la animación está activada
-    } else if (changedOption === 'vertexNormals') {
-        guiParams['animation'] = false;  // Desactivar animación si las normales están activadas
-    }
-}
-
+// Inicializar la GUI
 function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     const { ambientLight, directionalLight } = lights;
     
@@ -66,30 +49,26 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     });
 
     folderModel.add(guiParams, 'wireframe').name('Wireframe').onChange((value) => {
-        if (value) handleExclusiveOptionChange('wireframe');
         meshUpdateCallback('wireframe', { value });
     });
     
     folderModel.add(guiParams, 'modelOpacity').name('Opacidad').onChange((value) => {
-        if (value) handleExclusiveOptionChange('modelOpacity');
         meshUpdateCallback('modelOpacity', { value });
     });
     
     folderModel.add(guiParams, 'useMatcap').name('MatCap').onChange((value) => {
-        if (value) handleExclusiveOptionChange('useMatcap');
         meshUpdateCallback('matcap', { enabled: value });
     });
 
     folderModel.add(guiParams, 'vertexNormals').name('Normales').onChange((value) => {
-        if (value) handleAnimationAndNormalsChange('vertexNormals');  // Verificar exclusión mutua
         meshUpdateCallback('vertexNormals', { value });
     });
 
     folderModel.add(guiParams, 'animation').name('Animación').onChange((value) => {
-        if (value) handleAnimationAndNormalsChange('animation');  // Verificar exclusión mutua
         meshUpdateCallback('animation', value);
     });
 
+    
     // Carpeta de controles de iluminación
     const folderLights = gui.addFolder("Iluminación ambiental");
     
@@ -114,7 +93,7 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
         directionalLight.position.z = value;
     });
 
-    // Añadir la GUI al contenedor donde se encuentra el visor
+    // Añadir la GUI al contenedor donde se encuentra el visor, estaría fuera del mismo sin los siguientes parámetros.
     const guiContainer = document.createElement('div');
     guiContainer.style.position = 'absolute';
     guiContainer.style.top = '10px';
