@@ -4,7 +4,7 @@ import { GLTFLoader } from '/node_modules/three/examples/jsm/loaders/GLTFLoader.
 import { ambientLight, directionalLight } from './components/light.js';
 import { initializeModelNavigation } from './components/arrowController.js';
 import { camera } from './components/camera.js';
-import { initializeGUI, guiParams } from './components/guiController.js';
+import { initializeGUI, guiParams, updateGuiControllers } from './components/guiController.js';
 
 // Crear el renderer
 const renderer = new THREE.WebGLRenderer({ 
@@ -209,6 +209,8 @@ function handleMeshUpdate(type, data) {
         // Si estamos activando la animación, asegurarnos de que las normales estén desactivadas
         if (enableAnimation && guiParams.vertexNormals) {
             guiParams.vertexNormals = false;
+            // Actualizar la GUI para reflejar el cambio
+            updateGuiControllers();
             // Limpiar las normales que podrían estar mostradas
             cleanupVertexNormals();
         }
@@ -224,6 +226,9 @@ function handleMeshUpdate(type, data) {
         // Si estamos activando las normales, asegurarnos de que la animación esté desactivada
         if (data.value && enableAnimation) {
             enableAnimation = false;
+            guiParams.animation = false;
+            // Actualizar la GUI para reflejar el cambio
+            updateGuiControllers();
             // Pausar todas las animaciones si existen
             if (mixer && animationActions.length > 0) {
                 animationActions.forEach(action => {

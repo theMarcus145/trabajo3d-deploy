@@ -18,6 +18,10 @@ const guiParams = {
     directionalLightZ: 0,
 };
 
+// Variables para almacenar referencias a los controladores de GUI
+let animationController = null;
+let normalsController = null;
+
 // Inicializar la GUI
 function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     const { ambientLight, directionalLight } = lights;
@@ -60,20 +64,25 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
         meshUpdateCallback('matcap', { enabled: value });
     });
 
-    folderModel.add(guiParams, 'vertexNormals').name('Normales').onChange((value) => {
+    // Add vertexNormals control with mutual exclusivity with animation
+    normalsController = folderModel.add(guiParams, 'vertexNormals').name('Normales').onChange((value) => {
         if (value && guiParams.animation) {
-            // Si se activan las normales y está la animacion activada, esta se para
+            // If enabling normales and animation is already on, disable animation
             guiParams.animation = false;
+            // Update the animation controller to reflect the change
+            animationController.updateDisplay();
             meshUpdateCallback('animation', false);
         }
         meshUpdateCallback('vertexNormals', { value });
     });
 
     // Add animation control with mutual exclusivity with vertexNormals
-    folderModel.add(guiParams, 'animation').name('Animación').onChange((value) => {
+    animationController = folderModel.add(guiParams, 'animation').name('Animación').onChange((value) => {
         if (value && guiParams.vertexNormals) {
             // If enabling animation and normales is already on, disable normales
             guiParams.vertexNormals = false;
+            // Update the normales controller to reflect the change
+            normalsController.updateDisplay();
             meshUpdateCallback('vertexNormals', { value: false });
         }
         meshUpdateCallback('animation', value);
@@ -114,4 +123,10 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     return { gui, guiParams };
 }
 
-export { initializeGUI, guiParams };
+// Expose the controllers so they can be updated from outside
+export function updateGuiControllers() {
+    if (animationController) animationController.updateDisplay();
+    if (normalsController) normalsController.updateDisplay();
+}
+
+export { initializeGUI, guiParams, animationController, normalsController };
