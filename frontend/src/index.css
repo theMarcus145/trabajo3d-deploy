@@ -566,7 +566,7 @@ p a:hover {
 
 .progress-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--accent-color), #00c6ff); /* Usar el color de acento */
+    background: linear-gradient(#000000, #00ff1a); 
     transition: width 0.3s ease;
     border-radius: 10px;
 }
