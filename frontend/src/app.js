@@ -63,40 +63,35 @@ function loadMatcapTexture() {
 // cargar la textura al inicializar
 loadMatcapTexture();
 
-// Función para manejar el wireframe
-function updateWireframe(meshObject) {
-    // Eliminar wireframe existente si hay alguno
-    meshObject.children = meshObject.children.filter(child => !child.isLineSegments);
-    
-    // Crear nuevo wireframe si está activado
-    if (guiParams.wireframe) {
-        const edges = new THREE.EdgesGeometry(meshObject.geometry);
-        const lineMaterial = new THREE.LineBasicMaterial({ 
-            color: 0xffffff,
-            linewidth: 1,
-            depthTest: true
-        });
-        const wireframe = new THREE.LineSegments(edges, lineMaterial);
+function updateWireframe(rootObject) {
+    // Eliminar wireframes previos
+    rootObject.traverse(child => {
+        child.children = child.children.filter(c => !c.isLineSegments);
+    });
 
-        let position = child.position;
-        let rotation = child.rotation;
-        let scale = child.scale;
+    if (!guiParams.wireframe) return;
 
-        wireframe.position.x = position.x;
-        wireframe.position.y = position.y;
-        wireframe.position.z = position.z;
+    // Crear nuevo wireframe
+    rootObject.traverse(child => {
+        if (child.isMesh && child.geometry) {
+            const edges = new THREE.EdgesGeometry(child.geometry);
+            const lineMaterial = new THREE.LineBasicMaterial({ 
+                color: 0xffffff,
+                depthTest: true
+            });
+            const wireframe = new THREE.LineSegments(edges, lineMaterial);
 
-        wireframe.rotation.x = rotation.x;
-        wireframe.rotation.y = rotation.y;
-        wireframe.rotation.z = rotation.z;
+            // Obtener posición global y orientación
+            child.updateWorldMatrix(true, false); // importante para que el worldMatrix esté actualizado
+            child.getWorldPosition(wireframe.position);
+            child.getWorldQuaternion(wireframe.quaternion);
+            wireframe.scale.copy(child.getWorldScale());
 
-        wireframe.scale.x = scale.x;
-        wireframe.scale.y = scale.y;
-        wireframe.scale.z = scale.z;
-        
-        meshObject.add(wireframe);
-    }
+            scene.add(wireframe);
+        }
+    });
 }
+
 
 // Función para actualizar la apariencia del modelo según los ajustes
 function updateModelAppearance() {
