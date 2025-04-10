@@ -63,52 +63,22 @@ function loadMatcapTexture() {
 // cargar la textura al inicializar
 loadMatcapTexture();
 
-// Improved wireframe handling
-function updateWireframe(rootObject) {
-    // First, remove all existing wireframes
-    scene.traverse(obj => {
-        // Check if this is a wireframe we created earlier
-        if (obj.isLineSegments && obj.userData.isWireframe) {
-            // Remove from parent
-            if (obj.parent) {
-                obj.parent.remove(obj);
-            }
-            // Dispose of geometry and material
-            if (obj.geometry) obj.geometry.dispose();
-            if (obj.material) {
-                if (Array.isArray(obj.material)) {
-                    obj.material.forEach(mat => mat.dispose());
-                } else {
-                    obj.material.dispose();
-                }
-            }
-        }
-    });
-
-    // If wireframe is disabled, just exit after removing existing wireframes
-    if (!guiParams.wireframe) return;
-
-    // Create new wireframes
-    rootObject.traverse(child => {
-        if (child.isMesh && child.geometry) {
-            const edges = new THREE.EdgesGeometry(child.geometry);
-            const lineMaterial = new THREE.LineBasicMaterial({ 
-                color: 0xffffff,
-                depthTest: true
-            });
-            const wireframe = new THREE.LineSegments(edges, lineMaterial);
-            
-            // Mark this as a wireframe for future cleanup
-            wireframe.userData.isWireframe = true;
-            
-            // Make the wireframe a child of the mesh itself
-            // This ensures it will follow animations correctly
-            child.add(wireframe);
-            
-            // Reset position to origin of parent
-            wireframe.position.set(0, 0, 0);
-        }
-    });
+// Función para manejar el wireframe
+function updateWireframe(meshObject) {
+    // Eliminar wireframe existente si hay alguno
+    meshObject.children = meshObject.children.filter(child => !child.isLineSegments);
+    
+    // Crear nuevo wireframe si está activado
+    if (guiParams.wireframe) {
+        const edges = new THREE.EdgesGeometry(meshObject.geometry);
+        const lineMaterial = new THREE.LineBasicMaterial({ 
+            color: 0xffffff,
+            linewidth: 1,
+            depthTest: true
+        });
+        const wireframe = new THREE.LineSegments(edges, lineMaterial);       
+        meshObject.add(wireframe);
+    }
 }
 
 // Función para actualizar la apariencia del modelo según los ajustes
