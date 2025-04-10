@@ -91,6 +91,10 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     
     // Carpeta de controles de iluminación ambiental
     const folderLights = gui.addFolder("Iluminación ambiental");
+
+    directionalFolder.addColor(guiParams, 'backgroundColor').name("Color").onChange((value) => {
+        ambientLight.color.set(value);
+    });
     
     folderLights.add(guiParams, 'ambientLightIntensity', 0, 4, 0.1).name("Intensidad").onChange((value) => {
         ambientLight.intensity = value;
@@ -98,7 +102,7 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     
     // Carpeta de controles de iluminacón direccional
     const directionalFolder = gui.addFolder("Iluminación direccional");
-    
+
     directionalFolder.addColor(guiParams, 'backgroundColor').name("Color").onChange((value) => {
         directionalLight.color.set(value);
     });
