@@ -4,7 +4,7 @@ import { GLTFLoader } from '/node_modules/three/examples/jsm/loaders/GLTFLoader.
 import { ambientLight, directionalLight } from './components/light.js';
 import { initializeModelNavigation } from './components/arrowController.js';
 import { camera } from './components/camera.js';
-import { initializeGUI, guiParams, updateGuiControllers } from './components/guiController.js';
+import { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers } from './components/guiController.js';
 
 // Crear el renderer
 const renderer = new THREE.WebGLRenderer({ 
@@ -238,6 +238,12 @@ function handleMeshUpdate(type, data) {
         }
         updateModelAppearance();
     }
+    if (type === 'materialColor' && data.colorHex && data.value) {
+        const materials = colorMap.get(data.colorHex);
+        if (materials) {
+            materials.forEach(material => material.color.set(data.value));
+        }
+    }
 }
 
 // Inicializar la GUI
@@ -381,15 +387,11 @@ function loadModel(modelFolder) {
                       colorMap.get(colorHex).push(mat);
                     }
                 });
-
-                for (const [colorHex, mats] of colorMap.entries()) {
-                    console.log(`Color base: #${colorHex}, materiales:`, mats);
-                
-                    // Por ejemplo, cambiar a rojo
-                    mats.forEach(mat => mat.color.set('red'));
-                }
             }
         });
+
+        updateMaterialControllers(colorMap);
+
         // 4.2 - Si el modelo tiene una animación, entonces la longitud será mayor a 0
         hasAnimation = gltf.animations && gltf.animations.length > 0;
 
