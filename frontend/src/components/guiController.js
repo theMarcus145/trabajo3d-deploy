@@ -7,6 +7,7 @@ const guiParams = {
     modelOpacity: false,
     useMatcap: false,
     vertexNormals: false,
+    removeTextures: false,  // Added missing parameter
     animation: false,
     rotationX: 0,
     rotationY: 0,
@@ -67,6 +68,11 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     
     folderModel.add(guiParams, 'useMatcap').name('MatCap').onChange((value) => {
         meshUpdateCallback('matcap', { enabled: value });
+    });
+
+    // Add the removeTextures option
+    folderModel.add(guiParams, 'removeTextures').name('Sin Texturas').onChange((value) => {
+        meshUpdateCallback('removeTextures', { value });
     });
 
     // Add vertexNormals control with mutual exclusivity with animation

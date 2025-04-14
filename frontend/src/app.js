@@ -174,7 +174,7 @@ function updateModelAppearance() {
                     const normalGeometry = new THREE.BufferGeometry().setFromPoints(normalPoints);
                     const normalMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
                     const normalLines = new THREE.LineSegments(normalGeometry, normalMaterial);
-                    
+
                     vertexNormalsGroup.add(normalLines); 
                 }
                 
@@ -354,12 +354,16 @@ function loadModel(modelFolder) {
     
     // 2.1 - Limpiar materiales originales guardados de otros modelos
     originalMaterials.clear();
+    originalTextures.clear();
 
     // 2.2 - Establecer mesh a null mientras se carga (ya que el anterior mesh sigue cargado)
     mesh = null;
     
     // 2.3 - Resetear mixer (para las animaciones)
     mixer = null;
+    
+    // 2.4 - Limpiar mapa de colores
+    colorMap.clear();
     
 
     // 3 - Crear el LoadingManager para seguir el progreso de carga
