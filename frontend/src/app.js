@@ -137,11 +137,45 @@ function updateModelAppearance() {
                 }
                 
                 // Dibujar normales de los vértices si está habilitado
-                if (guiParams.vertexNormals) {
-                    const geometry = child.geometry;
+                if (guiParams.vertexNormals) { 
+                    const geometry = child.geometry; 
                     geometry.computeVertexNormals();
-            
-                    // Rest of the vertex normals code remains the same...
+ 
+                    // Obtener la posición y atributos de la normal
+                    const positions = geometry.attributes.position;
+                    const normals = geometry.attributes.normal;
+ 
+                    // Eliminar el límite de normales a cargar, procesamos todas las normales
+                    const stride = 1; // No limitar la cantidad de normales
+ 
+                    // Crear segmentos de línea
+                    const normalPoints = [];
+                    const worldMatrix = child.matrixWorld;
+ 
+                    for (let i = 0; i < positions.count; i += stride) {
+                        // Punto de comienzo
+                        const start = new THREE.Vector3();
+ 
+                        start.fromBufferAttribute(positions, i);
+                        start.applyMatrix4(worldMatrix);
+ 
+                        // Punto final (vertex position + normal direction)
+                        const end = new THREE.Vector3();
+ 
+                        end.fromBufferAttribute(normals, i);
+                        end.multiplyScalar(0.1); // Longitud de la normal
+                        end.add(start);
+ 
+                        normalPoints.push(start, end);
+ 
+                    }
+ 
+                    // Crear segmentos de línea por cada normal
+                    const normalGeometry = new THREE.BufferGeometry().setFromPoints(normalPoints);
+                    const normalMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
+                    const normalLines = new THREE.LineSegments(normalGeometry, normalMaterial);
+                    
+                    vertexNormalsGroup.add(normalLines); 
                 }
                 
                 // Asegurar que las sombras estén habilitadas
