@@ -1,6 +1,6 @@
 import { GUI } from 'dat.gui';
 
-// Estos son los parámetros de la GUI junto con todos sus valores por defecto
+// These are the GUI parameters with their default values
 const guiParams = {
     backgroundColor: '#000000',
     wireframe: false,
@@ -18,13 +18,16 @@ const guiParams = {
     directionalLightX: 20,
     directionalLightY: 0,
     directionalLightZ: 0,
+    // Object to store material colors
+    materialColors: {}
 };
 
-// Variables para almacenar referencias a los controladores de GUI
+// Variables to store references to GUI controllers
 let animationController = null;
 let normalsController = null;
+let materialFolder = null;
 
-// Inicializar la GUI
+// Initialize the GUI
 function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     const { ambientLight, directionalLight } = lights;
     
@@ -34,13 +37,13 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
 
     gui.width = 200;
 
-    // Ajustar el color del fondo
+    // Background color adjustment
     const folderBackground = gui.addFolder("Fondo");
     folderBackground.addColor(guiParams, 'backgroundColor').name("Color").onChange((value) => {
         meshUpdateCallback('backgroundColor', { value });
     });
 
-    // Carpeta para los controles del modelo
+    // Model controls folder
     const folderModel = gui.addFolder("Controles de Modelo");
     folderModel.add(guiParams, 'rotationX', -Math.PI, Math.PI, 0.01).name("X").onChange(() => {
         meshUpdateCallback('rotation', { axis: 'x', value: guiParams.rotationX });
@@ -90,7 +93,10 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
         meshUpdateCallback('animation', value);
     });
     
-    // Carpeta de controles de iluminación ambiental
+    // Create materials folder for colors
+    materialFolder = gui.addFolder("Colores de Materiales");
+    
+    // Ambient light controls folder
     const folderLights = gui.addFolder("Iluminación ambiental");
 
     folderLights.addColor(guiParams, 'ambientLightColor').name("Color").onChange((value) => {
@@ -101,7 +107,7 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
         ambientLight.intensity = value;
     });
     
-    // Carpeta de controles de iluminacón direccional
+    // Directional light controls folder
     const directionalFolder = gui.addFolder("Iluminación direccional");
 
     directionalFolder.addColor(guiParams, 'directionalLightColor').name("Color").onChange((value) => {
@@ -125,7 +131,7 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
         directionalLight.position.z = value;
     });
 
-    // Añadir la GUI al contenedor donde se encuentra el visor, estaría fuera del mismo sin los siguientes parámetros.
+    // Add the GUI to the container where the viewer is
     const guiContainer = document.createElement('div');
     guiContainer.style.position = 'absolute';
     guiContainer.style.top = '10px';
@@ -136,10 +142,41 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     return { gui, guiParams };
 }
 
+// Function to update material controllers in the GUI
+function updateMaterialControllers(colorMap) {
+    // Clear existing material folder controllers
+    if (materialFolder) {
+        for (let i = materialFolder.__controllers.length - 1; i >= 0; i--) {
+            materialFolder.remove(materialFolder.__controllers[i]);
+        }
+    }
+    
+    // Clear existing material colors in guiParams
+    guiParams.materialColors = {};
+    
+    // Add new color controllers for each material group
+    let colorIndex = 0;
+    for (const [colorHex, materials] of colorMap.entries()) {
+        const colorName = `Material ${colorIndex + 1}`;
+        // Initialize with the existing color or a default
+        guiParams.materialColors[colorHex] = `#${colorHex}`;
+        
+        // Add color controller to the material folder
+        materialFolder.addColor(guiParams.materialColors, colorHex)
+            .name(colorName)
+            .onChange((value) => {
+                // Update all materials with this base color
+                materials.forEach(material => material.color.set(value));
+            });
+        
+        colorIndex++;
+    }
+}
+
 // Expose the controllers so they can be updated from outside
-export function updateGuiControllers() {
+function updateGuiControllers() {
     if (animationController) animationController.updateDisplay();
     if (normalsController) normalsController.updateDisplay();
 }
 
-export { initializeGUI, guiParams, animationController, normalsController };
+export { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers };
