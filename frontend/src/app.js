@@ -106,10 +106,25 @@ function updateModelAppearance() {
                         opacity: guiParams.modelOpacity ? 0.6 : 1.0
                     });
                     
+                    // Save current color if there is one
+                    if (child.material && child.material.color) {
+                        matcapMaterial.color = child.material.color.clone();
+                    }
+                    
                     child.material = matcapMaterial;
                 } else {
-                    // Usar material original con posible opacidad
-                    child.material = originalMaterial
+                    // If we're switching back from matcap, we need to restore original material
+                    // but keep any color changes that were made
+                    const previousColor = child.material && child.material.color ? 
+                                         child.material.color.clone() : null;
+                    
+                    // Clone the original material to not modify it
+                    child.material = originalMaterial.clone();
+                    
+                    // If we had a previous color, apply it
+                    if (previousColor) {
+                        child.material.color = previousColor;
+                    }
                     
                     // Aplicar opacidad si está habilitada en la GUI
                     child.material.transparent = guiParams.modelOpacity > 0;
@@ -132,6 +147,24 @@ function updateModelAppearance() {
                         if (originalTextures.has(child.uuid)) {
                             child.material.map = originalTextures.get(child.uuid);
                             child.material.needsUpdate = true;
+                        }
+                    }
+                }
+                
+                // Update the colorMap to point to the new material instance
+                // Find all color entries that contained this mesh's previous material
+                if (child.material && child.material.color) {
+                    const colorHex = child.material.color.getHexString();
+                    
+                    // Check if this color exists in our map
+                    if (!colorMap.has(colorHex)) {
+                        // If not, create a new entry
+                        colorMap.set(colorHex, [child.material]);
+                    } else {
+                        // Make sure this specific material instance is in the array
+                        const materials = colorMap.get(colorHex);
+                        if (!materials.includes(child.material)) {
+                            materials.push(child.material);
                         }
                     }
                 }
@@ -186,7 +219,9 @@ function updateModelAppearance() {
                 updateWireframe(child);
             }
         }
-    });
+    });   
+    // Refresh the material controllers with the updated colorMap
+    updateMaterialControllers(colorMap);
 }
 
 // Limpiar las normales
@@ -402,6 +437,7 @@ function loadModel(modelFolder) {
                     originalTextures.set(child.uuid, child.material.map);
                 }
 
+                // Store the reference to the actual material being used
                 const material = child.material;
 
                 // Si es un array (múltiples materiales en una malla), recógelos todos
@@ -416,6 +452,7 @@ function loadModel(modelFolder) {
                         colorMap.set(colorHex, []);
                       }
             
+                      // Store reference to the actual material instance
                       colorMap.get(colorHex).push(mat);
                     }
                 });
