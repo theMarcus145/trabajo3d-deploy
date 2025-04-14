@@ -7,7 +7,7 @@ const guiParams = {
     modelOpacity: false,
     useMatcap: false,
     vertexNormals: false,
-    removeTextures: false,  // Added missing parameter
+    removeTextures: false,  // Added parameter
     animation: false,
     rotationX: 0,
     rotationY: 0,
@@ -171,10 +171,13 @@ function updateMaterialControllers(colorMap) {
         materialFolder.addColor(guiParams.materialColors, colorHex)
             .name(colorName)
             .onChange((value) => {
-                // Update all materials with this base color
-                materials.forEach(material => material.color.set(value));
-            });
-        
+                // Directly update all materials with this base color
+                materials.forEach(mat => {
+                    mat.color.set(value);
+                    mat.needsUpdate = true;
+                });
+            })
+        s
         colorIndex++;
     }
 }

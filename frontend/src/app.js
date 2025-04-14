@@ -264,12 +264,17 @@ function handleMeshUpdate(type, data) {
         }
         updateModelAppearance();
     } else if (type === 'removeTextures') {
-        // Handle the new removeTextures option
+        // Handle the removeTextures option
         updateModelAppearance();
     } else if (type === 'materialColor' && data.colorHex && data.value) {
+        // This part isn't needed anymore as we're handling color changes directly in the GUI controller
+        // But we'll keep it for backward compatibility
         const materials = colorMap.get(data.colorHex);
         if (materials) {
-            materials.forEach(material => material.color.set(data.value));
+            materials.forEach(material => {
+                material.color.set(data.value);
+                material.needsUpdate = true;
+            });
         }
     }
 }
