@@ -303,6 +303,7 @@ let hasAnimation = false;
 // Este array almacena todas las acciones de las animaciones del modelo actualmente cargado
 let animationActions = []; 
 
+const colorMap = new Map(); // Para guardar los materiales por color base
 function loadModel(modelFolder) {
     // 1- Mostrar pantalla de carga
     const loadingUI = createLoadingScreen();
@@ -354,7 +355,7 @@ function loadModel(modelFolder) {
     loader.load('scene.glb', (gltf) => {
         mesh = gltf.scene;  
 
-        // 4.1 - Guardar materiales originales y configurar sombras
+        // 4.1 - Guardar materiales originales y configurar sombras, agrupar materiales por colores base
         mesh.traverse((child) => {
             if (child.isMesh) {
                 // Enable shadows
@@ -362,6 +363,31 @@ function loadModel(modelFolder) {
                 child.receiveShadow = true;
                 
                 originalMaterials.set(child.uuid, child.material.clone());
+
+                const material = child.material;
+
+                // Si es un array (múltiples materiales en una malla), recógelos todos
+                const materials = Array.isArray(material) ? material : [material];
+
+                materials.forEach((mat) => {
+                    if (mat.color) {
+                      const colorHex = mat.color.getHexString();
+            
+                      // Agrupar por color base
+                      if (!colorMap.has(colorHex)) {
+                        colorMap.set(colorHex, []);
+                      }
+            
+                      colorMap.get(colorHex).push(mat);
+                    }
+                });
+
+                for (const [colorHex, mats] of colorMap.entries()) {
+                    console.log(`Color base: #${colorHex}, materiales:`, mats);
+                
+                    // Por ejemplo, cambiar a rojo
+                    mats.forEach(mat => mat.color.set('red'));
+                }
             }
         });
         // 4.2 - Si el modelo tiene una animación, entonces la longitud será mayor a 0
