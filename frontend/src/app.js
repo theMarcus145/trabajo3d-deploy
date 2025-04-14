@@ -109,7 +109,7 @@ function updateModelAppearance() {
                     child.material = matcapMaterial;
                 } else {
                     // Usar material original con posible opacidad
-                    child.material = originalMaterial.clone();
+                    child.material = originalMaterial
                     
                     // Aplicar opacidad si está habilitada en la GUI
                     child.material.transparent = guiParams.modelOpacity > 0;
