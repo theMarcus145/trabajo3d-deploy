@@ -176,8 +176,7 @@ function updateMaterialControllers(colorMap) {
                     mat.color.set(value);
                     mat.needsUpdate = true;
                 });
-            })
-        s
+            });
         colorIndex++;
     }
 }
