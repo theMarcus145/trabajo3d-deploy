@@ -192,18 +192,22 @@ function updateMaterialControllers(colorMap) {
 function updateColorButtonBackground(controller, color) {
     // Find the DOM element of the controller
     if (controller && controller.domElement) {
-        // Find the color picker element (which is the div containing the input)
-        const colorPickerElement = controller.domElement.querySelector('li .cr.color');
-        if (colorPickerElement) {
-            // Update the background color of the color picker
-            colorPickerElement.style.backgroundColor = color;
+        // The correct way to target the color element is to look for the div inside the li element
+        const liElement = controller.domElement;
+        
+        // Find the color display element which is typically in a div with class .c
+        const colorElement = liElement.querySelector('.c');
+        
+        if (colorElement) {
+            // Set background color of the color display element
+            colorElement.style.backgroundColor = color;
             
-            // Adjust text color for better visibility based on background
+            // Adjust text color for better visibility based on background brightness
             const rgb = hexToRgb(color);
             if (rgb) {
                 // Calculate luminance - if dark background use white text, otherwise black
                 const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
-                colorPickerElement.style.color = luminance > 0.5 ? '#000000' : '#ffffff';
+                colorElement.style.color = luminance > 0.5 ? '#000000' : '#ffffff';
             }
         }
     }
@@ -213,6 +217,11 @@ function updateColorButtonBackground(controller, color) {
 function hexToRgb(hex) {
     // Remove # if present
     hex = hex.replace('#', '');
+    
+    // Handle shorthand hex (e.g. #FFF)
+    if (hex.length === 3) {
+        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    }
     
     // Parse r, g, b values
     const bigint = parseInt(hex, 16);
