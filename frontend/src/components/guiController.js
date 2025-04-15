@@ -178,21 +178,27 @@ function updateMaterialControllers(colorMap) {
                 });
                 
                 // Update the background color of the button to match the selected color
-                updateColorButtonBackground(controller, value);
+                updateColorButtonBackground(controller, value, colorHex);
             });
         
-        // Set initial background color of the button
-        updateColorButtonBackground(controller, `#${colorHex}`);
+        // Set initial background color of the button and assign a unique ID
+        if (controller && controller.domElement) {
+            // Assign a unique data attribute to this controller's DOM element
+            controller.domElement.setAttribute('data-color-hex', colorHex);
+        }
+        
+        // Set initial background color
+        updateColorButtonBackground(controller, `#${colorHex}`, colorHex);
         
         colorIndex++;
     }
 }
 
 // Function to update the background color of a color controller button
-function updateColorButtonBackground(controller, color) {
+function updateColorButtonBackground(controller, color, colorHex) {
     // Find the DOM element of the controller
     if (controller && controller.domElement) {
-        // The correct way to target the color element is to look for the div inside the li element
+        // Find the specific controller by its data attribute
         const liElement = controller.domElement;
         
         // Find the color display element
