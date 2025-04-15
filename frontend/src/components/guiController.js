@@ -193,7 +193,7 @@ function updateColorButtonBackground(controller, color) {
     // Find the DOM element of the controller
     if (controller && controller.domElement) {
         // Find the color picker element (which is the div containing the input)
-        const colorPickerElement = controller.domElement.querySelector('.c input[type="text"]');
+        const colorPickerElement = controller.domElement.querySelector('li .cr.color');
         if (colorPickerElement) {
             // Update the background color of the color picker
             colorPickerElement.style.backgroundColor = color;
