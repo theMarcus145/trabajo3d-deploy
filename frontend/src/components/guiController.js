@@ -196,7 +196,7 @@ function updateColorButtonBackground(controller, color) {
         const liElement = controller.domElement;
         
         // Find the color display element which is typically in a div with class .c
-        const colorElement = liElement.querySelector('.c');
+        const colorElement = liElement.querySelector('li .cr.color');
         
         if (colorElement) {
             // Set background color of the color display element
