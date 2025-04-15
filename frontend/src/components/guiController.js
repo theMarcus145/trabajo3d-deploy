@@ -27,6 +27,8 @@ const guiParams = {
 let animationController = null;
 let normalsController = null;
 let materialFolder = null;
+// Store color controllers for later reference
+let colorControllers = {};
 
 // Initialize the GUI
 function initializeGUI(renderContainer, meshUpdateCallback, lights) {
@@ -150,6 +152,9 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
 
 // Function to update material controllers in the GUI
 function updateMaterialControllers(colorMap) {
+    // Clear existing color controllers storage
+    colorControllers = {};
+    
     // Clear existing material folder controllers
     if (materialFolder) {
         for (let i = materialFolder.__controllers.length - 1; i >= 0; i--) {
@@ -177,46 +182,126 @@ function updateMaterialControllers(colorMap) {
                     mat.needsUpdate = true;
                 });
                 
-                // Update the background color of the button to match the selected color
-                updateColorButtonBackground(controller, value, colorHex);
+                // Update the background color of the button
+                updateColorButtonBackground(colorHex, value);
             });
         
-        // Set initial background color of the button and assign a unique ID
-        if (controller && controller.domElement) {
-            // Assign a unique data attribute to this controller's DOM element
-            controller.domElement.setAttribute('data-color-hex', colorHex);
-        }
+        // Store controller reference by colorHex
+        colorControllers[colorHex] = controller;
         
-        // Set initial background color
-        updateColorButtonBackground(controller, `#${colorHex}`, colorHex);
+        // Set initial background color after a small delay to ensure DOM is ready
+        setTimeout(() => {
+            updateColorButtonBackground(colorHex, `#${colorHex}`);
+        }, 50);
         
         colorIndex++;
     }
 }
 
-// Function to update the background color of a color controller button
-function updateColorButtonBackground(controller, color, colorHex) {
-    // Find the DOM element of the controller
-    if (controller && controller.domElement) {
-        // Find the specific controller by its data attribute
-        const liElement = controller.domElement;
-        
-        // Find the color display element
-        const colorElement = liElement.querySelector('.c');
-        
-        if (colorElement) {
-            // Set background color of the color display element
-            colorElement.style.backgroundColor = color;
-            
-            // Adjust text color for better visibility based on background brightness
-            const rgb = hexToRgb(color);
-            if (rgb) {
-                // Calculate luminance - if dark background use white text, otherwise black
-                const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
-                colorElement.style.color = luminance > 0.5 ? '#000000' : '#ffffff';
+// Improved function to update the background color of a color controller button
+function updateColorButtonBackground(colorHex, colorValue) {
+    const controller = colorControllers[colorHex];
+    if (!controller || !controller.domElement) return;
+
+    // For dat.GUI, we need to find the color display element
+    // The structure is usually: li > .color > .c (where .c is the actual color display)
+    const liElement = controller.domElement;
+    
+    // Find all elements with class that might contain 'color'
+    const colorElements = liElement.querySelectorAll('*');
+    
+    // Look for the color display element
+    let colorDisplayElement = null;
+    
+    // Method 1: Try to find by direct selector (most common structure)
+    colorDisplayElement = liElement.querySelector('.c');
+    
+    // Method 2: If not found, look for elements with specific style properties
+    if (!colorDisplayElement) {
+        for (const el of colorElements) {
+            // Check if this element might be the color display
+            const style = window.getComputedStyle(el);
+            // Color elements often have width/height set and specific display values
+            if (style.width && style.height && 
+                (el.className.includes('c') || el.parentElement.className.includes('color'))) {
+                colorDisplayElement = el;
+                break;
             }
         }
     }
+    
+    // Method 3: If still not found, look for elements with class containing 'color'
+    if (!colorDisplayElement) {
+        for (const el of colorElements) {
+            if (el.className && 
+                (el.className.includes('color') || el.className.includes('c'))) {
+                colorDisplayElement = el;
+                break;
+            }
+        }
+    }
+    
+    // Apply color to the found element
+    if (colorDisplayElement) {
+        colorDisplayElement.style.backgroundColor = colorValue;
+        
+        // Calculate luminance and set text color for better visibility
+        const rgb = hexToRgb(colorValue);
+        if (rgb) {
+            const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
+            colorDisplayElement.style.color = luminance > 0.5 ? '#000000' : '#ffffff';
+        }
+    } else {
+        // Fallback approach: update all potential elements
+        console.log("Could not find color element, trying alternative approach");
+        updateColorSwatch(liElement, colorValue);
+    }
+}
+
+// Fallback method to find and update any element that could be the color swatch
+function updateColorSwatch(parentElement, colorValue) {
+    // CSS selector for potential color display elements
+    const colorSelectors = [
+        '.c', 
+        '.color', 
+        '[class*="color"]', 
+        '[class*="c-"]',
+        'input[type="color"]',
+        'div[style*="background"]'
+    ];
+    
+    // Try each selector
+    for (const selector of colorSelectors) {
+        const elements = parentElement.querySelectorAll(selector);
+        if (elements.length > 0) {
+            // Update all matching elements
+            elements.forEach(el => {
+                el.style.backgroundColor = colorValue;
+                // If it's an input of type color, update its value
+                if (el.tagName === 'INPUT' && el.type === 'color') {
+                    el.value = colorValue;
+                }
+            });
+            return true;
+        }
+    }
+    
+    // If no selector worked, try a more aggressive approach
+    // Set background color on small elements
+    const allElements = parentElement.querySelectorAll('*');
+    allElements.forEach(el => {
+        const style = window.getComputedStyle(el);
+        const width = parseInt(style.width);
+        const height = parseInt(style.height);
+        
+        // Small square-ish elements are likely color swatches
+        if (width > 0 && width < 50 && height > 0 && height < 50 && 
+            Math.abs(width - height) < 10) {
+            el.style.backgroundColor = colorValue;
+        }
+    });
+    
+    return false;
 }
 
 // Helper function to convert hex color to RGB
@@ -231,6 +316,8 @@ function hexToRgb(hex) {
     
     // Parse r, g, b values
     const bigint = parseInt(hex, 16);
+    if (isNaN(bigint)) return null;
+    
     return {
         r: (bigint >> 16) & 255,
         g: (bigint >> 8) & 255,
