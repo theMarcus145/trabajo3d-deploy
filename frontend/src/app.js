@@ -76,9 +76,9 @@ function handleMeshUpdate(type, data) {
     } else if (type === 'rotation' && mesh) { 
         mesh.rotation[data.axis] = data.value;
     } else if (type === 'wireframe') {
-        updateModelAppearance();
+        updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
     } else if (type === 'modelOpacity') {
-        updateModelAppearance();
+        updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
     } else if (type === 'matcap') {
         if (data.enabled !== undefined) {
             guiParams.useMatcap = data.enabled;
@@ -93,7 +93,7 @@ function handleMeshUpdate(type, data) {
             // Actualizar la GUI para reflejar el cambio
             updateGuiControllers();
             // Limpiar las normales que podrían estar mostradas
-            cleanupVertexNormals();
+            cleanupVertexNormals(vertexNormalsGroup);
         }
 
         // Si existe el mixer y el modelo tiene animaciones (ya que el array es mayor que 0), entonces pausa o reanuda la animación
