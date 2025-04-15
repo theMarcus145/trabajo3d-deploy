@@ -168,7 +168,7 @@ function updateMaterialControllers(colorMap) {
         guiParams.materialColors[colorHex] = `#${colorHex}`;
         
         // Add color controller to the material folder
-        materialFolder.addColor(guiParams.materialColors, colorHex)
+        const controller = materialFolder.addColor(guiParams.materialColors, colorHex)
             .name(colorName)
             .onChange((value) => {
                 // Directly update all materials with this base color
@@ -176,9 +176,51 @@ function updateMaterialControllers(colorMap) {
                     mat.color.set(value);
                     mat.needsUpdate = true;
                 });
+                
+                // Update the background color of the button to match the selected color
+                updateColorButtonBackground(controller, value);
             });
+        
+        // Set initial background color of the button
+        updateColorButtonBackground(controller, `#${colorHex}`);
+        
         colorIndex++;
     }
+}
+
+// Function to update the background color of a color controller button
+function updateColorButtonBackground(controller, color) {
+    // Find the DOM element of the controller
+    if (controller && controller.domElement) {
+        // Find the color picker element (which is the div containing the input)
+        const colorPickerElement = controller.domElement.querySelector('.c input[type="text"]');
+        if (colorPickerElement) {
+            // Update the background color of the color picker
+            colorPickerElement.style.backgroundColor = color;
+            
+            // Adjust text color for better visibility based on background
+            const rgb = hexToRgb(color);
+            if (rgb) {
+                // Calculate luminance - if dark background use white text, otherwise black
+                const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
+                colorPickerElement.style.color = luminance > 0.5 ? '#000000' : '#ffffff';
+            }
+        }
+    }
+}
+
+// Helper function to convert hex color to RGB
+function hexToRgb(hex) {
+    // Remove # if present
+    hex = hex.replace('#', '');
+    
+    // Parse r, g, b values
+    const bigint = parseInt(hex, 16);
+    return {
+        r: (bigint >> 16) & 255,
+        g: (bigint >> 8) & 255,
+        b: bigint & 255
+    };
 }
 
 // Expose the controllers so they can be updated from outside
