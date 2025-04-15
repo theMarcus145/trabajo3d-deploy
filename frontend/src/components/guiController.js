@@ -203,58 +203,23 @@ function updateColorButtonBackground(colorHex, colorValue) {
     const controller = colorControllers[colorHex];
     if (!controller || !controller.domElement) return;
 
-    // For dat.GUI, we need to find the color display element
-    // The structure is usually: li > .color > .c (where .c is the actual color display)
-    const liElement = controller.domElement;
+    // The controller.domElement is the entire li element that contains the button
+    const buttonElement = controller.domElement;
     
-    // Find all elements with class that might contain 'color'
-    const colorElements = liElement.querySelectorAll('*');
+    // Set background color of the entire button
+    buttonElement.style.backgroundColor = colorValue;
     
-    // Look for the color display element
-    let colorDisplayElement = null;
-    
-    // Method 1: Try to find by direct selector (most common structure)
-    colorDisplayElement = liElement.querySelector('.c');
-    
-    // Method 2: If not found, look for elements with specific style properties
-    if (!colorDisplayElement) {
-        for (const el of colorElements) {
-            // Check if this element might be the color display
-            const style = window.getComputedStyle(el);
-            // Color elements often have width/height set and specific display values
-            if (style.width && style.height && 
-                (el.className.includes('c') || el.parentElement.className.includes('color'))) {
-                colorDisplayElement = el;
-                break;
-            }
-        }
+    // Calculate luminance to determine if text should be black or white
+    const rgb = hexToRgb(colorValue);
+    if (rgb) {
+        const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
+        buttonElement.style.color = luminance > 0.5 ? '#000000' : '#ffffff';
     }
     
-    // Method 3: If still not found, look for elements with class containing 'color'
-    if (!colorDisplayElement) {
-        for (const el of colorElements) {
-            if (el.className && 
-                (el.className.includes('color') || el.className.includes('c'))) {
-                colorDisplayElement = el;
-                break;
-            }
-        }
-    }
-    
-    // Apply color to the found element
+    // Make sure the color swatch inside still updates as before
+    const colorDisplayElement = buttonElement.querySelector('.c');
     if (colorDisplayElement) {
         colorDisplayElement.style.backgroundColor = colorValue;
-        
-        // Calculate luminance and set text color for better visibility
-        const rgb = hexToRgb(colorValue);
-        if (rgb) {
-            const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
-            colorDisplayElement.style.color = luminance > 0.5 ? '#000000' : '#ffffff';
-        }
-    } else {
-        // Fallback approach: update all potential elements
-        console.log("Could not find color element, trying alternative approach");
-        updateColorSwatch(liElement, colorValue);
     }
 }
 
