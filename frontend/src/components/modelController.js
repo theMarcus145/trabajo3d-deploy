@@ -1,6 +1,23 @@
 import { guiParams, updateMaterialControllers } from './guiController';
 import * as THREE from '/node_modules/three/build/three.module.js';
 
+// Declarar variables
+let mesh = null;
+let vertexNormalsGroup = null;
+let colorMap = new Map();
+let matcapTexture = null;
+let originalMaterials = new Map();
+let originalTextures = new Map();
+
+// Inicializar las variables
+export function initModelController(modelMesh, normalsGroup, modelColorMap, texture, origMaterials, origTextures) {
+    mesh = modelMesh;
+    vertexNormalsGroup = normalsGroup;
+    colorMap = modelColorMap;
+    matcapTexture = texture;
+    originalMaterials = origMaterials;
+    originalTextures = origTextures;
+}
 
 // Función para manejar el wireframe
 export function updateWireframe(meshObject) {
@@ -22,6 +39,7 @@ export function updateWireframe(meshObject) {
 
 // Limpiar las normales
 export function cleanupVertexNormals() {
+
     // Eliminar todos los children
     while (vertexNormalsGroup.children.length > 0) {
         const object = vertexNormalsGroup.children[0];

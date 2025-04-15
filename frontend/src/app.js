@@ -6,7 +6,7 @@ import { initializeModelNavigation } from './components/arrowController.js';
 import { camera } from './components/camera.js';
 import { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers } from './components/guiController.js';
 import { createLoadingScreen } from './components/loadingScreen.js';
-import { updateWireframe, cleanupVertexNormals, updateModelAppearance } from './components/modelController.js';
+import { updateWireframe, cleanupVertexNormals, updateModelAppearance, initModelController } from './components/modelController.js';
 
 // Crear el renderer
 const renderer = new THREE.WebGLRenderer({ 
@@ -30,6 +30,9 @@ let mixer = null;
 // Crear grupo para las vertexNormals
 let vertexNormalsGroup = new THREE.Group();
 scene.add(vertexNormalsGroup);
+
+// Inicializar el colormap
+const colorMap = new Map(); // Para guardar los materiales por color base
 
 // Sombras
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -65,6 +68,9 @@ function loadMatcapTexture() {
 
 // cargar la textura al inicializar
 loadMatcapTexture();
+
+// Inicializar el model controller
+initModelController(mesh, vertexNormalsGroup, colorMap, matcapTexture, originalMaterials, originalTextures);
 
 
 let enableAnimation = false;
@@ -117,10 +123,10 @@ function handleMeshUpdate(type, data) {
                 });
             }
         }
-        updateModelAppearance();
+        updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
     } else if (type === 'removeTextures') {
         // Handle the removeTextures option
-        updateModelAppearance();
+        updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
     }
 }
 
@@ -134,7 +140,6 @@ let hasAnimation = false;
 // Este array almacena todas las acciones de las animaciones del modelo actualmente cargado
 let animationActions = []; 
 
-const colorMap = new Map(); // Para guardar los materiales por color base
 function loadModel(modelFolder) {
     // 1- Mostrar pantalla de carga
     const loadingUI = createLoadingScreen();
@@ -225,6 +230,9 @@ function loadModel(modelFolder) {
                 });
             }
         });
+
+        // Re-initialize the model controller with the updated objects
+        initModelController(mesh, vertexNormalsGroup, colorMap, matcapTexture, originalMaterials, originalTextures);
 
         updateMaterialControllers(colorMap);
 
