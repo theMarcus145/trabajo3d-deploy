@@ -1,13 +1,13 @@
 import { GUI } from 'dat.gui';
 
-// These are the GUI parameters with their default values
+// Estos son los parámetros de la GUI con sus valores por defecto
 const guiParams = {
     backgroundColor: '#000000',
     wireframe: false,
     modelOpacity: false,
     useMatcap: false,
     vertexNormals: false,
-    removeTextures: false,  // Added parameter
+    removeTextures: false,  
     animation: false,
     rotationX: 0,
     rotationY: 0,
@@ -19,18 +19,17 @@ const guiParams = {
     directionalLightX: 20,
     directionalLightY: 0,
     directionalLightZ: 0,
-    // Object to store material colors
     materialColors: {}
 };
 
-// Variables to store references to GUI controllers
+// Variables para almacenar referencias
 let animationController = null;
 let normalsController = null;
 let materialFolder = null;
-// Store color controllers for later reference
+// Almacenar los colorcontrollers para referenciarlos luego
 let colorControllers = {};
 
-// Initialize the GUI
+// Inicializar la GUI
 function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     const { ambientLight, directionalLight } = lights;
     
@@ -40,13 +39,13 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
 
     gui.width = 200;
 
-    // Background color adjustment
+    // Carpeta del fondo
     const folderBackground = gui.addFolder("Fondo");
     folderBackground.addColor(guiParams, 'backgroundColor').name("Color").onChange((value) => {
         meshUpdateCallback('backgroundColor', { value });
     });
 
-    // Model controls folder
+    // Carpeta para controlar el modelo
     const folderModel = gui.addFolder("Controles de Modelo");
     folderModel.add(guiParams, 'rotationX', -Math.PI, Math.PI, 0.01).name("X").onChange(() => {
         meshUpdateCallback('rotation', { axis: 'x', value: guiParams.rotationX });
@@ -72,39 +71,38 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
         meshUpdateCallback('matcap', { enabled: value });
     });
 
-    // Add the removeTextures option
     folderModel.add(guiParams, 'removeTextures').name('Sin Texturas').onChange((value) => {
         meshUpdateCallback('removeTextures', { value });
     });
 
-    // Add vertexNormals control with mutual exclusivity with animation
+    // Control de normales con exclusividad con animacion
     normalsController = folderModel.add(guiParams, 'vertexNormals').name('Normales').onChange((value) => {
         if (value && guiParams.animation) {
-            // If enabling normales and animation is already on, disable animation
+            // Si se activan las normales y la animación está activa, desactivarla
             guiParams.animation = false;
-            // Update the animation controller to reflect the change
+            // Actualizar el animation controller para que se pare la animación
             animationController.updateDisplay();
             meshUpdateCallback('animation', false);
         }
         meshUpdateCallback('vertexNormals', { value });
     });
 
-    // Add animation control with mutual exclusivity with vertexNormals
+    // Controlador de animaciones con exclusividad con las normales
     animationController = folderModel.add(guiParams, 'animation').name('Animación').onChange((value) => {
         if (value && guiParams.vertexNormals) {
-            // If enabling animation and normales is already on, disable normales
+            // Lo mismo, si se activa la animación y están las normales activas, desactivar las normales
             guiParams.vertexNormals = false;
-            // Update the normales controller to reflect the change
+            // Actualizar las normales para desactivarlas
             normalsController.updateDisplay();
             meshUpdateCallback('vertexNormals', { value: false });
         }
         meshUpdateCallback('animation', value);
     });
     
-    // Create materials folder for colors
+    // Carpeta para los colores de los materiales
     materialFolder = gui.addFolder("Colores de Materiales");
     
-    // Ambient light controls folder
+    // Carpeta para la luz ambiental
     const folderLights = gui.addFolder("Iluminación ambiental");
 
     folderLights.addColor(guiParams, 'ambientLightColor').name("Color").onChange((value) => {
@@ -115,7 +113,7 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
         ambientLight.intensity = value;
     });
     
-    // Directional light controls folder
+    // Carpeta para la luz direccional
     const directionalFolder = gui.addFolder("Iluminación direccional");
 
     directionalFolder.addColor(guiParams, 'directionalLightColor').name("Color").onChange((value) => {
@@ -143,7 +141,7 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
 
     setupAccordion(gui, folders);
 
-    // Add the GUI to the container where the viewer is
+    // Añadir la GUI donde se encuentre el contenedor del visor 3d
     const guiContainer = document.createElement('div');
     guiContainer.style.position = 'absolute';
     guiContainer.style.top = '10px';
@@ -154,16 +152,19 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     return { gui, guiParams };
 }
 
+//Funcion para el efecto de acordeón (cuando abres una carpeta, se cierran las demás)
 function setupAccordion(gui, folders) {
+    // Por cada carpeta...
     folders.forEach(folder => {
-      // Find the title element in each folder
+      // Coger el título de la carpeta
       const titleElement = folder.domElement.querySelector('.title');
       
+      // Si encuentra una carpeta, entonces...
       if (titleElement) {
         titleElement.addEventListener('click', () => {
-          // Check if this folder is being opened (it's currently closed)
+          // Ver si está siendo abierta
           if (!folder.domElement.classList.contains('open')) {
-            // Close all other folders
+            // Cerrar el resto de carpetas
             folders.forEach(otherFolder => {
               if (otherFolder !== folder) {
                 otherFolder.close();
@@ -175,43 +176,43 @@ function setupAccordion(gui, folders) {
     });
 }
 
-// Function to update material controllers in the GUI
+// Actualizar los controladores para los controles de los materiales en la GUI
 function updateMaterialControllers(colorMap) {
-    // Clear existing color controllers storage
+    // Limpiar los colores de todos los controllers (para actualizar)
     colorControllers = {};
     
-    // Clear existing material folder controllers
+    // Limpiar anteriores controladores
     if (materialFolder) {
         for (let i = materialFolder.__controllers.length - 1; i >= 0; i--) {
             materialFolder.remove(materialFolder.__controllers[i]);
         }
     }
     
-    // Clear existing material colors in guiParams
+    // Limpiar los colores de los materiales existentes en materialColors
     guiParams.materialColors = {};
     
-    // Add new color controllers for each material group
+    // AAñadir un nuevo controlador por cada grupo (los grupos son objetos que tienen todos el mismo color)
     let colorIndex = 0;
     for (const [colorHex, materials] of colorMap.entries()) {
         const colorName = `Material ${colorIndex + 1}`;
-        // Initialize with the existing color or a default
+        // Inicializar con el color existente
         guiParams.materialColors[colorHex] = `#${colorHex}`;
         
-        // Add color controller to the material folder
+        // Añadir el controlador a la carpeta
         const controller = materialFolder.addColor(guiParams.materialColors, colorHex)
             .name(colorName)
             .onChange((value) => {
-                // Directly update all materials with this base color
+
                 materials.forEach(mat => {
                     mat.color.set(value);
                     mat.needsUpdate = true;
                 });
                 
-                // Update the background color of the button
+                // Actualizar el color de fondo del controlador pasando el color activo del controlador
                 updateColorButtonBackground(colorHex, value);
             });
         
-        // Store controller reference by colorHex
+        // Almacenar referencia
         colorControllers[colorHex] = controller;
         
         // Set initial background color after a small delay to ensure DOM is ready
