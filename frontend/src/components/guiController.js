@@ -241,8 +241,7 @@ function updateColorButtonBackground(colorHex, colorValue) {
 function hexToRgb(hex) {
     // quitar el # si existe
     hex = hex.replace('#', '');
-    
-    // Parse r, g, b values
+
     const bigint = parseInt(hex, 16);
     if (isNaN(bigint)) return null;
     
@@ -253,7 +252,6 @@ function hexToRgb(hex) {
     };
 }
 
-// Expose the controllers so they can be updated from outside
 function updateGuiControllers() {
     if (animationController) animationController.updateDisplay();
     if (normalsController) normalsController.updateDisplay();

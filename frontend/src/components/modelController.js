@@ -37,7 +37,7 @@ export function updateWireframe(meshObject) {
     }
 }
 
-// Limpiar las normales
+// Funcion para limpiar las normales
 export function cleanupVertexNormals() {
 
     // Eliminar todos los children
@@ -64,67 +64,62 @@ export function cleanupVertexNormals() {
 export function updateModelAppearance() {
     if (!mesh) return;
     
-    // First, clear the color map before rebuilding it
+    // Limpiar el colormap
     colorMap.clear();
     
-    // Clean up any existing vertex normals
+    // Limpiar las normales
     cleanupVertexNormals();
     
     mesh.traverse((child) => {
         if (child.isMesh) {
-            // If not a wireframe
+            // Si no es un wireframe:
             if (!child.isLineSegments) {
                 
-                // Retrieve the original material
+                // Almacenar el material original
                 const originalMaterial = originalMaterials.get(child.uuid);
                 
-                // Decide which material to apply based on GUI options
-                if (guiParams.useMatcap && matcapTexture) {
-                    // Use MatCap material
+                // Decidir qué material utilizar
+                if (guiParams.useMatcap) { // Si useMatcap está activado (true)
+                    // Activar matcap
                     const matcapMaterial = new THREE.MeshMatcapMaterial({
                         matcap: matcapTexture,
                         transparent: guiParams.modelOpacity > 0,
                         opacity: guiParams.modelOpacity ? 0.6 : 1.0
                     });
                     
-                    // Save current color if there is one
+                    // Almacenar el color
                     if (child.material && child.material.color) {
                         matcapMaterial.color = child.material.color.clone();
                     }
                     
                     child.material = matcapMaterial;
                 } else {
-                    // If switching back from matcap, restore original material
-                    // but keep any color changes that were made
-                    const previousColor = child.material && child.material.color ? 
-                                         child.material.color.clone() : null;
-                    
-                    // Clone the original material to not modify it
+                    // Si se desactiva el matcap, cargar la textura original pero manteniendo los cambios de color
+                    const previousColor = child.material && child.material.color ? child.material.color.clone() : null;
+                                         
+                    // Clonar el material original para no modificarlo
                     child.material = originalMaterial.clone();
-                    
-                    // If we had a previous color, apply it
+
                     if (previousColor) {
                         child.material.color = previousColor;
                     }
                     
-                    // Apply opacity if enabled in GUI
+                    // Aplicar opacidad si esta está activada
                     child.material.transparent = guiParams.modelOpacity > 0;
                     child.material.opacity = guiParams.modelOpacity ? 0.6 : 1.0;
                     
-                    // Handle texture removal
+                    // Manejar la eliminación de texturas si está activa en la GUI
                     if (guiParams.removeTextures) {
-                        // Save original textures if first time
                         if (!originalTextures.has(child.uuid) && child.material.map) {
                             originalTextures.set(child.uuid, child.material.map);
                         }
                         
-                        // Remove textures but maintain material color
+                        // Quitar las texturas pero mantener el color del material
                         child.material.map = null;
-                        
-                        // Ensure needsUpdate is true to apply changes
+
                         child.material.needsUpdate = true;
                     } else {
-                        // Restore original texture if it exists
+                        // Si se desactiva la función, simplemente se carga de nuevo la textura anteriormente guardada
                         if (originalTextures.has(child.uuid)) {
                             child.material.map = originalTextures.get(child.uuid);
                             child.material.needsUpdate = true;
@@ -132,56 +127,55 @@ export function updateModelAppearance() {
                     }
                 }
                 
-                // Now, update the colorMap with the current material instance
+                // Actualizar el colormap
                 if (child.material && child.material.color) {
                     const colorHex = child.material.color.getHexString();
                     
-                    // Add this material to the colorMap
+                    // Añadir el material al colormap
                     if (!colorMap.has(colorHex)) {
                         colorMap.set(colorHex, [child.material]);
                     } else {
                         const materials = colorMap.get(colorHex);
-                        // Check if this exact material instance is already in the array
+                        // Comprobar si este material exacto ya está ene l colormap
                         if (!materials.some(mat => mat === child.material)) {
                             materials.push(child.material);
                         }
                     }
                 }
                 
-                // Draw vertex normals if enabled
+                // DIbujar normales si estas están activadas
                 if (guiParams.vertexNormals) { 
                     const geometry = child.geometry; 
                     geometry.computeVertexNormals();
  
-                    // Get position and normal attributes
+                    // Obtener tanto los atributos como la posición
                     const positions = geometry.attributes.position;
                     const normals = geometry.attributes.normal;
  
-                    // No limit on normals to load
                     const stride = 1;
  
-                    // Create line segments
+                    // Crear segmentos de línea
                     const normalPoints = [];
                     const worldMatrix = child.matrixWorld;
  
                     for (let i = 0; i < positions.count; i += stride) {
-                        // Starting point
+                        // Punto de comienzo
                         const start = new THREE.Vector3();
  
                         start.fromBufferAttribute(positions, i);
                         start.applyMatrix4(worldMatrix);
  
-                        // End point (vertex position + normal direction)
+                        // Punto de fin (vertex position + normal direction)
                         const end = new THREE.Vector3();
  
                         end.fromBufferAttribute(normals, i);
-                        end.multiplyScalar(0.1); // Normal length
+                        end.multiplyScalar(0.1); // La longitud de la normal
                         end.add(start);
  
                         normalPoints.push(start, end);
                     }
  
-                    // Create line segments for each normal
+                    // Crear segmentos de línea por cada normal
                     const normalGeometry = new THREE.BufferGeometry().setFromPoints(normalPoints);
                     const normalMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
                     const normalLines = new THREE.LineSegments(normalGeometry, normalMaterial);
@@ -189,16 +183,16 @@ export function updateModelAppearance() {
                     vertexNormalsGroup.add(normalLines); 
                 }
                 
-                // Enable shadows
+                // Activar que casteen sombras
                 child.castShadow = true;
                 child.receiveShadow = true;
                 
-                // Handle wireframes
+                // manejar los wireframes
                 updateWireframe(child);
             }
         }
     });   
     
-    // Refresh the material controllers with the updated colorMap
+    // Refrescar los controladores del color de los materiales con el nuevo colormap
     updateMaterialControllers(colorMap);
 }
