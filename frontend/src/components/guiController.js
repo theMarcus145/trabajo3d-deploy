@@ -242,15 +242,10 @@ function updateColorButtonBackground(colorHex, colorValue) {
     }
 }
 
-// Helper function to convert hex color to RGB
+// Convertir de Hex a RGB
 function hexToRgb(hex) {
-    // Remove # if present
+    // quitar el # si existe
     hex = hex.replace('#', '');
-    
-    // Handle shorthand hex (e.g. #FFF)
-    if (hex.length === 3) {
-        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-    }
     
     // Parse r, g, b values
     const bigint = parseInt(hex, 16);
