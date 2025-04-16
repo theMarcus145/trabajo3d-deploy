@@ -216,10 +216,8 @@ function updateMaterialControllers(colorMap) {
         colorControllers[colorHex] = controller;
         
         // Set initial background color after a small delay to ensure DOM is ready
-        setTimeout(() => {
-            updateColorButtonBackground(colorHex, `#${colorHex}`);
-        }, 50);
-        
+        updateColorButtonBackground(colorHex, `#${colorHex}`);
+
         colorIndex++;
     }
 }
@@ -235,11 +233,7 @@ function updateColorButtonBackground(colorHex, colorValue) {
     if (liElement) {
         // Establecer el color de fondo para todo el elemento li
         liElement.style.backgroundColor = colorValue;
-        
-        // Calcular la luminancia para determinar si el texto debe ser negro o blanco
-        const rgb = hexToRgb(colorValue);
-        const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
-        liElement.style.color = luminance > 0.5 ? '#000000' : '#ffffff';
+
     }
 }
 
