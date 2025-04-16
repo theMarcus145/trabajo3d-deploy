@@ -203,70 +203,35 @@ function updateColorButtonBackground(colorHex, colorValue) {
     const controller = colorControllers[colorHex];
     if (!controller || !controller.domElement) return;
 
-    // The controller.domElement is the entire li element that contains the button
-    const buttonElement = controller.domElement;
+    // El controller.domElement es el elemento li que contiene el botón
+    const liElement = controller.domElement.closest('li.cr.color');
     
-    // Set background color of the entire button
-    buttonElement.style.backgroundColor = colorValue;
-    
-    // Calculate luminance to determine if text should be black or white
-    const rgb = hexToRgb(colorValue);
-    if (rgb) {
-        const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
-        buttonElement.style.color = luminance > 0.5 ? '#000000' : '#ffffff';
-    }
-    
-    // Make sure the color swatch inside still updates as before
-    const colorDisplayElement = buttonElement.querySelector('.c');
-    if (colorDisplayElement) {
-        colorDisplayElement.style.backgroundColor = colorValue;
-    }
-}
-
-// Fallback method to find and update any element that could be the color swatch
-function updateColorSwatch(parentElement, colorValue) {
-    // CSS selector for potential color display elements
-    const colorSelectors = [
-        '.c', 
-        '.color', 
-        '[class*="color"]', 
-        '[class*="c-"]',
-        'input[type="color"]',
-        'div[style*="background"]'
-    ];
-    
-    // Try each selector
-    for (const selector of colorSelectors) {
-        const elements = parentElement.querySelectorAll(selector);
-        if (elements.length > 0) {
-            // Update all matching elements
-            elements.forEach(el => {
-                el.style.backgroundColor = colorValue;
-                // If it's an input of type color, update its value
-                if (el.tagName === 'INPUT' && el.type === 'color') {
-                    el.value = colorValue;
-                }
-            });
-            return true;
-        }
-    }
-    
-    // If no selector worked, try a more aggressive approach
-    // Set background color on small elements
-    const allElements = parentElement.querySelectorAll('*');
-    allElements.forEach(el => {
-        const style = window.getComputedStyle(el);
-        const width = parseInt(style.width);
-        const height = parseInt(style.height);
+    if (liElement) {
+        // Establecer el color de fondo para todo el elemento li
+        liElement.style.backgroundColor = colorValue;
         
-        // Small square-ish elements are likely color swatches
-        if (width > 0 && width < 50 && height > 0 && height < 50 && 
-            Math.abs(width - height) < 10) {
-            el.style.backgroundColor = colorValue;
+        // Calcular la luminancia para determinar si el texto debe ser negro o blanco
+        const rgb = hexToRgb(colorValue);
+        if (rgb) {
+            const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
+            liElement.style.color = luminance > 0.5 ? '#000000' : '#ffffff';
         }
-    });
-    
-    return false;
+    } else {
+        // Fallback al comportamiento anterior si no encontramos el li
+        buttonElement.style.backgroundColor = colorValue;
+        
+        const rgb = hexToRgb(colorValue);
+        if (rgb) {
+            const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
+            buttonElement.style.color = luminance > 0.5 ? '#000000' : '#ffffff';
+        }
+        
+        // Asegurarse de que el swatch de color interno también se actualice
+        const colorDisplayElement = buttonElement.querySelector('.c');
+        if (colorDisplayElement) {
+            colorDisplayElement.style.backgroundColor = colorValue;
+        }
+    }
 }
 
 // Helper function to convert hex color to RGB
