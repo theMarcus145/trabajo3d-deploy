@@ -139,6 +139,10 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
         directionalLight.position.z = value;
     });
 
+    const folders = [folderBackground, folderModel, folderLights, directionalFolder, materialFolder];
+
+    setupAccordion(gui, folders);
+
     // Add the GUI to the container where the viewer is
     const guiContainer = document.createElement('div');
     guiContainer.style.position = 'absolute';
@@ -147,29 +151,28 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     guiContainer.appendChild(gui.domElement);
     renderContainer.appendChild(guiContainer);
 
-    // Lista con todas las carpetas
-    const folders = [folderLights, folderBackground, folderModel, directionalFolder, materialFolder];
-
-    // Función que cierra todas las carpetas excepto la seleccionada
-    function setupAccordionBehavior(folderToOpen) {
-        folders.forEach(folder => {
-            if (folder !== folderToOpen) {
-                folder.close();
-            }
-        });
-    }
-
-    // Añadimos eventos a cada carpeta
-    folders.forEach(folder => {
-        const originalOpen = folder.open;
-        folder.open = function () {
-            setupAccordionBehavior(folder);
-            originalOpen.call(folder);
-        };
-    });
-
     return { gui, guiParams };
 }
+
+function setupAccordion(gui, folders) {
+    const observer = new MutationObserver(() => {
+        folders.forEach(folder => {
+            const isOpen = folder.domElement.classList.contains('open');
+            if (isOpen) {
+                folders.forEach(otherFolder => {
+                    if (otherFolder !== folder) {
+                        otherFolder.close();
+                    }
+                });
+            }
+        });
+    });
+
+    folders.forEach(folder => {
+        observer.observe(folder.domElement, { attributes: true, attributeFilter: ['class'] });
+    });
+}
+
 
 // Function to update material controllers in the GUI
 function updateMaterialControllers(colorMap) {
