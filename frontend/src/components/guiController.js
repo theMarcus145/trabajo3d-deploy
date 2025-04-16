@@ -223,7 +223,7 @@ function updateMaterialControllers(colorMap) {
     }
 }
 
-// Improved function to update the background color of a color controller button
+
 function updateColorButtonBackground(colorHex, colorValue) {
     const controller = colorControllers[colorHex];
     if (!controller || !controller.domElement) return;
