@@ -212,25 +212,8 @@ function updateColorButtonBackground(colorHex, colorValue) {
         
         // Calcular la luminancia para determinar si el texto debe ser negro o blanco
         const rgb = hexToRgb(colorValue);
-        if (rgb) {
-            const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
-            liElement.style.color = luminance > 0.5 ? '#000000' : '#ffffff';
-        }
-    } else {
-        // Fallback al comportamiento anterior si no encontramos el li
-        buttonElement.style.backgroundColor = colorValue;
-        
-        const rgb = hexToRgb(colorValue);
-        if (rgb) {
-            const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
-            buttonElement.style.color = luminance > 0.5 ? '#000000' : '#ffffff';
-        }
-        
-        // Asegurarse de que el swatch de color interno también se actualice
-        const colorDisplayElement = buttonElement.querySelector('.c');
-        if (colorDisplayElement) {
-            colorDisplayElement.style.backgroundColor = colorValue;
-        }
+        const luminance = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
+        liElement.style.color = luminance > 0.5 ? '#000000' : '#ffffff';
     }
 }
 
