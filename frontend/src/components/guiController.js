@@ -155,21 +155,23 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
 }
 
 function setupAccordion(gui, folders) {
-    const observer = new MutationObserver(() => {
-        folders.forEach(folder => {
-            const isOpen = folder.domElement.classList.contains('open');
-            if (isOpen) {
-                folders.forEach(otherFolder => {
-                    if (otherFolder !== folder) {
-                        otherFolder.close();
-                    }
-                });
-            }
-        });
-    });
-
     folders.forEach(folder => {
-        observer.observe(folder.domElement, { attributes: true, attributeFilter: ['class'] });
+      // Find the title element in each folder
+      const titleElement = folder.domElement.querySelector('.title');
+      
+      if (titleElement) {
+        titleElement.addEventListener('click', () => {
+          // Check if this folder is being opened (it's currently closed)
+          if (!folder.domElement.classList.contains('open')) {
+            // Close all other folders
+            folders.forEach(otherFolder => {
+              if (otherFolder !== folder) {
+                otherFolder.close();
+              }
+            });
+          }
+        });
+      }
     });
 }
 
