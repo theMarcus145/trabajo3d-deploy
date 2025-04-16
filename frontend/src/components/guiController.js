@@ -151,6 +151,8 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     guiContainer.appendChild(gui.domElement);
     renderContainer.appendChild(guiContainer);
 
+    setTimeout(fixColorPickerPositioning, 100);
+
     return { gui, guiParams };
 }
 
@@ -170,6 +172,41 @@ function setupAccordion(gui, folders) {
               }
             });
           }
+        });
+      }
+    });
+}
+
+// Add this function to your code
+function fixColorPickerPositioning() {
+    // Find all color controllers
+    const colorControllers = document.querySelectorAll('.cr.color');
+    
+    colorControllers.forEach(controller => {
+      const colorDisplay = controller.querySelector('.c');
+      
+      if (colorDisplay) {
+        // When the color display is clicked, adjust the picker position if needed
+        colorDisplay.addEventListener('click', () => {
+          // Short timeout to allow the picker to be created in the DOM
+          setTimeout(() => {
+            const picker = document.querySelector('.dg .c .picker');
+            if (!picker) return;
+            
+            // Get dimensions and positions
+            const guiRect = document.querySelector('.dg.ac').getBoundingClientRect();
+            const pickerRect = picker.getBoundingClientRect();
+            
+            // Check if the picker extends beyond the bottom of the GUI
+            if (pickerRect.bottom > guiRect.bottom) {
+              // Calculate how much the picker needs to move up
+              const offset = pickerRect.bottom - guiRect.bottom + 10; // 10px extra margin
+              
+              // Apply the adjustment
+              picker.style.transform = `translateY(-${offset}px)`;
+              picker.style.top = 'auto';
+            }
+          }, 10);
         });
       }
     });
@@ -221,6 +258,7 @@ function updateMaterialControllers(colorMap) {
         }, 50);
         
         colorIndex++;
+        setTimeout(fixColorPickerPositioning, 100);
     }
 }
 
