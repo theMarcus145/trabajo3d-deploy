@@ -147,6 +147,27 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     guiContainer.appendChild(gui.domElement);
     renderContainer.appendChild(guiContainer);
 
+    // Lista con todas las carpetas
+    const folders = [folderLights, folderBackground, folderModel, directionalFolder, materialFolder];
+
+    // Función que cierra todas las carpetas excepto la seleccionada
+    function setupAccordionBehavior(folderToOpen) {
+        folders.forEach(folder => {
+            if (folder !== folderToOpen) {
+                folder.close();
+            }
+        });
+    }
+
+    // Añadimos eventos a cada carpeta
+    folders.forEach(folder => {
+        const originalOpen = folder.open;
+        folder.open = function () {
+            setupAccordionBehavior(folder);
+            originalOpen.call(folder);
+        };
+    });
+
     return { gui, guiParams };
 }
 
@@ -243,5 +264,6 @@ function updateGuiControllers() {
     if (animationController) animationController.updateDisplay();
     if (normalsController) normalsController.updateDisplay();
 }
+
 
 export { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers };
