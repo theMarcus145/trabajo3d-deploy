@@ -3,22 +3,33 @@ import * as THREE from '/node_modules/three/build/three.module.js';
 // Crear una luz de ambiente
 const ambientLight = new THREE.AmbientLight(0xffffff, 4);
 
-// Crear una luz direccional
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0);
-directionalLight.position.set(20, 10, 20);
-directionalLight.castShadow = true;
+// Función para configurar una luz direccional
+function createDirectionalLight(x, y, z) {
+    const light = new THREE.DirectionalLight(0xffffff, 1); // Puedes ajustar la intensidad aquí
+    light.position.set(x, y, z);
+    light.castShadow = true;
 
-// Propiedades de las sombras
-directionalLight.shadow.mapSize.width = 1024;
-directionalLight.shadow.mapSize.height = 1024;
-directionalLight.shadow.camera.near = 0.5;
-directionalLight.shadow.camera.far = 500;
-directionalLight.shadow.camera.left = -30;
-directionalLight.shadow.camera.right = 30;
-directionalLight.shadow.camera.top = 30;
-directionalLight.shadow.camera.bottom = -30;
+    // Propiedades de sombra
+    light.shadow.mapSize.width = 1024;
+    light.shadow.mapSize.height = 1024;
+    light.shadow.camera.near = 0.5;
+    light.shadow.camera.far = 500;
+    light.shadow.camera.left = -30;
+    light.shadow.camera.right = 30;
+    light.shadow.camera.top = 30;
+    light.shadow.camera.bottom = -30;
 
-export { 
-    ambientLight, 
-    directionalLight, 
+    return light;
+}
+
+// Crear las luces direccionales
+const directionalLight = createDirectionalLight(-10, 0, 0);
+const directionalLight2 = createDirectionalLight(0, -10, 0);
+const directionalLight3 = createDirectionalLight(10, 10, 0);
+
+export {
+    ambientLight,
+    directionalLight,
+    directionalLight2,
+    directionalLight3
 };

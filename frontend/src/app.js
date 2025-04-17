@@ -1,7 +1,7 @@
 import * as THREE from '/node_modules/three/build/three.module.js';
 import { OrbitControls } from '/node_modules/three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from '/node_modules/three/examples/jsm/loaders/GLTFLoader.js';
-import { ambientLight, directionalLight } from './components/light.js';
+import { ambientLight, directionalLight, directionalLight2, directionalLight3 } from './components/light.js';
 import { initializeModelNavigation } from './components/arrowController.js';
 import { camera } from './components/camera.js';
 import { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers } from './components/guiController.js';
@@ -53,8 +53,9 @@ renderContainer.appendChild(renderer.domElement);
 // Añadir luces
 scene.add(ambientLight);
 scene.add(directionalLight);
-const helper = new THREE.DirectionalLightHelper( directionalLight, 5 );
-scene.add( helper );
+scene.add(directionalLight2);
+scene.add(directionalLight3);
+
 
 let mesh = null; // Variable global para almacenar el modelo cargado
 let originalMaterials = new Map(); // Guardar materiales originales
