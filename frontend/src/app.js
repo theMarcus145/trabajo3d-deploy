@@ -1,7 +1,17 @@
 import * as THREE from '/node_modules/three/build/three.module.js';
 import { OrbitControls } from '/node_modules/three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from '/node_modules/three/examples/jsm/loaders/GLTFLoader.js';
-import { directionalLight, directionalLight2, directionalLight3, targetOrigin } from './components/light.js';
+import { 
+    directionalLight, 
+    directionalLight2, 
+    directionalLight3, 
+    directionalLightHelper,
+    directionalLightHelper2,
+    directionalLightHelper3,
+    targetOrigin, 
+    toggleLightHelpers,
+    updateLightHelpers
+} from './components/light.js';
 import { initializeModelNavigation } from './components/arrowController.js';
 import { camera } from './components/camera.js';
 import { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers } from './components/guiController.js';
@@ -50,11 +60,17 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderContainer.appendChild(renderer.domElement);
 
 
-// Añadir luces
+// Añadir luces y helpers a la escena
 scene.add(targetOrigin);
 scene.add(directionalLight);
 scene.add(directionalLight2);
 scene.add(directionalLight3);
+
+// Add light helpers to the scene (initially invisible)
+scene.add(directionalLightHelper);
+scene.add(directionalLightHelper2);
+scene.add(directionalLightHelper3);
+toggleLightHelpers(false); // Start with helpers hidden
 
 
 let mesh = null; // Variable global para almacenar el modelo cargado
@@ -134,6 +150,9 @@ function handleMeshUpdate(type, data) {
     } else if (type === 'removeTextures') {
         // Handle the removeTextures option
         updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
+    } else if (type === 'showLightHelpers') {
+        // Toggle light helpers visibility
+        toggleLightHelpers(data.value);
     }
 }
 
@@ -158,8 +177,14 @@ function loadModel(modelFolder) {
     // 2- Limpiar la escena por completo
     scene.children = scene.children.filter(child => 
         child === directionalLight || 
+        child === directionalLight2 ||
+        child === directionalLight3 ||
+        child === directionalLightHelper ||
+        child === directionalLightHelper2 ||
+        child === directionalLightHelper3 ||
         child === camera ||
         child === vertexNormalsGroup ||
+        child === targetOrigin ||
         child.isMesh && child.material instanceof THREE.ShadowMaterial
     );
     
@@ -299,6 +324,9 @@ function animate() {
     if (enableAnimation && hasAnimation) {
         mixer.update(delta);
     }
+
+    // Update light helpers
+    updateLightHelpers();
 
     controls.update();
     renderer.render(scene, camera);
