@@ -46,17 +46,6 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
 
     // Carpeta para controlar el modelo
     const folderModel = gui.addFolder("Controles de Modelo");
-    folderModel.add(guiParams, 'rotationX', -Math.PI, Math.PI, 0.01).name("X").onChange(() => {
-        meshUpdateCallback('rotation', { axis: 'x', value: guiParams.rotationX });
-    });
-
-    folderModel.add(guiParams, 'rotationY', -Math.PI, Math.PI, 0.01).name("Y").onChange(() => {
-        meshUpdateCallback('rotation', { axis: 'y', value: guiParams.rotationY });
-    });
-
-    folderModel.add(guiParams, 'rotationZ', -Math.PI, Math.PI, 0.01).name("Z").onChange(() => {
-        meshUpdateCallback('rotation', { axis: 'z', value: guiParams.rotationZ });
-    });
 
     folderModel.add(guiParams, 'wireframe').name('Wireframe').onChange((value) => {
         meshUpdateCallback('wireframe', { value });

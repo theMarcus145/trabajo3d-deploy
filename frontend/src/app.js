@@ -138,7 +138,11 @@ function handleMeshUpdate(type, data) {
 }
 
 // Inicializar la GUI
-initializeGUI(renderContainer, handleMeshUpdate, { directionalLight });
+initializeGUI(renderContainer, handleMeshUpdate, { 
+    directionalLight, 
+    directionalLight2, 
+    directionalLight3 
+});
 
 // Esta variable almacena si el modelo tiene una animación o no
 let hasAnimation = false;
