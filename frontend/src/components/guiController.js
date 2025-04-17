@@ -72,6 +72,10 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
         meshUpdateCallback('matcap', { enabled: value });
     });
 
+    folderModel.add(guiParams, 'useNormalMap').name('NormalMap').onChange((value) => {
+            meshUpdateCallback('useNormalMap', { value });
+    });
+
     folderModel.add(guiParams, 'removeTextures').name('Sin Texturas').onChange((value) => {
         meshUpdateCallback('removeTextures', { value });
     });
@@ -88,9 +92,7 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
         meshUpdateCallback('vertexNormals', { value });
     });
 
-    folderModel.add(guiParams, 'useNormalMap').name('Textura normales').onChange((value) => {
-        meshUpdateCallback('useNormalMap', { value });
-    });
+    
 
     // Controlador de animaciones con exclusividad con las normales
     animationController = folderModel.add(guiParams, 'animation').name('Animación').onChange((value) => {
