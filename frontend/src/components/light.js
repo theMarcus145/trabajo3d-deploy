@@ -29,9 +29,9 @@ function createDirectionalLight(x, y, z) {
 }
 
 // Crear 3 luces que hagan un triángulo, now with helpers
-const { light: directionalLight, helper: directionalLightHelper } = createDirectionalLight(10, 0, 10); 
-const { light: directionalLight2, helper: directionalLightHelper2 } = createDirectionalLight(-10, 0, 10);
-const { light: directionalLight3, helper: directionalLightHelper3 } = createDirectionalLight(0, 10, 10);
+const { light: directionalLight, helper: directionalLightHelper } = createDirectionalLight(-10, 0, -10); 
+const { light: directionalLight2, helper: directionalLightHelper2 } = createDirectionalLight(10, 0, -10);
+const { light: directionalLight3, helper: directionalLightHelper3 } = createDirectionalLight(0, 0, 10);
 
 // Helper visibility control
 let helpersVisible = false;
