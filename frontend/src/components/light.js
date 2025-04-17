@@ -23,7 +23,7 @@ function createDirectionalLight(x, y, z) {
 
     light.target = targetOrigin;
     
-    return { light };
+    return light;
 }
 
 const directionalLight = createDirectionalLight(-15, 5, -15); 
