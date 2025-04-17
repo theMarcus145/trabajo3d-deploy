@@ -51,6 +51,7 @@ renderContainer.appendChild(renderer.domElement);
 
 
 // Añadir luces
+directionalLight.setInt
 scene.add(ambientLight);
 scene.add(directionalLight);
 scene.add(directionalLight2);

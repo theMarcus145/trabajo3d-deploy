@@ -5,7 +5,7 @@ const ambientLight = new THREE.AmbientLight(0xffffff, 4);
 
 // Función para configurar una luz direccional
 function createDirectionalLight(x, y, z) {
-    const light = new THREE.DirectionalLight(0xffffff, 1); // Puedes ajustar la intensidad aquí
+    const light = new THREE.DirectionalLight(0xffffff, 4); // Ajustar la intensidad
     light.position.set(x, y, z);
     light.castShadow = true;
 
