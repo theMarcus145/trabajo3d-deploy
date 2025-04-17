@@ -88,7 +88,7 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
         meshUpdateCallback('vertexNormals', { value });
     });
 
-    folderModel.add(guiParams, 'useNormalMap').name('Mapa de normales').onChange((value) => {
+    folderModel.add(guiParams, 'useNormalMap').name('Textura normales').onChange((value) => {
         meshUpdateCallback('useNormalMap', { value });
     });
 
