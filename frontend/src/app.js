@@ -1,12 +1,7 @@
 import * as THREE from '/node_modules/three/build/three.module.js';
 import { OrbitControls } from '/node_modules/three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from '/node_modules/three/examples/jsm/loaders/GLTFLoader.js';
-import { 
-    directionalLight, 
-    directionalLight2, 
-    directionalLight3, 
-    targetOrigin, 
-} from './components/light.js';
+import { directionalLight, directionalLight2, directionalLight3, targetOrigin} from './components/light.js';
 import { initializeModelNavigation } from './components/arrowController.js';
 import { camera } from './components/camera.js';
 import { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers } from './components/guiController.js';
