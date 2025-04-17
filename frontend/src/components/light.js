@@ -19,6 +19,7 @@ function createDirectionalLight(x, y, z) {
     light.shadow.camera.right = 30;
     light.shadow.camera.top = 30;
     light.shadow.camera.bottom = -30;
+    light.shadow.bias = -0.005;
 
     light.target = targetOrigin;
     
