@@ -53,6 +53,8 @@ renderContainer.appendChild(renderer.domElement);
 // Añadir luces
 scene.add(ambientLight);
 scene.add(directionalLight);
+const helper = new THREE.DirectionalLightHelper( directionalLight, 5 );
+scene.add( helper );
 
 let mesh = null; // Variable global para almacenar el modelo cargado
 let originalMaterials = new Map(); // Guardar materiales originales
@@ -133,9 +135,6 @@ function handleMeshUpdate(type, data) {
         updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
     }
 }
-
-const helper = new THREE.DirectionalLightHelper(directionalLight, 5);
-scene.add(helper);
 
 // Inicializar la GUI
 initializeGUI(renderContainer, handleMeshUpdate, { ambientLight, directionalLight });
