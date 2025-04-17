@@ -134,6 +134,9 @@ function handleMeshUpdate(type, data) {
     }
 }
 
+const helper = new THREE.DirectionalLightHelper(directionalLight, 5);
+scene.add(helper);
+
 // Inicializar la GUI
 initializeGUI(renderContainer, handleMeshUpdate, { ambientLight, directionalLight });
 
