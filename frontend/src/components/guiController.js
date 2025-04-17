@@ -13,8 +13,6 @@ const guiParams = {
     rotationX: 0,
     rotationY: 0,
     rotationZ: 0,
-    ambientLightIntensity: 4,
-    ambientLightColor: 0xffffff,
     directionalLightIntensity: 0,
     directionalLightColor: 0xffffff,
     directionalLightX: 20,
@@ -32,7 +30,7 @@ let colorControllers = {};
 
 // Inicializar la GUI
 function initializeGUI(renderContainer, meshUpdateCallback, lights) {
-    const { ambientLight, directionalLight } = lights;
+    const  directionalLight  = light;
     
     const gui = new GUI({ autoPlace: false });
     GUI.TEXT_CLOSED = "CERRAR CONTROLES";
@@ -109,17 +107,6 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     // Carpeta para los colores de los materiales
     materialFolder = gui.addFolder("Colores de Materiales");
     
-    // Carpeta para la luz ambiental
-    const folderLights = gui.addFolder("Iluminación ambiental");
-
-    folderLights.addColor(guiParams, 'ambientLightColor').name("Color").onChange((value) => {
-        ambientLight.color.set(value);
-    });
-    
-    folderLights.add(guiParams, 'ambientLightIntensity', 0, 4, 0.1).name("Intensidad").onChange((value) => {
-        ambientLight.intensity = value;
-    });
-    
     // Carpeta para la luz direccional
     const directionalFolder = gui.addFolder("Iluminación direccional");
 
@@ -129,19 +116,6 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     
     directionalFolder.add(guiParams, 'directionalLightIntensity', 0, 4, 0.1).name("Intensidad").onChange((value) => {
         directionalLight.intensity = value;
-    });
-
-    
-    directionalFolder.add(guiParams, 'directionalLightX', -30, 30, 1).name("X").onChange((value) => {
-        directionalLight.position.x = value;
-    });
-    
-    directionalFolder.add(guiParams, 'directionalLightY', -30, 30, 1).name("Y").onChange((value) => {
-        directionalLight.position.y = value;
-    });
-    
-    directionalFolder.add(guiParams, 'directionalLightZ', -30, 30, 1).name("Z").onChange((value) => {
-        directionalLight.position.z = value;
     });
 
     const folders = [folderBackground, folderModel, folderLights, directionalFolder, materialFolder];

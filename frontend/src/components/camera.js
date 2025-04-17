@@ -11,7 +11,7 @@ const camera = new THREE.PerspectiveCamera(
     45,  // FOV
     getCameraAspect(),  // Aspect ratio
 );
-camera.position.set(0, 5, 10);
+camera.position.set(0, -5, 10);
 camera.lookAt(0, 0, 0);
 
 // Añadir un resize event listener para cambiar el aspect ratio de la página cuando este cambie
