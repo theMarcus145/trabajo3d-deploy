@@ -13,16 +13,14 @@ const guiParams = {
     rotationX: 0,
     rotationY: 0,
     rotationZ: 0,
-    directionalLightIntensity: 1,
+    directionalLightIntensity: 2,
     directionalLightColor: 0xffffff,
-    showLightHelpers: false // New parameter for light helpers
 };
 
 // Variables to store references
 let animationController = null;
 let normalsController = null;
 let materialFolder = null;
-// Store color controllers for reference later
 let colorControllers = {};
 
 // Initialize the GUI
@@ -115,11 +113,6 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
         directionalLight.intensity = value;
         directionalLight2.intensity = value;
         directionalLight3.intensity = value;
-    });
-
-    // Add light helpers toggle
-    directionalFolder.add(guiParams, 'showLightHelpers').name("Mostrar Helpers").onChange((value) => {
-        meshUpdateCallback('showLightHelpers', { value });
     });
 
     const folders = [folderBackground, folderModel, directionalFolder, materialFolder];
