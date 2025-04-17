@@ -59,6 +59,129 @@
                 <button id="next-model" class="nav-arrow right-arrow"><i class="fas fa-chevron-right"></i></button>
             </div>
         </div>
+
+        <div class="instructions-section">
+            <div class="instructions-container" id="instructionsContainer">
+                <div class="instructions-header" id="instructionsHeader">
+                    <h2 class="instructions-title"><i class="fas fa-book"></i> GUÍA DE CONTROLES DEL VISOR 3D</h2>
+                    <div class="instructions-toggle"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="tech-line"></div>
+                <div class="instructions-content">
+                    <div class="instruction-category">
+                        <h3 class="category-title"><i class="fas fa-paint-brush"></i> Controles de Fondo</h3>
+                        <ul class="instruction-list">
+                            <li class="instruction-item">
+                                <span class="instruction-name">Color</span>
+                                <span class="instruction-description">Cambia el color de fondo del visor 3D seleccionando un color desde el selector.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="instruction-category">
+                        <h3 class="category-title"><i class="fas fa-cube"></i> Controles de Modelo</h3>
+                        <ul class="instruction-list">
+                            <li class="instruction-item">
+                                <span class="instruction-name">X, Y, Z</span>
+                                <span class="instruction-description">Ajusta la rotación del modelo en los ejes X, Y y Z respectivamente. Mueve los deslizadores para girar el modelo.</span>
+                            </li>
+                            <li class="instruction-item">
+                                <span class="instruction-name">Wireframe</span>
+                                <span class="instruction-description">Activa esta opción para visualizar el modelo en modo alambre, mostrando la estructura poligonal.</span>
+                            </li>
+                            <li class="instruction-item">
+                                <span class="instruction-name">Opacidad</span>
+                                <span class="instruction-description">Hace que el modelo sea semitransparente para poder ver su estructura interna.</span>
+                            </li>
+                            <li class="instruction-item">
+                                <span class="instruction-name">MatCap</span>
+                                <span class="instruction-description">Aplica una textura especial que simula materiales y reflejos sin necesidad de iluminación compleja.</span>
+                            </li>
+                            <li class="instruction-item">
+                                <span class="instruction-name">NormalMap</span>
+                                <span class="instruction-description">Aplica un tipo de material que utiliza las normales de las superficies de un objeto para asignar colores.</span>
+                            </li>
+                            <li class="instruction-item">
+                                <span class="instruction-name">Sin Texturas</span>
+                                <span class="instruction-description">Elimina todas las texturas del modelo para ver solo los colores base.</span>
+                            </li>
+                            <li class="instruction-item">
+                                <span class="instruction-name">Normales</span>
+                                <span class="instruction-description">Muestra las normales de los vértices del modelo.</span>
+                            </li>
+                            <li class="instruction-item">
+                                <span class="instruction-name">Animación</span>
+                                <span class="instruction-description">Activa la animación del modelo si está disponible (No todos los modelos tienen animación).</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="instruction-category">
+                        <h3 class="category-title"><i class="fas fa-palette"></i> Colores de Materiales</h3>
+                        <ul class="instruction-list">
+                            <li class="instruction-item">
+                                <span class="instruction-name">Material 1, 2, 3...</span>
+                                <span class="instruction-description">Cambia los colores de los distintos materiales del modelo. Cada botón de color corresponde a un grupo de materiales con el mismo color base.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="instruction-category">
+                        <h3 class="category-title"><i class="fas fa-lightbulb"></i> Iluminación Ambiental</h3>
+                        <ul class="instruction-list">
+                            <li class="instruction-item">
+                                <span class="instruction-name">Color</span>
+                                <span class="instruction-description">Selecciona el color de la luz ambiental que ilumina toda la escena por igual.</span>
+                            </li>
+                            <li class="instruction-item">
+                                <span class="instruction-name">Intensidad</span>
+                                <span class="instruction-description">Ajusta la intensidad de la luz ambiental de 0 (sin efecto) a 4 (máxima intensidad).</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="instruction-category">
+                        <h3 class="category-title"><i class="fas fa-sun"></i> Iluminación Direccional</h3>
+                        <ul class="instruction-list">
+                            <li class="instruction-item">
+                                <span class="instruction-name">Color</span>
+                                <span class="instruction-description">Selecciona el color de la luz direccional que simula la luz del sol o una fuente de luz principal.</span>
+                            </li>
+                            <li class="instruction-item">
+                                <span class="instruction-name">Intensidad</span>
+                                <span class="instruction-description">Ajusta la intensidad de la luz direccional de 0 (apagada) a 4 (máxima intensidad).</span>
+                            </li>
+                            <li class="instruction-item">
+                                <span class="instruction-name">X, Y, Z</span>
+                                <span class="instruction-description">Ajusta la posición de la luz direccional en los tres ejes para crear diferentes efectos de iluminación y sombras.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="instruction-category">
+                        <h3 class="category-title"><i class="fas fa-mouse"></i> Navegación del Visor</h3>
+                        <ul class="instruction-list">
+                            <li class="instruction-item">
+                                <span class="instruction-name">Rotar</span>
+                                <span class="instruction-description">Haz clic y arrastra con el ratón para rotar la cámara alrededor del modelo.</span>
+                            </li>
+                            <li class="instruction-item">
+                                <span class="instruction-name">Zoom</span>
+                                <span class="instruction-description">Usa la rueda del ratón para acercar o alejar la cámara del modelo.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <script>
+            // Script para el toggle
+            document.getElementById('instructionsHeader').addEventListener('click', function() {
+                document.getElementById('instructionsContainer').classList.toggle('active');
+            });
+        </script>
+
         <footer class="main-footer">
             <p><a href="https://www.3dsoulschool.es/" style="color: inherit; text-decoration: none;">3DSOULSCHOOL</a> - Escuela Superior de Artes Digitales</p>
             <p><a href="https://www.linkedin.com/in/marco-gil-valero-aabb861ab/?originalSubdomain=es" style="color: inherit; text-decoration: none;">Marco Gil Valero</a> - Diseño y Programación</p>
@@ -67,7 +190,9 @@
                 <a href="https://www.instagram.com/3dsoulschool/?hl=es" class="social-icon"><i class="fab fa-instagram"></i></a>
             </div>
         </footer>
+        
     </div>
     <script type="module" src="/src/app.js"></script>
+
 </body>
 </html>
