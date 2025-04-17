@@ -6,7 +6,10 @@ import { initializeModelNavigation } from './components/arrowController.js';
 import { camera } from './components/camera.js';
 import { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers } from './components/guiController.js';
 import { createLoadingScreen } from './components/loadingScreen.js';
-import { updateWireframe, cleanupVertexNormals, updateModelAppearance, initModelController } from './components/modelController.js';
+import { cleanupVertexNormals, updateModelAppearance, initModelController } from './components/modelController.js';
+
+// URL base para las peticiones API
+const API_URL = 'https://trabajo-3d-backend.onrender.com'
 
 // Crear el renderer
 const renderer = new THREE.WebGLRenderer({ 
@@ -46,8 +49,6 @@ renderer.setClearColor(0x000000, 0);
 renderer.setPixelRatio(window.devicePixelRatio);
 renderContainer.appendChild(renderer.domElement);
 
-// URL base para las peticiones API
-const API_URL = 'https://trabajo-3d-backend.onrender.com'
 
 // Añadir luces
 scene.add(ambientLight);
@@ -61,10 +62,6 @@ let originalTextures = new Map(); // Guardar texturas originales
 let matcapTexture = null;
 const textureLoader = new THREE.TextureLoader();
 
-// Cargar la textura matcap usando textureLoader
-function loadMatcapTexture() {
-    matcapTexture = textureLoader.load('/textures/matcap.jpg');
-}
 
 // cargar la textura al inicializar
 loadMatcapTexture();
@@ -74,7 +71,7 @@ initModelController(mesh, vertexNormalsGroup, colorMap, matcapTexture, originalM
 
 
 let enableAnimation = false;
-// Funcion para manejar el callback de las actualizaciones del mesh
+// Funcion que maneja las peticiones de la GUI, se le pasa un tipo y un valor(como un código de color)
 function handleMeshUpdate(type, data) {
     if (type === 'backgroundColor') {
         const colorValue = new THREE.Color(data.value);
@@ -124,6 +121,11 @@ function handleMeshUpdate(type, data) {
             }
         }
         updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
+    } else if (type === 'useNormalMap'){
+        if (data.enabled !== undefined) {
+            guiParams.useNormalMap = data.enabled;
+        }
+        updateModelAppearance();
     } else if (type === 'removeTextures') {
         // Handle the removeTextures option
         updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
@@ -195,21 +197,20 @@ function loadModel(modelFolder) {
     loader.load('scene.glb', (gltf) => {
         mesh = gltf.scene;  
 
-        // 4.1 - Guardar materiales originales y configurar sombras, agrupar materiales por colores base
+        
         mesh.traverse((child) => {
             if (child.isMesh) {
-                // Enable shadows
+                // Guardar materiales originales y configurar sombras
+                originalMaterials.set(child.uuid, child.material.clone());
                 child.castShadow = true;
                 child.receiveShadow = true;
                 
-                originalMaterials.set(child.uuid, child.material.clone());
-
                 // Almacenar texturas originales (si existen)
                 if (child.material.map) {
                     originalTextures.set(child.uuid, child.material.map);
                 }
 
-                // Store the reference to the actual material being used
+                // Almacenar el material en uso
                 const material = child.material;
 
                 // Si es un array (múltiples materiales en una malla), recógelos todos
@@ -223,15 +224,14 @@ function loadModel(modelFolder) {
                       if (!colorMap.has(colorHex)) {
                         colorMap.set(colorHex, []);
                       }
-            
-                      // Store reference to the actual material instance
+        
                       colorMap.get(colorHex).push(mat);
                     }
                 });
             }
         });
 
-        // Re-initialize the model controller with the updated objects
+        // 4.1 - Re-inicializar los controladores con los nuevos datos del modelo cargado
         initModelController(mesh, vertexNormalsGroup, colorMap, matcapTexture, originalMaterials, originalTextures);
 
         updateMaterialControllers(colorMap);

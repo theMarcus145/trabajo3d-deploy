@@ -7,6 +7,7 @@ const guiParams = {
     modelOpacity: false,
     useMatcap: false,
     vertexNormals: false,
+    useNormalMap: false,
     removeTextures: false,  
     animation: false,
     rotationX: 0,
@@ -85,6 +86,10 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
             meshUpdateCallback('animation', false);
         }
         meshUpdateCallback('vertexNormals', { value });
+    });
+
+    folderModel.add(guiParams, 'useNormalMap').name('Mapa de normales').onChange((value) => {
+        meshUpdateCallback('useNormalMap', { value });
     });
 
     // Controlador de animaciones con exclusividad con las normales

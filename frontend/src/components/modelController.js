@@ -93,6 +93,16 @@ export function updateModelAppearance() {
                     }
                     
                     child.material = matcapMaterial;
+                    
+                } else if (guiParams.useNormalMap){
+                    
+                    const normalMaterial = new THREE.MeshNormalMaterial({
+                        transparent: guiParams.modelOpacity > 0,
+                        opacity: guiParams.modelOpacity ? 0.6 : 1.0
+                    });
+
+                    child.material = normalMaterial;
+
                 } else {
                     // Si se desactiva el matcap, cargar la textura original pero manteniendo los cambios de color
                     const previousColor = child.material && child.material.color ? child.material.color.clone() : null;
@@ -143,7 +153,7 @@ export function updateModelAppearance() {
                     }
                 }
                 
-                // DIbujar normales si estas están activadas
+                // Dibujar normales si estas están activadas
                 if (guiParams.vertexNormals) { 
                     const geometry = child.geometry; 
                     geometry.computeVertexNormals();
