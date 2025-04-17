@@ -5,12 +5,7 @@ import {
     directionalLight, 
     directionalLight2, 
     directionalLight3, 
-    directionalLightHelper,
-    directionalLightHelper2,
-    directionalLightHelper3,
     targetOrigin, 
-    toggleLightHelpers,
-    updateLightHelpers
 } from './components/light.js';
 import { initializeModelNavigation } from './components/arrowController.js';
 import { camera } from './components/camera.js';
@@ -60,17 +55,11 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderContainer.appendChild(renderer.domElement);
 
 
-// Añadir luces y helpers a la escena
+// Añadir luces a la escena
 scene.add(targetOrigin);
 scene.add(directionalLight);
 scene.add(directionalLight2);
 scene.add(directionalLight3);
-
-// Add light helpers to the scene (initially invisible)
-scene.add(directionalLightHelper);
-scene.add(directionalLightHelper2);
-scene.add(directionalLightHelper3);
-toggleLightHelpers(false); // Start with helpers hidden
 
 
 let mesh = null; // Variable global para almacenar el modelo cargado
@@ -150,9 +139,6 @@ function handleMeshUpdate(type, data) {
     } else if (type === 'removeTextures') {
         // Handle the removeTextures option
         updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
-    } else if (type === 'showLightHelpers') {
-        // Toggle light helpers visibility
-        toggleLightHelpers(data.value);
     }
 }
 
@@ -179,9 +165,6 @@ function loadModel(modelFolder) {
         child === directionalLight || 
         child === directionalLight2 ||
         child === directionalLight3 ||
-        child === directionalLightHelper ||
-        child === directionalLightHelper2 ||
-        child === directionalLightHelper3 ||
         child === camera ||
         child === vertexNormalsGroup ||
         child === targetOrigin ||
@@ -324,9 +307,6 @@ function animate() {
     if (enableAnimation && hasAnimation) {
         mixer.update(delta);
     }
-
-    // Update light helpers
-    updateLightHelpers();
 
     controls.update();
     renderer.render(scene, camera);
