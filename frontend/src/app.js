@@ -61,10 +61,12 @@ let originalTextures = new Map(); // Guardar texturas originales
 // Definir el matcap
 let matcapTexture = null;
 const textureLoader = new THREE.TextureLoader();
-
+loadMatcapTexture();
 
 // cargar la textura al inicializar
-loadMatcapTexture();
+function loadMatcapTexture() {
+    matcapTexture = textureLoader.load('/textures/matcap.jpg');
+}
 
 // Inicializar el model controller
 initModelController(mesh, vertexNormalsGroup, colorMap, matcapTexture, originalMaterials, originalTextures);
