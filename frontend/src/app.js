@@ -23,7 +23,7 @@ scene.add(camera);
 
 // Controles de cámara
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.enablePan = false;
+controls.enablePan = true;
 controls.enableDamping = true;
 
 // Reloj y Mixer para las animaciones
