@@ -96,13 +96,34 @@ export function updateModelAppearance() {
                     
                 } else if (guiParams.useNormalMap){
                     
-                    const normalMaterial = new THREE.MeshNormalMaterial({
-                        transparent: guiParams.modelOpacity > 0,
-                        opacity: guiParams.modelOpacity ? 0.6 : 1.0
-                    });
-
-                    child.material = normalMaterial;
-
+                    // Instead of creating a new MeshNormalMaterial, we'll use the original material
+                    // and enhance its normal map effect
+                    const previousColor = child.material && child.material.color ? child.material.color.clone() : null;
+                    
+                    // Clonar el material original para no modificarlo
+                    child.material = originalMaterial.clone();
+                    
+                    if (previousColor) {
+                        child.material.color = previousColor;
+                    }
+                    
+                    // Apply normal map settings
+                    if (child.material.normalMap) {
+                        // Enhance the effect of the normal map by increasing the normal scale
+                        child.material.normalScale = new THREE.Vector2(2.0, 2.0);
+                    } else if (originalNormalMaps.has(child.material.uuid)) {
+                        // Restore normal map if it exists in our storage
+                        child.material.normalMap = originalNormalMaps.get(child.material.uuid);
+                        child.material.normalScale = new THREE.Vector2(2.0, 2.0);
+                    }
+                    
+                    // Apply opacity settings
+                    child.material.transparent = guiParams.modelOpacity > 0;
+                    child.material.opacity = guiParams.modelOpacity ? 0.6 : 1.0;
+                    
+                    // Make sure normal map is visible
+                    child.material.needsUpdate = true;
+                    
                 } else {
                     // Si se desactiva el matcap, cargar la textura original pero manteniendo los cambios de color
                     const previousColor = child.material && child.material.color ? child.material.color.clone() : null;
