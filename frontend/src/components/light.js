@@ -10,7 +10,7 @@ function createDirectionalLight(x, y, z) {
     light.position.set(x, y, z);
     light.castShadow = true;
 
-    // Shadow properties
+    // Sombras
     light.shadow.mapSize.width = 1024;
     light.shadow.mapSize.height = 1024;
     light.shadow.camera.near = 0.5;
@@ -20,18 +20,16 @@ function createDirectionalLight(x, y, z) {
     light.shadow.camera.top = 30;
     light.shadow.camera.bottom = -30;
 
-    // Set the target to point to origin
     light.target = targetOrigin;
 
     return light;
 }
 
-// Create three directional lights positioned in a triangle formation, all pointing to (0,0,0)
-const directionalLight = createDirectionalLight(10, 0, 10);     // First point of triangle
-const directionalLight2 = createDirectionalLight(-10, 0, 10);   // Second point of triangle
-const directionalLight3 = createDirectionalLight(0, 10, 10);    // Third point of triangle
+// Crear 3 luces que hagan un triángulo
+const directionalLight = createDirectionalLight(10, 0, 10); 
+const directionalLight2 = createDirectionalLight(-10, 0, 10);
+const directionalLight3 = createDirectionalLight(0, 10, 10);
 
-// Export the lights and target
 export {
     directionalLight,
     directionalLight2,
