@@ -97,7 +97,7 @@ function handleMeshUpdate(type, data) {
                 guiParams.useMatcap = data.enabled;
             }
             updateGuiControllers();
-            updateModelAppearance();
+            updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
             break;
 
         case 'useNormalMap':
@@ -106,7 +106,7 @@ function handleMeshUpdate(type, data) {
                 guiParams.useNormalMap = data.enabled;
             }
             updateGuiControllers();
-            updateModelAppearance();
+            updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
             break;
 
         case 'vertexNormals':
