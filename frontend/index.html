@@ -40,6 +40,9 @@
             </div>
             
             <div id="render-container" class="render-container">
+                <button id="resetBtn" class="reset-button">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
             </div>
             
             <div class="controls-hint">
@@ -60,7 +63,6 @@
             </div>
         </div>
         
-        <button id="resetBtn">Reset Settings</button>
         <script>
             document.getElementById('resetBtn').addEventListener('click', function() {
                 const resetEvent = new CustomEvent('resetSettings');
