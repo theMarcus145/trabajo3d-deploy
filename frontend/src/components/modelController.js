@@ -64,6 +64,13 @@ export function cleanupVertexNormals() {
 export function updateModelAppearance() {
     if (!mesh) return;
     
+    // Si reiniciamos al original, se hace lo primero
+
+    if (resetToOriginal) {
+        resetMaterialsToOriginal(mesh, originalMaterials, originalTextures);
+    }
+
+    
     // Limpiar el colormap
     colorMap.clear();
     
@@ -199,7 +206,29 @@ export function updateModelAppearance() {
             }
         }
     });   
-    
+
     // Refrescar los controladores del color de los materiales con el nuevo colormap
     updateMaterialControllers(colorMap);
+}
+
+export function resetMaterialsToOriginal(mesh, originalMaterials, originalTextures) {
+    if (!mesh) return;
+    
+    mesh.traverse((child) => {
+        if (child.isMesh) {
+            // Obtener el material original del mesh
+            const originalMaterial = originalMaterials.get(child.uuid);
+            
+            if (originalMaterial) {
+                // Clonar el material
+                child.material = originalMaterial.clone();
+                
+                // Restorear la textura original
+                if (originalTextures.has(child.uuid)) {
+                    child.material.map = originalTextures.get(child.uuid);
+                    child.material.needsUpdate = true;
+                }
+            }
+        }
+    });
 }

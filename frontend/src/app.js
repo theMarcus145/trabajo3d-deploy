@@ -91,6 +91,11 @@ function handleMeshUpdate(type, data) {
             updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
             break;
 
+        case 'resetMaterials':
+            // pasar true al final si queremos reiniciar al original
+            updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures, true);
+            break;
+
         case 'matcap':
             if (data.enabled !== undefined) {
                 guiParams.useMatcap = data.enabled;
@@ -138,6 +143,13 @@ function handleMeshUpdate(type, data) {
                     action.paused = !enableAnimation;
                 });
             }
+            break;
+            
+        case 'directionalLightIntensity':
+            directionalLight.intensity = data;
+            directionalLight2.intensity = data;
+            directionalLight3.intensity = data;
+            directionalLight4.intensity = data;
             break;
     }
 }

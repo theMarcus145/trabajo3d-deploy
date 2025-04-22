@@ -18,11 +18,11 @@ const defaultSettings = structuredClone(guiParams);
 // Variables para almacenar referencias
 let animationController = null;
 let normalsController = null;
-let materialFolder = null;
 let matcapController = null;
 let normalMapController = null;
 let meshUpdateCallback = null;
 let colorControllers = {};
+let materialFolder = null;
 
 // Inicializar la GUI
 function initializeGUI(renderContainer, callback, lights) {
@@ -218,35 +218,61 @@ function updateGuiControllers() {
     if (normalMapController) normalMapController.updateDisplay();
 }
 
+
 function resetSettings() {
+    // Reiniciar todos los parámetros a sus valores iniciales
     for (const [key, value] of Object.entries(defaultSettings)) {
         guiParams[key] = value;
+    }
 
-        switch (key) {
-            case 'useMatcap':
-            case 'useNormalMap':
-                meshUpdateCallback(key, { enabled: value });
-                updateGuiControllers();
-                break;
-            case 'animation':
-            case 'vertexNormals':
-                meshUpdateCallback(key, value);
-                updateGuiControllers();
-                break;
-            case 'backgroundColor':
-                meshUpdateCallback(key, { value });
-                updateGuiControllers();
-                break;
-            case 'directionalLightIntensity':
-                meshUpdateCallback(key, value);
-                updateGuiControllers();
-                break;
-            default:
-                meshUpdateCallback(key, { value });
-                break;
+    // Reset material colors back to original values
+    if (guiParams.materialColors) {
+        for (const colorHex in guiParams.materialColors) {
+            // Reset each color back to its original hex value
+            guiParams.materialColors[colorHex] = `#${colorHex}`;
+            
+            // Update the color controller display if it exists
+            if (colorControllers[colorHex]) {
+                colorControllers[colorHex].updateDisplay();
+            }
         }
     }
 
+    // Update all controllers to reflect default values
+    updateGuiControllers();
+
+    // Reset background color
+    meshUpdateCallback('backgroundColor', { value: defaultSettings.backgroundColor });
+
+    // Reset light intensity
+    if (meshUpdateCallback) {
+        meshUpdateCallback('directionalLightIntensity', defaultSettings.directionalLightIntensity);
+    }
+
+    // Reset model appearance settings
+    const settingsToReset = [
+        'wireframe', 
+        'modelOpacity', 
+        'useMatcap', 
+        'vertexNormals', 
+        'useNormalMap', 
+        'removeTextures',
+        'animation'
+    ];
+    
+    // Apply each setting reset
+    for (const setting of settingsToReset) {
+        if (setting === 'useMatcap' || setting === 'useNormalMap') {
+            meshUpdateCallback(setting, { enabled: defaultSettings[setting] });
+        } else if (setting === 'animation' || setting === 'vertexNormals') {
+            meshUpdateCallback(setting, defaultSettings[setting]);
+        } else {
+            meshUpdateCallback(setting, { value: defaultSettings[setting] });
+        }
+    }
+
+    // Signal to reset materials to original state
+    meshUpdateCallback('resetMaterials', true);
 }
 
 export { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers, resetSettings };
