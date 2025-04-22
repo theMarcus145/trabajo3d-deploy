@@ -37,7 +37,8 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     });
 
     // Model control folder
-
+    const folderModel = gui.addFolder("Controles de Modelo");
+    
     folderModel.add(guiParams, 'wireframe').name('Wireframe').onChange((value) => {
         meshUpdateCallback('wireframe', { value });
     });
@@ -87,12 +88,6 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     
     // Directional light folder
     const directionalFolder = gui.addFolder("Iluminación direccional");
-
-    directionalFolder.addColor(guiParams, 'directionalLightColor').name("Color").onChange((value) => {
-        directionalLight.color.set(value);
-        directionalLight2.color.set(value);
-        directionalLight3.color.set(value);
-    });
     
     directionalFolder.add(guiParams, 'directionalLightIntensity', 0, 4, 0.1).name("Intensidad").onChange((value) => {
         directionalLight.intensity = value;
