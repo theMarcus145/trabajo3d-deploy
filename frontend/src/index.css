@@ -730,39 +730,39 @@ p a:hover {
 
 /* Fix for color picker appearing behind other elements */
 .dg .c .picker {
-    z-index: 10000 !important; /* Extremely high z-index to ensure it's above everything */
-    position: absolute !important;
-  }
-  
-  /* Make sure the saturation field appears properly */
-  .dg .c .picker .selector {
-    z-index: 10001 !important;
-    width: 1px; /* Keep your existing width */
-  }
-  
-  /* Ensure the color controllers are properly positioned */
-  .dg .cr.color {
-    position: relative;
-    z-index: 9999; /* High z-index for the color controller itself */
-  }
-  
-  /* Fix for the color display in the GUI */
-  .dg .cr.color .c {
-    position: relative;
-    overflow: visible !important; /* Critical - allows popup to extend outside boundaries */
-  }
-  
-  /* Make sure the background of the container doesn't cut off the color picker */
-  .dg.main {
-    overflow: visible !important; /* Override the overflow: hidden that was set previously */
-  }
-  
-  /* Only hide overflow for the content area, not the entire controller */
-  .dg .close-button {
-    overflow: hidden;
-  }
-  
-  /* For the folders themselves, maintain overflow hidden except when a color picker is active */
-  .dg .folder:has(.cr.color:hover) {
-    overflow: visible !important;
-  }
+  z-index: 10000 !important; /* Extremely high z-index to ensure it's above everything */
+  position: absolute !important;
+}
+
+/* Make sure the saturation field appears properly */
+.dg .c .picker .selector {
+  z-index: 10001 !important;
+  width: 1px; /* Keep your existing width */
+}
+
+/* Ensure the color controllers are properly positioned */
+.dg .cr.color {
+  position: relative;
+  z-index: 9999; /* High z-index for the color controller itself */
+}
+
+/* Fix for the color display in the GUI */
+.dg .cr.color .c {
+  position: relative;
+  overflow: visible !important; /* Critical - allows popup to extend outside boundaries */
+}
+
+/* Make sure the background of the container doesn't cut off the color picker */
+.dg.main {
+  overflow: visible !important; /* Override the overflow: hidden that was set previously */
+}
+
+/* Only hide overflow for the content area, not the entire controller */
+.dg .close-button {
+  overflow: hidden;
+}
+
+/* For the folders themselves, maintain overflow hidden except when a color picker is active */
+.dg .folder:has(.cr.color:hover) {
+  overflow: visible !important;
+}
