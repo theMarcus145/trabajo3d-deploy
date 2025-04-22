@@ -56,10 +56,10 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     });
 
     folderModel.add(guiParams, 'useNormalMap').name('NormalMap').onChange((value) => {
-        if (value && guiParams.useNormalMap) {
+        if (value && guiParams.useMatcap) {
             // Si se activa el normalmap, desactivar el matcap
             guiParams.useMatcap = false;
-            meshUpdateCallback('useMatcap', false);
+            meshUpdateCallback('matcap', false);
         }
         meshUpdateCallback('useNormalMap', { value });
     });

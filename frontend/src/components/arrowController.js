@@ -22,7 +22,7 @@ export function initializeModelNavigation(loadModel) {
 
                 models = await response.json();
                 
-                // Ensure we have a models array
+                // Asegurar que hay un array de modelos
                 if (!models.models || !Array.isArray(models.models)) {
                     console.warn('Invalid models structure');
                     return; // Salir si la estructura es incorrecta

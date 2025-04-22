@@ -446,7 +446,7 @@ canvas {
     width: 40%;
     overflow: hidden;
     text-overflow: ellipsis;
-  
+    font-family: 'Orbitron';
     /* Borde negro simulado usando múltiples sombras */
     text-shadow:
       -0.5px -0.5px 0 #000,

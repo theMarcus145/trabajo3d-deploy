@@ -146,7 +146,7 @@ export function updateModelAppearance() {
                         colorMap.set(colorHex, [child.material]);
                     } else {
                         const materials = colorMap.get(colorHex);
-                        // Comprobar si este material exacto ya está ene l colormap
+                        // Comprobar si este material exacto ya está en el colormap
                         if (!materials.some(mat => mat === child.material)) {
                             materials.push(child.material);
                         }
@@ -193,9 +193,6 @@ export function updateModelAppearance() {
                     vertexNormalsGroup.add(normalLines); 
                 }
                 
-                // Activar que casteen sombras
-                child.castShadow = true;
-                child.receiveShadow = true;
                 
                 // manejar los wireframes
                 updateWireframe(child);
