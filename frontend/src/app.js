@@ -81,8 +81,6 @@ function handleMeshUpdate(type, data) {
     if (type === 'backgroundColor') {
         const colorValue = new THREE.Color(data.value);
         renderer.setClearColor(colorValue, 1);
-    } else if (type === 'rotation' && mesh) { 
-        mesh.rotation[data.axis] = data.value;
     } else if (type === 'wireframe') {
         updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
     } else if (type === 'modelOpacity') {
@@ -92,6 +90,21 @@ function handleMeshUpdate(type, data) {
             guiParams.useMatcap = data.enabled;
         }
         updateModelAppearance();
+    } else if (type === 'vertexNormals') {
+        // Si estamos activando las normales, asegurarnos de que la animación esté desactivada
+        if (data.value && enableAnimation) {
+            enableAnimation = false;
+            guiParams.animation = false;
+            // Actualizar la GUI para reflejar el cambio
+            updateGuiControllers();
+            // Pausar todas las animaciones si existen
+            if (mixer && animationActions.length > 0) {
+                animationActions.forEach(action => {
+                    action.paused = true;
+                });
+            }
+        }
+        updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
     } else if (type === 'animation') {
         enableAnimation = data;
 
@@ -111,28 +124,12 @@ function handleMeshUpdate(type, data) {
             });
         }
         
-    } else if (type === 'vertexNormals') {
-        // Si estamos activando las normales, asegurarnos de que la animación esté desactivada
-        if (data.value && enableAnimation) {
-            enableAnimation = false;
-            guiParams.animation = false;
-            // Actualizar la GUI para reflejar el cambio
-            updateGuiControllers();
-            // Pausar todas las animaciones si existen
-            if (mixer && animationActions.length > 0) {
-                animationActions.forEach(action => {
-                    action.paused = true;
-                });
-            }
-        }
-        updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
     } else if (type === 'useNormalMap'){
         if (data.enabled !== undefined) {
             guiParams.useNormalMap = data.enabled;
         }
         updateModelAppearance();
     } else if (type === 'removeTextures') {
-        // Handle the removeTextures option
         updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
     }
 }
