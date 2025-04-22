@@ -96,6 +96,7 @@ function handleMeshUpdate(type, data) {
             if (data.enabled !== undefined) {
                 guiParams.useMatcap = data.enabled;
             }
+            updateGuiControllers();
             updateModelAppearance();
             break;
 
@@ -104,6 +105,7 @@ function handleMeshUpdate(type, data) {
             if (data.enabled !== undefined) {
                 guiParams.useNormalMap = data.enabled;
             }
+            updateGuiControllers();
             updateModelAppearance();
             break;
 
