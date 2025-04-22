@@ -9,6 +9,7 @@
     --dark-bg: #000000;
 }
 
+/* Estilos base */
 * {
     margin: 0;
     padding: 0;
@@ -29,7 +30,7 @@ body {
     padding: 20px 0;
 }
 
-/* Background Effects */
+/* Efectos de fondo */
 .background-effects {
     position: fixed;
     top: 0;
@@ -73,6 +74,7 @@ body {
     animation: pulse 10s infinite alternate;
 }
 
+/* Animaciones */
 @keyframes float {
     0% { transform: translate(0, 0); }
     50% { transform: translate(30px, 30px); }
@@ -84,6 +86,17 @@ body {
     100% { opacity: 0.4; transform: scale(1.2); }
 }
 
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 5px rgba(19, 193, 13, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(19, 193, 13, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(19, 193, 13, 0.5); }
+}
+
+/* Contenedor principal */
 .container {
     text-align: center;
     max-width: 1200px;
@@ -94,7 +107,7 @@ body {
     gap: 40px;
 }
 
-/* Header Styles */
+/* Estilos del encabezado */
 .main-header {
     position: relative;
     padding: 25px;
@@ -113,7 +126,7 @@ body {
     gap: 10px;
 }
 
-/* New styles for header with logo */
+/* Estilos para encabezado con logo */
 .header-text-with-logo {
     display: flex;
     align-items: center;
@@ -167,6 +180,7 @@ h1 {
     margin-top: 20px;
 }
 
+/* Líneas decorativas */
 .tech-line {
     height: 2px;
     background: linear-gradient(90deg, 
@@ -175,6 +189,7 @@ h1 {
         rgba(19, 193, 13, 0) 100%);
     width: 100%;
     position: relative;
+    margin: 10px 0;
 }
 
 .tech-dots {
@@ -193,7 +208,7 @@ h1 {
     box-shadow: 0 0 10px var(--accent-glow);
 }
 
-/* Viewer Section */
+/* Títulos de sección */
 .section-title {
     color: var(--accent-color);
     font-size: 1.5em;
@@ -209,8 +224,7 @@ h1 {
     font-size: 0.9em;
 }
 
-/* Removed .viewer-section class here */
-
+/* Sección del visor */
 .viewer-info {
     margin-bottom: 5px;
 }
@@ -237,7 +251,7 @@ h1 {
     border: 2px solid var(--accent-color);
 }
 
-
+/* Spinner de carga */
 .spinner {
     width: 50px;
     height: 50px;
@@ -247,19 +261,15 @@ h1 {
     animation: spin 1s ease-in-out infinite;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
+/* Pistas de controles */
 .controls-hint {
     display: flex;
     justify-content: center;
     gap: 30px;
-    margin-top: 10px;   
+    margin-top: -20px;   
     font-size: 0.9em;
     color: var(--text-color);
     opacity: 0.8;
-    margin-top: -20px;
 }
 
 .hint-item {
@@ -268,13 +278,14 @@ h1 {
     gap: 8px;
 }
 
+/* Canvas */
 canvas {
     width: 100% !important;
     height: 100% !important;
     border-radius: 15px;
 }
 
-/* Navigation Section */
+/* Sección de navegación */
 .navigation-section {
     margin-top: 10px;
 }
@@ -297,6 +308,7 @@ canvas {
     padding: 5px;
 }
 
+/* Botones de modelos */
 .model-button {
     display: none;
     font-size: 21px;
@@ -345,6 +357,7 @@ canvas {
     transform: scale(1.05);
 }
 
+/* Flechas de navegación */
 .nav-arrow {
     background-color: var(--secondary-bg);
     border: 2px solid var(--accent-color);
@@ -367,7 +380,7 @@ canvas {
     box-shadow: 0 0 15px var(--accent-glow);
 }
 
-/* Footer */
+/* Pie de página */
 .main-footer {
     margin-top: 20px;
     padding: 20px;
@@ -396,8 +409,8 @@ canvas {
     text-shadow: 0 0 10px var(--accent-glow);
 }
 
-/* Config Menu Styles - Keeping original */
-#config-menu{
+/* Estilos del menú de configuración */
+#config-menu {
     background-color: var(--secondary-bg);
     margin-left: 290px;
     margin-right: 290px;
@@ -408,12 +421,12 @@ canvas {
     margin-top: 40px;
 }
 
-#config-panel{
+#config-panel {
     padding-top: 5px;
     padding-bottom: 25px;
 }
 
-/* dat.gui Styles - Keeping original as requested */
+/* Estilos para dat.gui */
 .dg.ac {
     z-index: 1000 !important;
 }
@@ -422,7 +435,7 @@ canvas {
     background-color: rgba(10, 47, 22, 0.85) !important;
     border: 2px solid var(--accent-color) !important;
     box-shadow: 0 0 10px var(--accent-glow) !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     font-family: 'Orbitron', sans-serif;
 }
 
@@ -457,6 +470,7 @@ canvas {
     border: 2px solid var(--accent-color) !important;
     color: var(--accent-color) !important;
     font-family: 'Orbitron', sans-serif;
+    overflow: hidden;
 }
 
 .dg .close-button:hover {
@@ -475,37 +489,27 @@ canvas {
     transform: scale(0.98);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .header-text-with-logo {
-        flex-direction: column-reverse;
-        gap: 15px;
-    }
-    
-    .logo {
-        width: 50px;
-    }
-    
-    h1 {
-        font-size: 1.5em;
-    }
-    
-    .render-container {
-        height: 400px;
-    }
-    
-    .controls-hint {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .main-footer {
-        flex-direction: column;
-        text-align: center;
-    }
+/* Correcciones para el selector de color */
+.dg .c .picker {
+  z-index: 10000 !important;
+  position: absolute !important;
 }
 
+.dg .c .picker .selector {
+  z-index: 10001 !important;
+  width: 1px;
+}
 
+.dg .cr.color .c {
+  position: relative;
+  overflow: visible !important;
+}
+
+.dg .folder:has(.cr.color:hover) {
+  overflow: visible !important;
+}
+
+/* Enlaces */
 p a {
     color: inherit;
     text-decoration: none;
@@ -517,8 +521,7 @@ p a:hover {
     border-radius: 2px;
 }
 
-/* Estilos de la loading screen*/
-
+/* Pantalla de carga */
 .loading-screen {
     position: absolute;
     top: 0;
@@ -535,7 +538,7 @@ p a:hover {
 }
 
 .progress-container {
-    background-color: rgba(10, 47, 22, 0.7); /* Color oscuro para coincidir con el fondo principal */
+    background-color: rgba(10, 47, 22, 0.7);
     border-radius: 10px;
     padding: 20px;
     width: 80%;
@@ -543,8 +546,8 @@ p a:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
-    box-shadow: 0 0 20px var(--accent-glow); /* Efecto de resplandor acorde a tu tema */
-    border: 1px solid var(--accent-color); /* Borde acorde al color de acento */
+    box-shadow: 0 0 20px var(--accent-glow);
+    border: 1px solid var(--accent-color);
     font-family: 'Orbitron', sans-serif;
 }
 
@@ -555,7 +558,7 @@ p a:hover {
     margin-bottom: 15px;
     font-weight: bold;
     text-align: center;
-    text-shadow: 0 0 10px var(--accent-glow); /* Agrega un resplandor sutil al texto */
+    text-shadow: 0 0 10px var(--accent-glow);
 }
 
 .progress-bar-container {
@@ -569,9 +572,10 @@ p a:hover {
 
 .progress-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #000000, #00ff1a); /* Usar el color de acento */
+    background: linear-gradient(90deg, #000000, #00ff1a);
     transition: width 0.3s ease;
     border-radius: 10px;
+    animation: pulseGlow 1.5s infinite alternate;
 }
 
 .progress-text {
@@ -585,20 +589,10 @@ p a:hover {
     justify-content: center;
     color: white;
     font-weight: bold;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); /* Efecto de sombra para el texto */
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
 }
 
-/* Animación de resplandor para la barra de progreso */
-@keyframes pulseGlow {
-    0% { box-shadow: 0 0 5px rgba(19, 193, 13, 0.5); }
-    50% { box-shadow: 0 0 20px rgba(19, 193, 13, 0.8); }
-    100% { box-shadow: 0 0 5px rgba(19, 193, 13, 0.5); }
-}
-
-.progress-bar-fill {
-    animation: pulseGlow 1.5s infinite alternate; /* Añadir animación de resplandor */
-}
-
+/* Sección de instrucciones */
 .instructions-section {
     margin-top: 40px;
     max-width: 990px;
@@ -655,17 +649,7 @@ p a:hover {
     transform: rotate(180deg);
 }
 
-.tech-line {
-    height: 2px;
-    background: linear-gradient(90deg, 
-        rgba(19, 193, 13, 0) 0%, 
-        rgba(19, 193, 13, 1) 50%, 
-        rgba(19, 193, 13, 0) 100%);
-    width: 100%;
-    position: relative;
-    margin: 10px 0;
-}
-
+/* Categorías de instrucciones */
 .instruction-category {
     margin-top: 20px;
     padding: 15px;
@@ -709,7 +693,35 @@ p a:hover {
     font-size: 0.9em;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
+    .header-text-with-logo {
+        flex-direction: column-reverse;
+        gap: 15px;
+    }
+    
+    .logo {
+        width: 50px;
+    }
+    
+    h1 {
+        font-size: 1.5em;
+    }
+    
+    .render-container {
+        height: 400px;
+    }
+    
+    .controls-hint {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .main-footer {
+        flex-direction: column;
+        text-align: center;
+    }
+    
     .instruction-item {
         flex-direction: column;
     }   
@@ -724,39 +736,4 @@ p a:hover {
         min-width: auto;
         width: 100%;
     }
-}
-
-/* Add these styles to your index.css file */
-
-/* Fix for color picker appearing behind other elements */
-.dg .c .picker {
-  z-index: 10000 !important; /* Extremely high z-index to ensure it's above everything */
-  position: absolute !important;
-}
-
-/* Make sure the saturation field appears properly */
-.dg .c .picker .selector {
-  z-index: 10001 !important;
-  width: 1px; /* Keep your existing width */
-}
-
-/* Fix for the color display in the GUI */
-.dg .cr.color .c {
-  position: relative;
-  overflow: visible !important; /* Critical - allows popup to extend outside boundaries */
-}
-
-/* Make sure the background of the container doesn't cut off the color picker */
-.dg.main {
-  overflow: visible !important; /* Override the overflow: hidden that was set previously */
-}
-
-/* Only hide overflow for the content area, not the entire controller */
-.dg .close-button {
-  overflow: hidden;
-}
-
-/* For the folders themselves, maintain overflow hidden except when a color picker is active */
-.dg .folder:has(.cr.color:hover) {
-  overflow: visible !important;
 }
