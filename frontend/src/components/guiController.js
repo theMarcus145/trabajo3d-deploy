@@ -47,10 +47,20 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     });
     
     folderModel.add(guiParams, 'useMatcap').name('MatCap').onChange((value) => {
-        meshUpdateCallback('matcap', { enabled: value });
+        if (value && guiParams.useNormalMap) {
+            // Si se activa el matcap, desactivar el normalmap
+            guiParams.useNormalMap = false;
+            meshUpdateCallback('useNormalMap', false);
+        }
+        meshUpdateCallback('matcap', { value });
     });
 
     folderModel.add(guiParams, 'useNormalMap').name('NormalMap').onChange((value) => {
+        if (value && guiParams.useNormalMap) {
+            // Si se activa el normalmap, desactivar el matcap
+            guiParams.useMatcap = false;
+            meshUpdateCallback('useMatcap', false);
+        }
         meshUpdateCallback('useNormalMap', { value });
     });
 
