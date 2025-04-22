@@ -61,7 +61,7 @@ export function cleanupVertexNormals() {
 }
 
 // Función para actualizar la apariencia del modelo según los ajustes
-export function updateModelAppearance() {
+export function updateModelAppearance(resetToOriginal = false) {
     if (!mesh) return;
     
     // Si reiniciamos al original, se hace lo primero
@@ -70,7 +70,7 @@ export function updateModelAppearance() {
         resetMaterialsToOriginal(mesh, originalMaterials, originalTextures);
     }
 
-    
+
     // Limpiar el colormap
     colorMap.clear();
     
