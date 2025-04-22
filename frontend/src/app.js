@@ -76,63 +76,65 @@ initModelController(mesh, vertexNormalsGroup, colorMap, matcapTexture, originalM
 
 
 let enableAnimation = false;
-// Funcion que maneja las peticiones de la GUI, se le pasa un tipo y un valor(como un código de color)
+// Funcion que maneja las peticiones de la GUI, se le pasa un tipo y un valor (como un código de color)
 function handleMeshUpdate(type, data) {
-    if (type === 'backgroundColor') {
-        const colorValue = new THREE.Color(data.value);
-        renderer.setClearColor(colorValue, 1);
-    } else if (type === 'wireframe') {
-        updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
-    } else if (type === 'modelOpacity') {
-        updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
-    } else if (type === 'matcap') {
-        if (data.enabled !== undefined) {
-            guiParams.useMatcap = data.enabled;
-        }
-        updateModelAppearance();
-    } else if (type === 'vertexNormals') {
-        // Si estamos activando las normales, asegurarnos de que la animación esté desactivada
-        if (data.value && enableAnimation) {
-            enableAnimation = false;
-            guiParams.animation = false;
-            // Actualizar la GUI para reflejar el cambio
-            updateGuiControllers();
-            // Pausar todas las animaciones si existen
+    switch (type) {
+        case 'backgroundColor':
+            const colorValue = new THREE.Color(data.value);
+            renderer.setClearColor(colorValue, 1);
+            break;
+
+        case 'wireframe':
+        case 'modelOpacity':
+        case 'removeTextures':
+            updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
+            break;
+
+        case 'matcap':
+            if (data.enabled !== undefined) {
+                guiParams.useMatcap = data.enabled;
+            }
+            updateModelAppearance();
+            break;
+
+        case 'useNormalMap':
+            if (data.enabled !== undefined) {
+                guiParams.useNormalMap = data.enabled;
+            }
+            updateModelAppearance();
+            break;
+
+        case 'vertexNormals':
+            if (data.value && enableAnimation) {
+                enableAnimation = false;
+                guiParams.animation = false;
+                updateGuiControllers();
+                if (mixer && animationActions.length > 0) {
+                    animationActions.forEach(action => {
+                        action.paused = true;
+                    });
+                }
+            }
+            updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
+            break;
+
+        case 'animation':
+            enableAnimation = data;
+            if (enableAnimation && guiParams.vertexNormals) {
+                guiParams.vertexNormals = false;
+                updateGuiControllers();
+                cleanupVertexNormals(vertexNormalsGroup);
+            }
+
             if (mixer && animationActions.length > 0) {
                 animationActions.forEach(action => {
-                    action.paused = true;
+                    action.paused = !enableAnimation;
                 });
             }
-        }
-        updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
-    } else if (type === 'animation') {
-        enableAnimation = data;
-
-        // Si estamos activando la animación, asegurarnos de que las normales estén desactivadas
-        if (enableAnimation && guiParams.vertexNormals) {
-            guiParams.vertexNormals = false;
-            // Actualizar la GUI para reflejar el cambio
-            updateGuiControllers();
-            // Limpiar las normales que podrían estar mostradas
-            cleanupVertexNormals(vertexNormalsGroup);
-        }
-
-        // Si existe el mixer y el modelo tiene animaciones (ya que el array es mayor que 0), entonces pausa o reanuda la animación
-        if (mixer && animationActions.length > 0) {
-            animationActions.forEach(action => {
-                action.paused = !enableAnimation;
-            });
-        }
-        
-    } else if (type === 'useNormalMap'){
-        if (data.enabled !== undefined) {
-            guiParams.useNormalMap = data.enabled;
-        }
-        updateModelAppearance();
-    } else if (type === 'removeTextures') {
-        updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
+            break;
     }
 }
+
 
 // Inicializar la GUI
 initializeGUI(renderContainer, handleMeshUpdate, { 
