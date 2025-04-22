@@ -144,13 +144,6 @@ function handleMeshUpdate(type, data) {
                 });
             }
             break;
-            
-        case 'directionalLightIntensity':
-            directionalLight.intensity = data;
-            directionalLight2.intensity = data;
-            directionalLight3.intensity = data;
-            directionalLight4.intensity = data;
-            break;
     }
 }
 
@@ -308,13 +301,13 @@ function onWindowResize() {
 }
 window.addEventListener('resize', onWindowResize);
 
-//Manejar el botón de reinicio de los ajustes
+// Manejar el botón de reinicio de los ajustes
 document.addEventListener('resetSettings', function() {
     resetSettings();
     
     // Después de reiniciar los ajustes, actualizar el modelo
     updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
-    
+    updateGuiControllers();
 });
 
 // Animación
