@@ -92,15 +92,15 @@ function handleMeshUpdate(type, data) {
             break;
 
         case 'matcap':
-            
-            guiParams.useNormalMap = false;
+
+
             guiParams.useMatcap = data.enabled;
             updateModelAppearance();
             break;
 
         case 'useNormalMap':
 
-            guiParams.useMatcap = false;
+
             guiParams.useNormalMap = data.enabled;
             updateModelAppearance();
             break;
