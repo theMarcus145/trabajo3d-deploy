@@ -92,20 +92,22 @@ function handleMeshUpdate(type, data) {
             break;
 
         case 'matcap':
-            guiParams.useNormalMap = false;
             if (data.enabled !== undefined) {
                 guiParams.useMatcap = data.enabled;
+                if (data.enabled) {
+                    guiParams.useNormalMap = false;
+                }
             }
-            updateGuiControllers();
             updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
             break;
 
         case 'useNormalMap':
-            guiParams.useMatcap = false;
             if (data.enabled !== undefined) {
                 guiParams.useNormalMap = data.enabled;
+                if (data.enabled) {
+                    guiParams.useMatcap = false;
+                }
             }
-            updateGuiControllers();
             updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
             break;
 

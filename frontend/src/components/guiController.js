@@ -17,6 +17,8 @@ const guiParams = {
 let animationController = null;
 let normalsController = null;
 let materialFolder = null;
+let matcapController = null;
+let normalMapController = null;
 let colorControllers = {};
 
 // Inicializar la GUI
@@ -46,22 +48,24 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
         meshUpdateCallback('modelOpacity', { value });
     });
     
-    folderModel.add(guiParams, 'useMatcap').name('MatCap').onChange((value) => {
+    matcapController = folderModel.add(guiParams, 'useMatcap').name('MatCap').onChange((value) => {
         if (value && guiParams.useNormalMap) {
             // Si se activa el matcap, desactivar el normalmap
             guiParams.useNormalMap = false;
-            meshUpdateCallback('useNormalMap', false);
+            // Actualizar la UI del controller del normalmap
+            normalMapController.updateDisplay();
         }
-        meshUpdateCallback('matcap', { value });
+        meshUpdateCallback('matcap', { enabled: value });
     });
 
-    folderModel.add(guiParams, 'useNormalMap').name('NormalMap').onChange((value) => {
+    normalMapController = folderModel.add(guiParams, 'useNormalMap').name('NormalMap').onChange((value) => {
         if (value && guiParams.useMatcap) {
             // Si se activa el normalmap, desactivar el matcap
             guiParams.useMatcap = false;
-            meshUpdateCallback('matcap', false);
+            // Actualizar la UI del controller del matcap
+            matcapController.updateDisplay();
         }
-        meshUpdateCallback('useNormalMap', { value });
+        meshUpdateCallback('useNormalMap', { enabled: value });
     });
 
     folderModel.add(guiParams, 'removeTextures').name('Sin Texturas').onChange((value) => {
@@ -202,10 +206,11 @@ function updateColorButtonBackground(colorHex, colorValue) {
     }
 }
 
-
 function updateGuiControllers() {
     if (animationController) animationController.updateDisplay();
     if (normalsController) normalsController.updateDisplay();
+    if (matcapController) matcapController.updateDisplay();
+    if (normalMapController) normalMapController.updateDisplay();
 }
 
 export { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers };
