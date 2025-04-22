@@ -21,7 +21,7 @@ let colorControllers = {};
 
 // Initialize the GUI
 function initializeGUI(renderContainer, meshUpdateCallback, lights) {
-    const { directionalLight, directionalLight2, directionalLight3 } = lights;
+    const { directionalLight, directionalLight2, directionalLight3, directionalLight4 } = lights;
     
     const gui = new GUI({ autoPlace: false });
     GUI.TEXT_CLOSED = "CERRAR CONTROLES";
