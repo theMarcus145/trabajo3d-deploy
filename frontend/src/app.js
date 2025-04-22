@@ -4,7 +4,7 @@ import { GLTFLoader } from '/node_modules/three/examples/jsm/loaders/GLTFLoader.
 import { directionalLight, directionalLight2, directionalLight3, directionalLight4, targetOrigin} from './components/light.js';
 import { initializeModelNavigation } from './components/arrowController.js';
 import { camera } from './components/camera.js';
-import { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers } from './components/guiController.js';
+import { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers, resetSettings } from './components/guiController.js';
 import { createLoadingScreen } from './components/loadingScreen.js';
 import { cleanupVertexNormals, updateModelAppearance, initModelController } from './components/modelController.js';
 
@@ -75,6 +75,18 @@ function loadMatcapTexture() {
 // Inicializar el model controller
 initModelController(mesh, vertexNormalsGroup, colorMap, matcapTexture, originalMaterials, originalTextures);
 
+document.addEventListener('resetSettings', function() {
+    resetSettings();
+    
+    // Update model appearance after settings reset
+    updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
+    
+    // Update light intensity
+    directionalLight.intensity = guiParams.directionalLightIntensity;
+    directionalLight2.intensity = guiParams.directionalLightIntensity;
+    directionalLight3.intensity = guiParams.directionalLightIntensity;
+    directionalLight4.intensity = guiParams.directionalLightIntensity;
+});
 
 let enableAnimation = false;
 // Funcion que maneja las peticiones de la GUI, se le pasa un tipo y un valor (como un código de color)
