@@ -39,7 +39,7 @@ function initializeGUI(renderContainer, callback, lights) {
 
     // Carpeta de fondo
     const folderBackground = gui.addFolder("Fondo");
-    folderBackground.addColor(guiParams, 'backgroundColor').name("Color").listen.onChange((value) => {
+    folderBackground.addColor(guiParams, 'backgroundColor').name("Color").onChange((value) => {
         meshUpdateCallback('backgroundColor', { value });
     });
 
@@ -213,10 +213,23 @@ function updateColorButtonBackground(colorHex, colorValue) {
 }
 
 function updateGuiControllers() {
-    if (animationController) animationController.updateDisplay();
-    if (normalsController) normalsController.updateDisplay();
-    if (matcapController) matcapController.updateDisplay();
-    if (normalMapController) normalMapController.updateDisplay();
+    // referenciar a la gui
+    const gui = materialFolder.__gui;
+    
+    // Actualizar todos los controladores en todas las carpetas
+    for (var i = 0; i < Object.keys(gui.__folders).length; i++) {
+        var key = Object.keys(gui.__folders)[i];
+        for (var j = 0; j < gui.__folders[key].__controllers.length; j++) {
+            gui.__folders[key].__controllers[j].updateDisplay();
+        }
+    }
+    
+    // Actualizar los controladores que no estén en carpetas
+    if (gui.__controllers) {
+        for (var k = 0; k < gui.__controllers.length; k++) {
+            gui.__controllers[k].updateDisplay();
+        }
+    }
 }
 
 
