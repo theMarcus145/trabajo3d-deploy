@@ -59,6 +59,16 @@
                 <button id="next-model" class="nav-arrow right-arrow"><i class="fas fa-chevron-right"></i></button>
             </div>
         </div>
+        
+        <button id="resetBtn">Reset Settings</button>
+
+        <script type="module">
+          import { resetSettings } from './components/guiController.js';
+        
+          document.getElementById('resetBtn').addEventListener('click', () => {
+            resetSettings();
+          });
+        </script>
 
         <div class="instructions-section">
             <div class="instructions-container" id="instructionsContainer">

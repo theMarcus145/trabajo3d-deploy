@@ -13,6 +13,8 @@ const guiParams = {
     directionalLightIntensity: 2,
 };
 
+const defaultSettings = structuredClone(guiParams);
+
 // Variables para almacenar referencias
 let animationController = null;
 let normalsController = null;
@@ -213,4 +215,33 @@ function updateGuiControllers() {
     if (normalMapController) normalMapController.updateDisplay();
 }
 
-export { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers };
+function resetSettings() {
+    for (const [key, value] of Object.entries(defaultSettings)) {
+        guiParams[key] = value;
+
+        switch (key) {
+            case 'useMatcap':
+            case 'useNormalMap':
+                meshUpdateCallback(key, { enabled: value });
+                break;
+            case 'animation':
+            case 'vertexNormals':
+                meshUpdateCallback(key, value);
+                break;
+            case 'backgroundColor':
+                meshUpdateCallback(key, { value });
+                break;
+            case 'directionalLightIntensity':
+                // Se actualiza desde el controlador, pero por si acaso:
+                meshUpdateCallback(key, value);
+                break;
+            default:
+                meshUpdateCallback(key, { value });
+                break;
+        }
+    }
+
+    updateGuiControllers(); // Para refrescar la GUI
+}
+
+export { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers, resetSettings };
