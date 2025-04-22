@@ -21,10 +21,13 @@ let normalsController = null;
 let materialFolder = null;
 let matcapController = null;
 let normalMapController = null;
+let meshUpdateCallback = null;
 let colorControllers = {};
 
 // Inicializar la GUI
-function initializeGUI(renderContainer, meshUpdateCallback, lights) {
+function initializeGUI(renderContainer, callback, lights) {
+    meshUpdateCallback = callback;
+    
     const { directionalLight, directionalLight2, directionalLight3, directionalLight4 } = lights;
     
     const gui = new GUI({ autoPlace: false });

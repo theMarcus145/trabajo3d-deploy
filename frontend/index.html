@@ -61,15 +61,12 @@
         </div>
         
         <button id="resetBtn">Reset Settings</button>
-
-        <script type="module">
-          import { resetSettings } from './components/guiController.js';
-        
-          document.getElementById('resetBtn').addEventListener('click', () => {
-            resetSettings();
-          });
+        <script>
+            document.getElementById('resetBtn').addEventListener('click', function() {
+                const resetEvent = new CustomEvent('resetSettings');
+                document.dispatchEvent(resetEvent);
+            });
         </script>
-
         <div class="instructions-section">
             <div class="instructions-container" id="instructionsContainer">
                 <div class="instructions-header" id="instructionsHeader">
