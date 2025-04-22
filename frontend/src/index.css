@@ -440,9 +440,19 @@ canvas {
 }
 
 .dg .property-name {
-    color: #ffffff !important;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 10px;
+    cursor: default;
+    float: left;
+    clear: left;
+    width: 40%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  
+    /* Borde negro simulado usando múltiples sombras */
+    text-shadow:
+      -0.5px -0.5px 0 #000,
+       0.5px -0.5px 0 #000,
+      -0.5px  0.5px 0 #000,
+       0.5px  0.5px 0 #000;
 }
 
 .dg .c .slider {
