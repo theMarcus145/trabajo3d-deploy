@@ -261,9 +261,6 @@ function loadModel(modelFolder) {
                 animationActions.push(action); // Guardar acción
             });
         }
-        
-        // 4.4 - Aplicar rotación inicial
-        mesh.rotation.set(guiParams.rotationX, guiParams.rotationY, guiParams.rotationZ);
 
         // 4.5 - Aplicar las configuraciones activadas en la GUI
         updateModelAppearance();
