@@ -181,7 +181,7 @@ h1 {
     display: flex;
     justify-content: center;
     gap: 40px;
-    margin-top: -5px;
+    margin-top: -15px;
 }
 
 .tech-dot {
@@ -712,7 +712,7 @@ p a:hover {
 @media (max-width: 768px) {
     .instruction-item {
         flex-direction: column;
-    }
+    }   
     
     .instruction-name {
         border-right: none;
