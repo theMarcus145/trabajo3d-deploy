@@ -1,4 +1,5 @@
 import { GUI } from 'dat.gui';
+import { directionalLight, directionalLight2, directionalLight3, directionalLight4 } from './light';
 
 // Estos son los parámetros de la GUI con sus valores por defecto
 const guiParams = {
@@ -225,31 +226,26 @@ function resetSettings() {
         guiParams[key] = value;
     }
 
-    // Reset material colors back to original values
+    // Reiniciar los colores de los materiales
     if (guiParams.materialColors) {
         for (const colorHex in guiParams.materialColors) {
-            // Reset each color back to its original hex value
+            // Reiniciar cada color a su color Hex por defecto
             guiParams.materialColors[colorHex] = `#${colorHex}`;
             
-            // Update the color controller display if it exists
             if (colorControllers[colorHex]) {
                 colorControllers[colorHex].updateDisplay();
             }
         }
     }
-
-    // Update all controllers to reflect default values
-    updateGuiControllers();
-
-    // Reset background color
+    // Reiniciar el color de fondo
     meshUpdateCallback('backgroundColor', { value: defaultSettings.backgroundColor });
 
-    // Reset light intensity
-    if (meshUpdateCallback) {
-        meshUpdateCallback('directionalLightIntensity', defaultSettings.directionalLightIntensity);
-    }
+    // Reinicar la intensidad de la luz
+    directionalLight.intensity = defaultSettings.directionalLightIntensity;
+    directionalLight2.intensity = defaultSettings.directionalLightIntensity;
+    directionalLight3.intensity = defaultSettings.directionalLightIntensity;
+    directionalLight4.intensity = defaultSettings.directionalLightIntensity;
 
-    // Reset model appearance settings
     const settingsToReset = [
         'wireframe', 
         'modelOpacity', 
@@ -259,8 +255,7 @@ function resetSettings() {
         'removeTextures',
         'animation'
     ];
-    
-    // Apply each setting reset
+
     for (const setting of settingsToReset) {
         if (setting === 'useMatcap' || setting === 'useNormalMap') {
             meshUpdateCallback(setting, { enabled: defaultSettings[setting] });
@@ -271,7 +266,9 @@ function resetSettings() {
         }
     }
 
-    // Signal to reset materials to original state
+    // Actualizar los controllers para que se apliquen sus valores por defecto visualmente
+    updateGuiControllers();
+
     meshUpdateCallback('resetMaterials', true);
 }
 
