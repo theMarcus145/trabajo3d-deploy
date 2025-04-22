@@ -1,7 +1,7 @@
 import * as THREE from '/node_modules/three/build/three.module.js';
 import { OrbitControls } from '/node_modules/three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from '/node_modules/three/examples/jsm/loaders/GLTFLoader.js';
-import { directionalLight, directionalLight2, directionalLight3, targetOrigin} from './components/light.js';
+import { directionalLight, directionalLight2, directionalLight3, directionalLight4, targetOrigin} from './components/light.js';
 import { initializeModelNavigation } from './components/arrowController.js';
 import { camera } from './components/camera.js';
 import { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers } from './components/guiController.js';
@@ -55,6 +55,7 @@ scene.add(targetOrigin);
 scene.add(directionalLight);
 scene.add(directionalLight2);
 scene.add(directionalLight3);
+scene.add(directionalLight4);
 
 
 let mesh = null; // Variable global para almacenar el modelo cargado
@@ -135,12 +136,12 @@ function handleMeshUpdate(type, data) {
     }
 }
 
-
 // Inicializar la GUI
 initializeGUI(renderContainer, handleMeshUpdate, { 
     directionalLight, 
     directionalLight2, 
-    directionalLight3 
+    directionalLight3,
+    directionalLight4
 });
 
 // Esta variable almacena si el modelo tiene una animación o no
@@ -159,6 +160,7 @@ function loadModel(modelFolder) {
         child === directionalLight || 
         child === directionalLight2 ||
         child === directionalLight3 ||
+        child === directionalLight4 ||
         child === camera ||
         child === vertexNormalsGroup ||
         child === targetOrigin ||

@@ -11,7 +11,6 @@ const guiParams = {
     removeTextures: false,  
     animation: false,
     directionalLightIntensity: 2,
-    directionalLightColor: 0xffffff,
 };
 
 // Variables to store references
@@ -93,6 +92,7 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
         directionalLight.intensity = value;
         directionalLight2.intensity = value;
         directionalLight3.intensity = value;
+        directionalLight4.intensity = value;
     });
 
     const folders = [folderBackground, folderModel, directionalFolder, materialFolder];
