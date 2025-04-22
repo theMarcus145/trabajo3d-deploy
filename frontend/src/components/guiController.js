@@ -27,7 +27,7 @@ let colorControllers = {};
 // Inicializar la GUI
 function initializeGUI(renderContainer, callback, lights) {
     meshUpdateCallback = callback;
-    
+
     const { directionalLight, directionalLight2, directionalLight3, directionalLight4 } = lights;
     
     const gui = new GUI({ autoPlace: false });
@@ -226,17 +226,20 @@ function resetSettings() {
             case 'useMatcap':
             case 'useNormalMap':
                 meshUpdateCallback(key, { enabled: value });
+                updateGuiControllers();
                 break;
             case 'animation':
             case 'vertexNormals':
                 meshUpdateCallback(key, value);
+                updateGuiControllers();
                 break;
             case 'backgroundColor':
                 meshUpdateCallback(key, { value });
+                updateGuiControllers();
                 break;
             case 'directionalLightIntensity':
-                // Se actualiza desde el controlador, pero por si acaso:
                 meshUpdateCallback(key, value);
+                updateGuiControllers();
                 break;
             default:
                 meshUpdateCallback(key, { value });
@@ -244,7 +247,6 @@ function resetSettings() {
         }
     }
 
-    updateGuiControllers(); // Para refrescar la GUI
 }
 
 export { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers, resetSettings };

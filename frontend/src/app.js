@@ -75,18 +75,6 @@ function loadMatcapTexture() {
 // Inicializar el model controller
 initModelController(mesh, vertexNormalsGroup, colorMap, matcapTexture, originalMaterials, originalTextures);
 
-document.addEventListener('resetSettings', function() {
-    resetSettings();
-    
-    // Update model appearance after settings reset
-    updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
-    
-    // Update light intensity
-    directionalLight.intensity = guiParams.directionalLightIntensity;
-    directionalLight2.intensity = guiParams.directionalLightIntensity;
-    directionalLight3.intensity = guiParams.directionalLightIntensity;
-    directionalLight4.intensity = guiParams.directionalLightIntensity;
-});
 
 let enableAnimation = false;
 // Funcion que maneja las peticiones de la GUI, se le pasa un tipo y un valor (como un código de color)
@@ -307,6 +295,15 @@ function onWindowResize() {
     renderer.setSize(renderContainer.clientWidth, renderContainer.clientHeight);
 }
 window.addEventListener('resize', onWindowResize);
+
+//Manejar el botón de reinicio de los ajustes
+document.addEventListener('resetSettings', function() {
+    resetSettings();
+    
+    // Después de reiniciar los ajustes, actualizar el modelo
+    updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
+    
+});
 
 // Animación
 function animate() {
