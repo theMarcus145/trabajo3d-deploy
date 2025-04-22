@@ -87,14 +87,8 @@ function initializeGUI(renderContainer, meshUpdateCallback, lights) {
     materialFolder = gui.addFolder("Colores de Materiales");
     
     // Directional light folder
-    const directionalFolder = gui.addFolder("Iluminación direccional");
+    const directionalFolder = gui.addFolder("Iluminación");
 
-    directionalFolder.addColor(guiParams, 'directionalLightColor').name("Color").onChange((value) => {
-        directionalLight.color.set(value);
-        directionalLight2.color.set(value);
-        directionalLight3.color.set(value);
-    });
-    
     directionalFolder.add(guiParams, 'directionalLightIntensity', 0, 4, 0.1).name("Intensidad").onChange((value) => {
         directionalLight.intensity = value;
         directionalLight2.intensity = value;
