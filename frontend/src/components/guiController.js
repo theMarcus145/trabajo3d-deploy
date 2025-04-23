@@ -12,7 +12,7 @@ const guiParams = {
     useNormalMap: false,
     removeTextures: false,  
     animation: false,
-    directionalLightIntensity: 2,
+    directionalLightIntensity: 1.6,
     castShadows: false,
 };
 

@@ -6,7 +6,7 @@ targetOrigin.position.set(0, 0, 0);
 
 // Función para crear cada luz direccional
 function createDirectionalLight(x, y, z) {
-    const light = new THREE.DirectionalLight(0xffffff, 3);
+    const light = new THREE.DirectionalLight(0xffffff, 1.6);
     light.position.set(x, y, z);
     light.castShadow = false;
 
@@ -27,7 +27,7 @@ function createDirectionalLight(x, y, z) {
 }
 
 // Crear 8 luces direccionales en las esquinas de un cubo imaginario
-// Las coordenadas representan las 8 esquinas de un cubo (x, y, z) donde cada valor es 1 o -1
+// Las coordenadas representan las 8 esquinas de un cubo
 // Esquina superior frontal izquierda
 const directionalLight1 = createDirectionalLight(-15, 15, 15);
 // Esquina superior frontal derecha
