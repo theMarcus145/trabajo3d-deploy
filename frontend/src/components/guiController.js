@@ -1,5 +1,6 @@
 import { GUI } from 'dat.gui';
-import { directionalLight, directionalLight2, directionalLight3, directionalLight4 } from './light';
+import { directionalLight1, directionalLight2, directionalLight3, directionalLight4, 
+         directionalLight5, directionalLight6, directionalLight7, directionalLight8 } from './light';
 
 // Estos son los parámetros de la GUI con sus valores por defecto
 const guiParams = {
@@ -29,7 +30,8 @@ let materialFolder = null;
 function initializeGUI(renderContainer, callback, lights) {
     meshUpdateCallback = callback;
 
-    const { directionalLight, directionalLight2, directionalLight3, directionalLight4 } = lights;
+    const { directionalLight1, directionalLight2, directionalLight3, directionalLight4,
+            directionalLight5, directionalLight6, directionalLight7, directionalLight8 } = lights;
     
     const gui = new GUI({ autoPlace: false });
     GUI.TEXT_CLOSED = "CERRAR CONTROLES";
@@ -101,10 +103,14 @@ function initializeGUI(renderContainer, callback, lights) {
     const directionalFolder = gui.addFolder("Iluminación");
 
     directionalFolder.add(guiParams, 'directionalLightIntensity', 0, 4, 0.1).listen().name("Intensidad").onChange((value) => {
-        directionalLight.intensity = value;
+        directionalLight1.intensity = value;
         directionalLight2.intensity = value;
         directionalLight3.intensity = value;
         directionalLight4.intensity = value;
+        directionalLight5.intensity = value;
+        directionalLight6.intensity = value;
+        directionalLight7.intensity = value;
+        directionalLight8.intensity = value;
     });
 
     const folders = [folderBackground, folderModel, directionalFolder, materialFolder];
@@ -250,6 +256,9 @@ function resetSettings() {
     directionalLight2.intensity = defaultSettings.directionalLightIntensity;
     directionalLight3.intensity = defaultSettings.directionalLightIntensity;
     directionalLight4.intensity = defaultSettings.directionalLightIntensity;
+    directionalLight5.intensity = defaultSettings.directionalLightIntensity;
+    directionalLight6.intensity = defaultSettings.directionalLightIntensity;
+    directionalLight7.intensity = defaultSettings.directionalLightIntensity;
 
     const settingsToReset = [
         'wireframe', 

@@ -1,7 +1,9 @@
 import * as THREE from '/node_modules/three/build/three.module.js';
 import { OrbitControls } from '/node_modules/three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from '/node_modules/three/examples/jsm/loaders/GLTFLoader.js';
-import { directionalLight, directionalLight2, directionalLight3, directionalLight4, targetOrigin} from './components/light.js';
+import { directionalLight1, directionalLight2, directionalLight3, directionalLight4, 
+         directionalLight5, directionalLight6, directionalLight7, directionalLight8, 
+         targetOrigin} from './components/light.js';
 import { initializeModelNavigation } from './components/arrowController.js';
 import { camera } from './components/camera.js';
 import { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers, resetSettings } from './components/guiController.js';
@@ -52,10 +54,14 @@ renderContainer.appendChild(renderer.domElement);
 
 // Añadir luces a la escena
 scene.add(targetOrigin);
-scene.add(directionalLight);
+scene.add(directionalLight1);
 scene.add(directionalLight2);
 scene.add(directionalLight3);
 scene.add(directionalLight4);
+scene.add(directionalLight5);
+scene.add(directionalLight6);
+scene.add(directionalLight7);
+scene.add(directionalLight8);
 
 
 let mesh = null; // Variable global para almacenar el modelo cargado
@@ -149,10 +155,14 @@ function handleMeshUpdate(type, data) {
 
 // Inicializar la GUI
 initializeGUI(renderContainer, handleMeshUpdate, { 
-    directionalLight, 
+    directionalLight1, 
     directionalLight2, 
     directionalLight3,
-    directionalLight4
+    directionalLight4,
+    directionalLight5,
+    directionalLight6,
+    directionalLight7,
+    directionalLight8
 });
 
 // Esta variable almacena si el modelo tiene una animación o no
@@ -168,10 +178,14 @@ function loadModel(modelFolder) {
     
     // 2- Limpiar la escena por completo
     scene.children = scene.children.filter(child => 
-        child === directionalLight || 
+        child === directionalLight1 || 
         child === directionalLight2 ||
         child === directionalLight3 ||
         child === directionalLight4 ||
+        child === directionalLight5 || 
+        child === directionalLight6 ||
+        child === directionalLight7 ||
+        child === directionalLight8 ||
         child === camera ||
         child === vertexNormalsGroup ||
         child === targetOrigin ||
@@ -332,32 +346,66 @@ function adjustCameraAndLights(model) {
     // Ajustar las posiciones de las luces direccionales
     const lightDistance = distance * 1.5;
     
-    directionalLight.position.set(
+    // Posicionar las luces en las 8 esquinas de un cubo imaginario
+    // Esquina superior frontal izquierda
+    directionalLight1.position.set(
         center.x - lightDistance,
-        center.y + lightDistance * 0.33,
-        center.z - lightDistance
-    );
-    
-    directionalLight2.position.set(
-        center.x + lightDistance,
-        center.y + lightDistance * 0.33,
-        center.z - lightDistance
-    );
-    
-    directionalLight3.position.set(
-        center.x,
-        center.y,
+        center.y + lightDistance,
         center.z + lightDistance
     );
     
+    // Esquina superior frontal derecha
+    directionalLight2.position.set(
+        center.x + lightDistance,
+        center.y + lightDistance,
+        center.z + lightDistance
+    );
+    
+    // Esquina superior trasera izquierda
+    directionalLight3.position.set(
+        center.x - lightDistance,
+        center.y + lightDistance,
+        center.z - lightDistance
+    );
+    
+    // Esquina superior trasera derecha
     directionalLight4.position.set(
-        center.x,
-        center.y - lightDistance * 0.67,
-        center.z
+        center.x + lightDistance,
+        center.y + lightDistance,
+        center.z - lightDistance
+    );
+    
+    // Esquina inferior frontal izquierda
+    directionalLight5.position.set(
+        center.x - lightDistance,
+        center.y - lightDistance,
+        center.z + lightDistance
+    );
+    
+    // Esquina inferior frontal derecha
+    directionalLight6.position.set(
+        center.x + lightDistance,
+        center.y - lightDistance,
+        center.z + lightDistance
+    );
+    
+    // Esquina inferior trasera izquierda
+    directionalLight7.position.set(
+        center.x - lightDistance,
+        center.y - lightDistance,
+        center.z - lightDistance
+    );
+    
+    // Esquina inferior trasera derecha
+    directionalLight8.position.set(
+        center.x + lightDistance,
+        center.y - lightDistance,
+        center.z - lightDistance
     );
     
     // Ajustar los parámetros de las sombras según el tamaño del modelo
-    [directionalLight, directionalLight2, directionalLight3, directionalLight4].forEach(light => {
+    [directionalLight1, directionalLight2, directionalLight3, directionalLight4,
+     directionalLight5, directionalLight6, directionalLight7, directionalLight8].forEach(light => {
         light.shadow.camera.left = -maxDimension;
         light.shadow.camera.right = maxDimension;
         light.shadow.camera.top = maxDimension;

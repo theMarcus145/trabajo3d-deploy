@@ -26,15 +26,33 @@ function createDirectionalLight(x, y, z) {
     return light;
 }
 
-const directionalLight = createDirectionalLight(-15, 5, -15); 
-const directionalLight2 = createDirectionalLight(15, 5, -15);
-const directionalLight3 = createDirectionalLight(0, 0, 15);
-const directionalLight4 = createDirectionalLight(0, -10, 0);
+// Crear 8 luces direccionales en las esquinas de un cubo imaginario
+// Las coordenadas representan las 8 esquinas de un cubo (x, y, z) donde cada valor es 1 o -1
+// Esquina superior frontal izquierda
+const directionalLight1 = createDirectionalLight(-15, 15, 15);
+// Esquina superior frontal derecha
+const directionalLight2 = createDirectionalLight(15, 15, 15);
+// Esquina superior trasera izquierda
+const directionalLight3 = createDirectionalLight(-15, 15, -15);
+// Esquina superior trasera derecha
+const directionalLight4 = createDirectionalLight(15, 15, -15);
+// Esquina inferior frontal izquierda
+const directionalLight5 = createDirectionalLight(-15, -15, 15);
+// Esquina inferior frontal derecha
+const directionalLight6 = createDirectionalLight(15, -15, 15);
+// Esquina inferior trasera izquierda
+const directionalLight7 = createDirectionalLight(-15, -15, -15);
+// Esquina inferior trasera derecha
+const directionalLight8 = createDirectionalLight(15, -15, -15);
 
 export {
-    directionalLight,
+    directionalLight1,
     directionalLight2,
     directionalLight3,
     directionalLight4,
+    directionalLight5,
+    directionalLight6,
+    directionalLight7,
+    directionalLight8,
     targetOrigin,
 };
