@@ -115,7 +115,7 @@ function initializeGUI(renderContainer, callback, lights) {
     });
 
     // Añadir control para activar/desactivar sombras
-    directionalFolder.add(guiParams, 'castShadows').listen().name("Activar Sombras").onChange((value) => {
+    directionalFolder.add(guiParams, 'castShadows').listen().name("Sombras").onChange((value) => {
         directionalLight1.castShadow = value;
         directionalLight2.castShadow = value;
         directionalLight3.castShadow = value;
