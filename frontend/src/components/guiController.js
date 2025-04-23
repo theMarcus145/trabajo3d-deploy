@@ -113,6 +113,8 @@ function initializeGUI(renderContainer, callback, lights) {
         directionalLight8.intensity = value;
     });
 
+    // directionalFolder.add(guiParams, 'directionalLightShadows',  )
+
     const folders = [folderBackground, folderModel, directionalFolder, materialFolder];
 
     setupAccordion(folders);
