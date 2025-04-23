@@ -150,6 +150,27 @@ function handleMeshUpdate(type, data) {
                 });
             }
             break;
+        case 'castShadows':
+            const enableShadows = data.value;
+            directionalLight1.castShadow = enableShadows;
+            directionalLight2.castShadow = enableShadows;
+            directionalLight3.castShadow = enableShadows;
+            directionalLight4.castShadow = enableShadows;
+            directionalLight5.castShadow = enableShadows;
+            directionalLight6.castShadow = enableShadows;
+            directionalLight7.castShadow = enableShadows;
+            directionalLight8.castShadow = enableShadows;
+                
+            // Si hay un modelo cargado, actualiza todas sus mallas para recibir sombras
+            if (mesh) {
+                mesh.traverse((child) => {
+                    if (child.isMesh) {
+                        child.castShadow = enableShadows;
+                        child.receiveShadow = enableShadows;
+                    }
+                });
+            }
+            break;
     }
 }
 

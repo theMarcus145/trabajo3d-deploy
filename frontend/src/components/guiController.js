@@ -13,6 +13,7 @@ const guiParams = {
     removeTextures: false,  
     animation: false,
     directionalLightIntensity: 2,
+    castShadows: false,
 };
 
 const defaultSettings = structuredClone(guiParams);
@@ -113,7 +114,19 @@ function initializeGUI(renderContainer, callback, lights) {
         directionalLight8.intensity = value;
     });
 
-    // directionalFolder.add(guiParams, 'directionalLightShadows',  )
+    // Añadir control para activar/desactivar sombras
+    directionalFolder.add(guiParams, 'castShadows').listen().name("Activar Sombras").onChange((value) => {
+        directionalLight1.castShadow = value;
+        directionalLight2.castShadow = value;
+        directionalLight3.castShadow = value;
+        directionalLight4.castShadow = value;
+        directionalLight5.castShadow = value;
+        directionalLight6.castShadow = value;
+        directionalLight7.castShadow = value;
+        directionalLight8.castShadow = value;
+        
+        meshUpdateCallback('castShadows', { value });
+    });
 
     const folders = [folderBackground, folderModel, directionalFolder, materialFolder];
 
@@ -253,14 +266,25 @@ function resetSettings() {
     // Reiniciar el color de fondo
     meshUpdateCallback('backgroundColor', { value: defaultSettings.backgroundColor });
 
-    // Reinicar la intensidad de la luz
-    directionalLight.intensity = defaultSettings.directionalLightIntensity;
+    // Reiniciar la intensidad de la luz (corregido)
+    directionalLight1.intensity = defaultSettings.directionalLightIntensity;
     directionalLight2.intensity = defaultSettings.directionalLightIntensity;
     directionalLight3.intensity = defaultSettings.directionalLightIntensity;
     directionalLight4.intensity = defaultSettings.directionalLightIntensity;
     directionalLight5.intensity = defaultSettings.directionalLightIntensity;
     directionalLight6.intensity = defaultSettings.directionalLightIntensity;
     directionalLight7.intensity = defaultSettings.directionalLightIntensity;
+    directionalLight8.intensity = defaultSettings.directionalLightIntensity;
+    
+    // Reiniciar las sombras
+    directionalLight1.castShadow = defaultSettings.castShadows;
+    directionalLight2.castShadow = defaultSettings.castShadows;
+    directionalLight3.castShadow = defaultSettings.castShadows;
+    directionalLight4.castShadow = defaultSettings.castShadows;
+    directionalLight5.castShadow = defaultSettings.castShadows;
+    directionalLight6.castShadow = defaultSettings.castShadows;
+    directionalLight7.castShadow = defaultSettings.castShadows;
+    directionalLight8.castShadow = defaultSettings.castShadows;
 
     const settingsToReset = [
         'wireframe', 
@@ -269,7 +293,8 @@ function resetSettings() {
         'vertexNormals', 
         'useNormalMap', 
         'removeTextures',
-        'animation'
+        'animation',
+        'castShadows'
     ];
 
     for (const setting of settingsToReset) {
