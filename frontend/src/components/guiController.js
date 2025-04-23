@@ -39,7 +39,7 @@ function initializeGUI(renderContainer, callback, lights) {
 
     // Carpeta de fondo
     const folderBackground = gui.addFolder("Fondo");
-    folderBackground.addColor(guiParams, 'backgroundColor').name("Color").onChange((value) => {
+    folderBackground.addColor(guiParams, 'backgroundColor').listen().name("Color").onChange((value) => {
         meshUpdateCallback('backgroundColor', { value });
     });
 
