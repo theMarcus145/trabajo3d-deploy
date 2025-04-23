@@ -46,15 +46,15 @@ function initializeGUI(renderContainer, callback, lights) {
     // Carpeta de control del modelo
     const folderModel = gui.addFolder("Controles de Modelo");
 
-    folderModel.add(guiParams, 'wireframe').name('Wireframe').onChange((value) => {
+    folderModel.add(guiParams, 'wireframe').listen().name('Wireframe').onChange((value) => {
         meshUpdateCallback('wireframe', { value });
     });
     
-    folderModel.add(guiParams, 'modelOpacity').name('Opacidad').onChange((value) => {
+    folderModel.add(guiParams, 'modelOpacity').listen().name('Opacidad').onChange((value) => {
         meshUpdateCallback('modelOpacity', { value });
     });
     
-    matcapController = folderModel.add(guiParams, 'useMatcap').name('MatCap').onChange((value) => {
+    matcapController = folderModel.add(guiParams, 'useMatcap').listen().name('MatCap').onChange((value) => {
         if (value && guiParams.useNormalMap) {
             // Si se activa el matcap, desactivar el normalmap
             guiParams.useNormalMap = false;
@@ -64,7 +64,7 @@ function initializeGUI(renderContainer, callback, lights) {
         meshUpdateCallback('matcap', { enabled: value });
     });
 
-    normalMapController = folderModel.add(guiParams, 'useNormalMap').name('NormalMap').onChange((value) => {
+    normalMapController = folderModel.add(guiParams, 'useNormalMap').listen().name('NormalMap').onChange((value) => {
         if (value && guiParams.useMatcap) {
             // Si se activa el normalmap, desactivar el matcap
             guiParams.useMatcap = false;
@@ -74,29 +74,25 @@ function initializeGUI(renderContainer, callback, lights) {
         meshUpdateCallback('useNormalMap', { enabled: value });
     });
 
-    folderModel.add(guiParams, 'removeTextures').name('Sin Texturas').onChange((value) => {
+    folderModel.add(guiParams, 'removeTextures').listen().name('Sin Texturas').onChange((value) => {
         meshUpdateCallback('removeTextures', { value });
     });
 
     // Controlador de normales con exclusividad respecto a animación
-    normalsController = folderModel.add(guiParams, 'vertexNormals').name('Normales').onChange((value) => {
+    normalsController = folderModel.add(guiParams, 'vertexNormals').listen().name('Normales').onChange((value) => {
         if (value && guiParams.animation) {
             // Si se activan las normales y la animación está activa, se desactiva la animación
             guiParams.animation = false;
-            // Actualizar el controlador de animación para detenerla
-            animationController.updateDisplay();
             meshUpdateCallback('animation', false);
         }
         meshUpdateCallback('vertexNormals', { value });
     });
 
     // Controlador de animación con exclusividad respecto a normales
-    animationController = folderModel.add(guiParams, 'animation').name('Animación').onChange((value) => {
+    animationController = folderModel.add(guiParams, 'animation').listen().name('Animación').onChange((value) => {
         if (value && guiParams.vertexNormals) {
             // Lo mismo, si se activa la animación y las normales están activadas, se desactivan las normales
             guiParams.vertexNormals = false;
-            // Actualizar las normales para desactivarlas
-            normalsController.updateDisplay();
             meshUpdateCallback('vertexNormals', { value: false });
         }
         meshUpdateCallback('animation', value);
