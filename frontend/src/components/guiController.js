@@ -100,7 +100,7 @@ function initializeGUI(renderContainer, callback, lights) {
     // Carpeta de iluminación direccional
     const directionalFolder = gui.addFolder("Iluminación");
 
-    directionalFolder.add(guiParams, 'directionalLightIntensity', 0, 4, 0.1).name("Intensidad").onChange((value) => {
+    directionalFolder.add(guiParams, 'directionalLightIntensity', 0, 4, 0.1).listen().name("Intensidad").onChange((value) => {
         directionalLight.intensity = value;
         directionalLight2.intensity = value;
         directionalLight3.intensity = value;
@@ -109,7 +109,7 @@ function initializeGUI(renderContainer, callback, lights) {
 
     const folders = [folderBackground, folderModel, directionalFolder, materialFolder];
 
-    setupAccordion(gui, folders);
+    setupAccordion(folders);
 
     // Añadir la GUI en el contenedor del visor 3D
     const guiContainer = document.createElement('div');
@@ -123,7 +123,7 @@ function initializeGUI(renderContainer, callback, lights) {
 }
 
 // Función para el efecto acordeón (cuando se abre una carpeta, se cierran las otras)
-function setupAccordion(gui, folders) {
+function setupAccordion(folders) {
     // Para cada carpeta...
     folders.forEach(folder => {
       // Obtener el título de la carpeta
