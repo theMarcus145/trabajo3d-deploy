@@ -58,8 +58,6 @@ function initializeGUI(renderContainer, callback, lights) {
         if (value && guiParams.useNormalMap) {
             // Si se activa el matcap, desactivar el normalmap
             guiParams.useNormalMap = false;
-            // Actualizar la UI del controller del normalmap
-            normalMapController.updateDisplay();
         }
         meshUpdateCallback('matcap', { enabled: value });
     });
@@ -68,8 +66,6 @@ function initializeGUI(renderContainer, callback, lights) {
         if (value && guiParams.useMatcap) {
             // Si se activa el normalmap, desactivar el matcap
             guiParams.useMatcap = false;
-            // Actualizar la UI del controller del matcap
-            matcapController.updateDisplay();
         }
         meshUpdateCallback('useNormalMap', { enabled: value });
     });
