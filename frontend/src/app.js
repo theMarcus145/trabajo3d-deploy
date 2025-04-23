@@ -279,6 +279,8 @@ function loadModel(modelFolder) {
 
         // 4.6 - Agregar el modelo a la escena
         scene.add(mesh);
+
+        adjustCameraAndLights(mesh);
     }, 
     // Manejar el progreso de carga de cada archivo
     (xhr) => {
@@ -291,6 +293,83 @@ function loadModel(modelFolder) {
         console.error(`Error loading model from ${modelFolder}:`, error);
         loadingUI.hide();
     });
+}
+
+function adjustCameraAndLights(model) {
+    if (!model) return;
+
+    // Crear una bounding box para obtener el tamaño del modelo
+    const boundingBox = new THREE.Box3().setFromObject(model);
+    const size = new THREE.Vector3();
+    boundingBox.getSize(size);
+    const center = new THREE.Vector3();
+    boundingBox.getCenter(center);
+
+    // Calcular la dimensión máxima para determinar la escala general
+    const maxDimension = Math.max(size.x, size.y, size.z);
+    
+    // Ajustar la posición de la cámara basada en el tamaño del modelo
+    // Usamos un factor de 2 para asegurarnos que la cámara esté lo suficientemente lejos
+    const distance = maxDimension * 2;
+    camera.position.set(
+        center.x + distance,
+        center.y + distance * 0.5,
+        center.z + distance
+    );
+    
+    // Hacer que la cámara mire al centro del modelo
+    camera.lookAt(center);
+    
+    // Ajustar el near y far de la cámara para asegurar que el modelo sea visible
+    camera.near = distance * 0.01;
+    camera.far = distance * 100;
+    camera.updateProjectionMatrix();
+    
+    // Posicionar las luces alrededor del modelo
+    // Ajustamos el target para que apunte al centro del modelo
+    targetOrigin.position.copy(center);
+    
+    // Ajustar las posiciones de las luces direccionales
+    const lightDistance = distance * 1.5;
+    
+    directionalLight.position.set(
+        center.x - lightDistance,
+        center.y + lightDistance * 0.33,
+        center.z - lightDistance
+    );
+    
+    directionalLight2.position.set(
+        center.x + lightDistance,
+        center.y + lightDistance * 0.33,
+        center.z - lightDistance
+    );
+    
+    directionalLight3.position.set(
+        center.x,
+        center.y,
+        center.z + lightDistance
+    );
+    
+    directionalLight4.position.set(
+        center.x,
+        center.y - lightDistance * 0.67,
+        center.z
+    );
+    
+    // Ajustar los parámetros de las sombras según el tamaño del modelo
+    [directionalLight, directionalLight2, directionalLight3, directionalLight4].forEach(light => {
+        light.shadow.camera.left = -maxDimension;
+        light.shadow.camera.right = maxDimension;
+        light.shadow.camera.top = maxDimension;
+        light.shadow.camera.bottom = -maxDimension;
+        light.shadow.camera.near = 0.5;
+        light.shadow.camera.far = lightDistance * 4;
+        light.shadow.camera.updateProjectionMatrix();
+    });
+    
+    // Resetear los controles de órbita para apuntar al centro del objeto
+    controls.target.copy(center);
+    controls.update();
 }
 
 // Manejar el redimensionamiento
