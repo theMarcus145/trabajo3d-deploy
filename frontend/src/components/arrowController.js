@@ -73,7 +73,6 @@ export function initializeModelNavigation(loadModel) {
                 document.querySelectorAll('.model-button').forEach(btn => 
                     btn.classList.remove('active'));
                 button.classList.add('active');
-                clearScene();
                 loadModel(model.name);
             });
         });
@@ -107,7 +106,7 @@ export function initializeModelNavigation(loadModel) {
 
             buttons.forEach(btn => btn.classList.remove('active'));
             buttons[newIndex].classList.add('active');
-            clearScene();
+
             loadModel(buttons[newIndex].dataset.model);
         }
 
@@ -120,7 +119,6 @@ export function initializeModelNavigation(loadModel) {
         }
 
         if (initialModel) {
-            clearScene();
             loadModel(initialModel);
         }
     }
