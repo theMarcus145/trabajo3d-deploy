@@ -407,5 +407,5 @@ function animate() {
 }
 
 
-initializeModelNavigation(loadModel);
+initializeModelNavigation(loadModel, API_URL);
 animate();

@@ -1,12 +1,12 @@
 import * as THREE from '/node_modules/three/build/three.module.js';
 
-export function initializeModelNavigation(loadModel) {
+export function initializeModelNavigation(loadModel, url) {
     const modelListContainer = document.getElementById('model-list');
     const prevButton = document.getElementById('prev-model');
     const nextButton = document.getElementById('next-model');
 
     // URL base para las peticiones API
-    const API_URL = 'https://trabajo-3d-backend.onrender.com'
+    const API_URL = url;
     
     // Bandera para rastrear el estado de carga
     let isLoading = false;
