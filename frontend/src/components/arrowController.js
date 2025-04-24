@@ -8,20 +8,20 @@ export function initializeModelNavigation(loadModel) {
     // URL base para las peticiones API
     const API_URL = 'https://trabajo-3d-backend.onrender.com'
     
-    // Flag to track loading state
+    // Bandera para rastrear el estado de carga
     let isLoading = false;
-    // Reference to current loader for cancellation
+    // Referencia al cargador actual para cancelación
     let currentLoader = null;
 
-    // Modified loadModel function that checks loading state
+    // Función loadModel modificada que verifica el estado de carga
     function safeLoadModel(modelName) {
-        // If already loading, cancel the current load and clear scene
+        // Si ya se está cargando, cancelar la carga actual y limpiar la escena
         if (isLoading && currentLoader) {
             currentLoader.cancel();
-            clearScene(); // Make sure scene is cleared
+            clearScene(); // Asegurarse de que la escena se limpia
         }
         
-        // Set loading flag and call original loadModel with our controller
+        // Establecer la bandera de carga y llamar a loadModel original con nuestro controlador
         isLoading = true;
         currentLoader = {
             cancel: () => {
@@ -34,11 +34,11 @@ export function initializeModelNavigation(loadModel) {
             }
         };
         
-        // Call the original loadModel with our controller
+        // Llamar a la función loadModel original con nuestro controlador
         loadModel(modelName, currentLoader);
     }
 
-    // Fetch a los modelos disponibles y crear los botones
+    // Obtener los modelos disponibles y crear los botones
     async function fetchAndCreateModelButtons() {
         try {
             let models;
@@ -46,15 +46,15 @@ export function initializeModelNavigation(loadModel) {
                 const response = await fetch(`${API_URL}/models.json`);
                 
                 if (!response.ok) {
-                    console.warn('Failed to fetch models.json');
-                    return; // Salir si el fetch devuelve un error
+                    console.warn('Error al obtener models.json');
+                    return; // Salir si fetch devuelve un error
                 }
 
                 models = await response.json();
                 
-                // Asegurar que hay un array de modelos
+                // Asegurarse de que hay un array de modelos
                 if (!models.models || !Array.isArray(models.models)) {
-                    console.warn('Invalid models structure');
+                    console.warn('Estructura de modelos no válida');
                     return; // Salir si la estructura es incorrecta
                 }
                 models.models = models.models.map(model => ({
@@ -64,17 +64,17 @@ export function initializeModelNavigation(loadModel) {
                 
                 createModelButtons(models.models);
             } catch (error) {
-                console.error('Error fetching models:', error);
+                console.error('Error al obtener los modelos:', error);
             }
         } catch (error) {
-            console.error('Complete error in model navigation:', error);
+            console.error('Error completo en la navegación de modelos:', error);
         }
     }
 
     function createModelButtons(models) {
-        // Salir si no encuentra modelos o no encuentra la carpeta donde se almacenan
+        // Salir si no hay modelos o no se encuentra el contenedor de modelos
         if (!models || !models.length || !modelListContainer) {
-            console.error('No models available or model container not found');
+            console.error('No hay modelos disponibles o no se encontró el contenedor de modelos');
             return;
         }
 
@@ -83,7 +83,7 @@ export function initializeModelNavigation(loadModel) {
             const button = document.createElement('button');
             button.classList.add('model-button');
             if (index === 0) button.classList.add('active');
-            //Darle nombre al botón
+            // Darle nombre al botón
             button.dataset.model = model.name;
             
             const span = document.createElement('span');
@@ -91,7 +91,7 @@ export function initializeModelNavigation(loadModel) {
             
             const img = document.createElement('img');
             img.src = model.imagePath;
-            img.alt = `${model.name} Model`;
+            img.alt = `Modelo ${model.name}`;
             img.classList.add('button-image');
             
             button.appendChild(span);
@@ -100,7 +100,7 @@ export function initializeModelNavigation(loadModel) {
             modelListContainer.appendChild(button);
             
             button.addEventListener('click', () => {
-                // Don't allow clicking if already loading
+                // No permitir hacer clic si ya se está cargando
                 if (isLoading) return;
                 
                 document.querySelectorAll('.model-button').forEach(btn => 
@@ -110,7 +110,7 @@ export function initializeModelNavigation(loadModel) {
             });
         });
 
-        // Setup de la navegación y se carga el primer modelo de todos
+        // Configuración de la navegación y carga del primer modelo
         setupModelNavigation(models[0].name);
     }
 
@@ -118,18 +118,18 @@ export function initializeModelNavigation(loadModel) {
         const buttons = Array.from(modelListContainer.querySelectorAll('.model-button'));
         
         if (!buttons.length) {
-            console.warn('No model buttons found');
+            console.warn('No se encontraron botones de modelos');
             return;
         }
 
         function navigateModels(direction) {
-            // Don't allow navigation if already loading
+            // No permitir la navegación si ya se está cargando
             if (isLoading) return;
             
             const currentIndex = buttons.findIndex(button => button.classList.contains('active'));
             
             if (currentIndex === -1) {
-                console.warn('No active model button found');
+                console.warn('No se encontró el botón de modelo activo');
                 return;
             }
             
@@ -148,7 +148,7 @@ export function initializeModelNavigation(loadModel) {
 
         if (prevButton) {
             prevButton.addEventListener('click', () => {
-                // Check if we're already loading
+                // Verificar si ya se está cargando
                 if (isLoading) return;
                 navigateModels('prev');
             });
@@ -156,7 +156,7 @@ export function initializeModelNavigation(loadModel) {
         
         if (nextButton) {
             nextButton.addEventListener('click', () => {
-                // Check if we're already loading
+                // Verificar si ya se está cargando
                 if (isLoading) return;
                 navigateModels('next');
             });
