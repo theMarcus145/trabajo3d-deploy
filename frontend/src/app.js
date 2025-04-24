@@ -333,37 +333,36 @@ function loadModel(modelFolder) {
 function adjustCameraAndLights(model) {
     if (!model) return;
 
-    // Create a bounding box to get the model size
+    // Crear una bounding box del objeto
     const boundingBox = new THREE.Box3().setFromObject(model);
     
-    // Get the size and center of the model
+    // Obtener el tamaño y el centro del modelo
     const size = new THREE.Vector3();
     boundingBox.getSize(size);
     
     const center = new THREE.Vector3();
     boundingBox.getCenter(center);
     
-    // Calculate the maximum dimension for sizing
+    // Calcular la dimensión máxima para luego posicionar las luces
     const maxDimension = Math.max(size.x, size.y, size.z);
     
-    // Calculate camera position based on model size
+    // Calcular la posición de la cámara (fórmula sacada de https://wejn.org/2020/12/cracking-the-threejs-object-fitting-nut/)
     const fov = camera.fov * (Math.PI/180);
     const fovh = 2 * Math.atan(Math.tan(fov/2) * camera.aspect);
     let dx = size.z / 2 + Math.abs(size.x / 2 / Math.tan(fovh / 2));
     let dy = size.z / 2 + Math.abs(size.y / 2 / Math.tan(fov / 2));
     let cameraZ = Math.max(dx, dy) * 1.2; // Add a small margin
     
-    // Set camera position
+    // Posicionar la cámara
     camera.position.set(0, size.y/4, cameraZ);
     
-    // Make the camera look at the center of the model
+    // Hacer que la cámara mire al centro
     camera.lookAt(center);
     
-    // Calculate camera to far edge distance
     const minZ = boundingBox.min.z;
     const cameraToFarEdge = (minZ < 0) ? -minZ + cameraZ : cameraZ - minZ;
     
-    // Set camera near and far planes
+    // Ajustar el cono de visión
     camera.near = cameraToFarEdge * 0.01;
     camera.far = cameraToFarEdge * 3;
     camera.updateProjectionMatrix();
