@@ -19,10 +19,6 @@ const guiParams = {
 const defaultSettings = structuredClone(guiParams);
 
 // Variables para almacenar referencias
-let animationController = null;
-let normalsController = null;
-let matcapController = null;
-let normalMapController = null;
 let meshUpdateCallback = null;
 let colorControllers = {};
 let materialFolder = null;
