@@ -374,71 +374,62 @@ function adjustCameraAndLights(model) {
         controls.update();
     }
     
-    // Position lights around the model
-    // Set target to the center of the model
+    // Posicionar las luces alrededor del modelo
     targetOrigin.position.copy(center);
     
-    // Calculate light distance based on model size
+    // Calcular la distancia de la luz
     const lightDistance = maxDimension * 1.5;
     
-    // Position the lights in the 8 corners of an imaginary cube
-    // Upper front left corner
+    // Posicionar las luces en un cubo imaginario alrededor del objeto
     directionalLight1.position.set(
         center.x - lightDistance,
         center.y + lightDistance,
         center.z + lightDistance
     );
     
-    // Upper front right corner
     directionalLight2.position.set(
         center.x + lightDistance,
         center.y + lightDistance,
         center.z + lightDistance
     );
-    
-    // Upper back left corner
+
     directionalLight3.position.set(
         center.x - lightDistance,
         center.y + lightDistance,
         center.z - lightDistance
     );
     
-    // Upper back right corner
     directionalLight4.position.set(
         center.x + lightDistance,
         center.y + lightDistance,
         center.z - lightDistance
     );
     
-    // Lower front left corner
     directionalLight5.position.set(
         center.x - lightDistance,
         center.y - lightDistance,
         center.z + lightDistance
     );
-    
-    // Lower front right corner
+
     directionalLight6.position.set(
         center.x + lightDistance,
         center.y - lightDistance,
         center.z + lightDistance
     );
     
-    // Lower back left corner
     directionalLight7.position.set(
         center.x - lightDistance,
         center.y - lightDistance,
         center.z - lightDistance
     );
     
-    // Lower back right corner
     directionalLight8.position.set(
         center.x + lightDistance,
         center.y - lightDistance,
         center.z - lightDistance
     );
     
-    // Adjust shadow parameters based on model size
+    // Ajustar las sombras dependiendo del tamaño del objeto
     [directionalLight1, directionalLight2, directionalLight3, directionalLight4,
      directionalLight5, directionalLight6, directionalLight7, directionalLight8].forEach(light => {
         light.shadow.camera.left = -maxDimension;
