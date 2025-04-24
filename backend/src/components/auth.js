@@ -1,13 +1,13 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'desarrollo_secreto_inseguro';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Contraseña hasheada con bcrypt
 const USERS = [
     {
         username: 'admin',
-        passwordHash: '$2a$10$ZbuKJxKvp/u62wnAdjEwlukJ51HIXARTaX392coc18Kez9lHeolqu'
+        passwordHash: '$2a$10$kHM6nNrIpnHOQyYpel0hBO521.ZjRCDo0cNg3URHILB3JLkPEVjO2'
     }
 ];
 
