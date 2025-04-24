@@ -198,20 +198,7 @@ function loadModel(modelFolder) {
     loadingUI.show();
     
     // 2- Limpiar la escena por completo
-    scene.children = scene.children.filter(child => 
-        child === directionalLight1 || 
-        child === directionalLight2 ||
-        child === directionalLight3 ||
-        child === directionalLight4 ||
-        child === directionalLight5 || 
-        child === directionalLight6 ||
-        child === directionalLight7 ||
-        child === directionalLight8 ||
-        child === camera ||
-        child === vertexNormalsGroup ||
-        child === targetOrigin ||
-        child.isMesh && child.material instanceof THREE.ShadowMaterial
-    );
+    clearScene();
     
     // 2.1 - Limpiar materiales originales guardados de otros modelos
     originalMaterials.clear();
@@ -330,6 +317,22 @@ function loadModel(modelFolder) {
     });
 }
 
+function clearScene(){
+    scene.children = scene.children.filter(child => 
+        child === directionalLight1 || 
+        child === directionalLight2 ||
+        child === directionalLight3 ||
+        child === directionalLight4 ||
+        child === directionalLight5 || 
+        child === directionalLight6 ||
+        child === directionalLight7 ||
+        child === directionalLight8 ||
+        child === camera ||
+        child === vertexNormalsGroup ||
+        child === targetOrigin ||
+        child.isMesh && child.material instanceof THREE.ShadowMaterial
+    );
+}
 
 function adjustCameraAndLights(model) {
     if (!model) return;
