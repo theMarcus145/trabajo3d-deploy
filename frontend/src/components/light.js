@@ -5,9 +5,11 @@ const targetOrigin = new THREE.Object3D();
 targetOrigin.position.set(0, 0, 0);
 
 // Función para crear cada luz direccional
-function createDirectionalLight() {
+function createDirectionalLight(x, y, z) {
     const light = new THREE.DirectionalLight(0xffffff, 1.6);
+    light.position.set(x, y, z);
     light.castShadow = false;
+
     // Sombras
     light.shadow.mapSize.width = 1024;
     light.shadow.mapSize.height = 1024;
@@ -44,13 +46,17 @@ const directionalLight7 = createDirectionalLight(-15, -15, -15);
 const directionalLight8 = createDirectionalLight(15, -15, -15);
 
 function adjustLights(model) {
+    // Crear una bounding box del objeto
     const boundingBox = new THREE.Box3().setFromObject(model);
 
     const center = new THREE.Vector3();
     boundingBox.getCenter(center);
 
-    if (!center || !maxDimension) return;
-    
+    const size = new THREE.Vector3();
+    boundingBox.getCenter(size);
+
+    const maxDimension = Math.max(size.x, size.y, size.z)
+
     // Posicionar el target al centro del modelo
     targetOrigin.position.copy(center);
     
