@@ -334,10 +334,9 @@ function loadModel(modelFolder) {
 function adjustCameraAndLights(model) {
     if (!model) return;
     
-    const cameraData = adjustCamera(model, controls);
+    adjustCamera(model, controls);
     
-    // Usar los datos de la cámara para ajustar las luces
-    adjustLights(cameraData.center, cameraData.maxDimension);
+    adjustLights(model);
 }
 
 // Manejar el redimensionamiento

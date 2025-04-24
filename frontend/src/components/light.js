@@ -43,7 +43,12 @@ const directionalLight7 = createDirectionalLight(-15, -15, -15);
 // Esquina inferior trasera derecha
 const directionalLight8 = createDirectionalLight(15, -15, -15);
 
-function adjustLights(center, maxDimension) {
+function adjustLights(model) {
+    const boundingBox = new THREE.Box3().setFromObject(model);
+
+    const center = new THREE.Vector3();
+    boundingBox.getCenter(center);
+
     if (!center || !maxDimension) return;
     
     // Posicionar el target al centro del modelo
