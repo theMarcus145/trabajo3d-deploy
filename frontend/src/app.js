@@ -333,117 +333,113 @@ function loadModel(modelFolder) {
 function adjustCameraAndLights(model) {
     if (!model) return;
 
-    // Crear una bounding box para obtener el tamaño del modelo
+    // Create a bounding box to get the model size
     const boundingBox = new THREE.Box3().setFromObject(model);
-    boundingBox.setFromObject( model );
-
-    var middle = new THREE.Vector3();
+    
+    // Get the size and center of the model
     const size = new THREE.Vector3();
-
     boundingBox.getSize(size);
-
+    
     const center = new THREE.Vector3();
     boundingBox.getCenter(center);
-
     
-    // 
-
-    const fov = camera.fov * ( Math.PI/180 );
-    const fovh = 2*Math.atan(Math.tan(fov/2) * camera.aspect);
-    let dx = size.z / 2 + Math.abs( size.x / 2 / Math.tan( fovh / 2 ) );
-    let dy = size.z / 2 + Math.abs( size.y / 2 / Math.tan( fov / 2 ) );
-    let cameraZ = Math.max(dx, dy); 
+    // Calculate the maximum dimension for sizing
+    const maxDimension = Math.max(size.x, size.y, size.z);
     
-    camera.position.set( 0, 0, cameraZ );
-
-    // Hacer que la cámara mire al centro del modelo
+    // Calculate camera position based on model size
+    const fov = camera.fov * (Math.PI/180);
+    const fovh = 2 * Math.atan(Math.tan(fov/2) * camera.aspect);
+    let dx = size.z / 2 + Math.abs(size.x / 2 / Math.tan(fovh / 2));
+    let dy = size.z / 2 + Math.abs(size.y / 2 / Math.tan(fov / 2));
+    let cameraZ = Math.max(dx, dy) * 1.2; // Add a small margin
+    
+    // Set camera position
+    camera.position.set(0, size.y/4, cameraZ);
+    
+    // Make the camera look at the center of the model
     camera.lookAt(center);
-
+    
+    // Calculate camera to far edge distance
     const minZ = boundingBox.min.z;
-    const cameraToFarEdge = ( minZ < 0 ) ? -minZ + cameraZ : cameraZ - minZ;
-
+    const cameraToFarEdge = (minZ < 0) ? -minZ + cameraZ : cameraZ - minZ;
+    
+    // Set camera near and far planes
+    camera.near = cameraToFarEdge * 0.01;
     camera.far = cameraToFarEdge * 3;
     camera.updateProjectionMatrix();
-
-    if ( orbitControls !== undefined ) {
-        // set camera to rotate around the center
-        orbitControls.target = new THREE.Vector3(0, 0, 0);
-
-        // prevent camera from zooming out far enough to create far plane cutoff
-        orbitControls.maxDistance = cameraToFarEdge * 2;
+    
+    // Update orbit controls to target the center of the model
+    if (controls !== undefined) {
+        controls.target.copy(center);
+        controls.maxDistance = cameraToFarEdge * 2;
+        controls.update();
     }
-
     
-    // Ajustar el near y far de la cámara para asegurar que el modelo sea visible
-    camera.near = distance * 0.01;
-    camera.far = distance * 100;
-    camera.updateProjectionMatrix();
-    
-    // Posicionar las luces alrededor del modelo
-    // Ajustamos el target para que apunte al centro del modelo
+    // Position lights around the model
+    // Set target to the center of the model
     targetOrigin.position.copy(center);
     
-    // Ajustar las posiciones de las luces direccionales
-    const lightDistance = distance * 1.5;
+    // Calculate light distance based on model size
+    const lightDistance = maxDimension * 1.5;
     
-    // Posicionar las luces en las 8 esquinas de un cubo imaginario
-    // Esquina superior frontal izquierda
+    // Position the lights in the 8 corners of an imaginary cube
+    // Upper front left corner
     directionalLight1.position.set(
         center.x - lightDistance,
         center.y + lightDistance,
         center.z + lightDistance
     );
     
-    // Esquina superior frontal derecha
+    // Upper front right corner
     directionalLight2.position.set(
         center.x + lightDistance,
         center.y + lightDistance,
         center.z + lightDistance
     );
     
-    // Esquina superior trasera izquierda
+    // Upper back left corner
     directionalLight3.position.set(
         center.x - lightDistance,
         center.y + lightDistance,
         center.z - lightDistance
     );
     
-    // Esquina superior trasera derecha
+    // Upper back right corner
     directionalLight4.position.set(
         center.x + lightDistance,
         center.y + lightDistance,
         center.z - lightDistance
     );
     
-    // Esquina inferior frontal izquierda
+    // Lower front left corner
     directionalLight5.position.set(
         center.x - lightDistance,
         center.y - lightDistance,
         center.z + lightDistance
     );
     
-    // Esquina inferior frontal derecha
+    // Lower front right corner
     directionalLight6.position.set(
         center.x + lightDistance,
         center.y - lightDistance,
         center.z + lightDistance
     );
     
-    // Esquina inferior trasera izquierda
+    // Lower back left corner
     directionalLight7.position.set(
         center.x - lightDistance,
         center.y - lightDistance,
         center.z - lightDistance
     );
     
-    // Esquina inferior trasera derecha
+    // Lower back right corner
     directionalLight8.position.set(
         center.x + lightDistance,
         center.y - lightDistance,
         center.z - lightDistance
     );
     
-    // Ajustar los parámetros de las sombras según el tamaño del modelo
+    // Adjust shadow parameters based on model size
     [directionalLight1, directionalLight2, directionalLight3, directionalLight4,
      directionalLight5, directionalLight6, directionalLight7, directionalLight8].forEach(light => {
         light.shadow.camera.left = -maxDimension;
@@ -454,12 +450,7 @@ function adjustCameraAndLights(model) {
         light.shadow.camera.far = lightDistance * 4;
         light.shadow.camera.updateProjectionMatrix();
     });
-    
-    // Resetear los controles de órbita para apuntar al centro del objeto
-    controls.target.copy(center);
-    controls.update();
 }
-
 // Manejar el redimensionamiento
 function onWindowResize() {
     camera.aspect = renderContainer.clientWidth / renderContainer.clientHeight;
