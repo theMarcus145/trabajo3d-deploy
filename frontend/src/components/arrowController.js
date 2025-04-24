@@ -7,6 +7,36 @@ export function initializeModelNavigation(loadModel) {
 
     // URL base para las peticiones API
     const API_URL = 'https://trabajo-3d-backend.onrender.com'
+    
+    // Flag to track loading state
+    let isLoading = false;
+    // Reference to current loader for cancellation
+    let currentLoader = null;
+
+    // Modified loadModel function that checks loading state
+    function safeLoadModel(modelName) {
+        // If already loading, cancel the current load and clear scene
+        if (isLoading && currentLoader) {
+            currentLoader.cancel();
+            clearScene(); // Make sure scene is cleared
+        }
+        
+        // Set loading flag and call original loadModel with our controller
+        isLoading = true;
+        currentLoader = {
+            cancel: () => {
+                isLoading = false;
+                currentLoader = null;
+            },
+            complete: () => {
+                isLoading = false;
+                currentLoader = null;
+            }
+        };
+        
+        // Call the original loadModel with our controller
+        loadModel(modelName, currentLoader);
+    }
 
     // Fetch a los modelos disponibles y crear los botones
     async function fetchAndCreateModelButtons() {
@@ -70,10 +100,13 @@ export function initializeModelNavigation(loadModel) {
             modelListContainer.appendChild(button);
             
             button.addEventListener('click', () => {
+                // Don't allow clicking if already loading
+                if (isLoading) return;
+                
                 document.querySelectorAll('.model-button').forEach(btn => 
                     btn.classList.remove('active'));
                 button.classList.add('active');
-                loadModel(model.name);
+                safeLoadModel(model.name);
             });
         });
 
@@ -90,6 +123,9 @@ export function initializeModelNavigation(loadModel) {
         }
 
         function navigateModels(direction) {
+            // Don't allow navigation if already loading
+            if (isLoading) return;
+            
             const currentIndex = buttons.findIndex(button => button.classList.contains('active'));
             
             if (currentIndex === -1) {
@@ -107,20 +143,33 @@ export function initializeModelNavigation(loadModel) {
             buttons.forEach(btn => btn.classList.remove('active'));
             buttons[newIndex].classList.add('active');
 
-            loadModel(buttons[newIndex].dataset.model);
+            safeLoadModel(buttons[newIndex].dataset.model);
         }
 
         if (prevButton) {
-            prevButton.addEventListener('click', () => navigateModels('prev'));
+            prevButton.addEventListener('click', () => {
+                // Check if we're already loading
+                if (isLoading) return;
+                navigateModels('prev');
+            });
         }
         
         if (nextButton) {
-            nextButton.addEventListener('click', () => navigateModels('next'));
+            nextButton.addEventListener('click', () => {
+                // Check if we're already loading
+                if (isLoading) return;
+                navigateModels('next');
+            });
         }
 
         if (initialModel) {
-            loadModel(initialModel);
+            safeLoadModel(initialModel);
         }
+    }
+
+    function clearScene() {
+        const clearEvent = new CustomEvent('clearScene');
+        document.dispatchEvent(clearEvent);
     }
 
     fetchAndCreateModelButtons();

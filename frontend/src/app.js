@@ -67,6 +67,8 @@ scene.add(directionalLight8);
 let mesh = null; // Variable global para almacenar el modelo cargado
 let originalMaterials = new Map(); // Guardar materiales originales
 let originalTextures = new Map(); // Guardar texturas originales
+let isModelLoading = false; // Variable para saber si se está cargando un modelo 
+let currentLoadingManager = null;
 
 // Definir el matcap
 let matcapTexture = null;
@@ -192,7 +194,7 @@ let hasAnimation = false;
 // Este array almacena todas las acciones de las animaciones del modelo actualmente cargado
 let animationActions = []; 
 
-function loadModel(modelFolder) {
+function loadModel(modelFolder, loaderController = null) {
     // 1- Mostrar pantalla de carga
     const loadingUI = createLoadingScreen();
     loadingUI.show();
@@ -227,6 +229,10 @@ function loadModel(modelFolder) {
     loadingManager.onLoad = () => {
         setTimeout(() => {
             loadingUI.hide();
+            // Mark loading as complete
+            if (loaderController) {
+                loaderController.complete();
+            }
         }, 500); // Pequeño delay
     };
     
@@ -234,11 +240,29 @@ function loadModel(modelFolder) {
     loadingManager.onError = (url) => {
         console.error(`Error loading: ${url}`);
         loadingUI.hide();
+        if (loaderController) {
+            loaderController.complete();
+        }
     };
+
+    // Flag para comprobar si se ha cancelado la carga
+    let isCancelled = false;
+    if (loaderController) {
+        // Override the cancel method to set our flag
+        const originalCancel = loaderController.cancel;
+        loaderController.cancel = () => {
+            isCancelled = true;
+            loadingUI.hide();
+            originalCancel();
+        };
+    }
 
     // 4 - Contactar con el backend para obtener los modelos
     const loader = new GLTFLoader(loadingManager).setPath(`${API_URL}/models/${modelFolder}/`);
     loader.load('scene.glb', (gltf) => {
+        // Ver si la carga se ha cancelado
+        if (isCancelled) return;
+        
         mesh = gltf.scene;  
 
         
@@ -314,8 +338,16 @@ function loadModel(modelFolder) {
     (error) => {
         console.error(`Error loading model from ${modelFolder}:`, error);
         loadingUI.hide();
+        if (loaderController) {
+            loaderController.complete();
+        }
     });
 }
+
+// Event listener para limpiar la escena
+document.addEventListener('clearScene', function() {
+    clearScene();
+});
 
 function clearScene(){
     scene.children = scene.children.filter(child => 
