@@ -335,25 +335,44 @@ function adjustCameraAndLights(model) {
 
     // Crear una bounding box para obtener el tamaño del modelo
     const boundingBox = new THREE.Box3().setFromObject(model);
+    boundingBox.setFromObject( model );
+
+    var middle = new THREE.Vector3();
     const size = new THREE.Vector3();
+
     boundingBox.getSize(size);
+
     const center = new THREE.Vector3();
     boundingBox.getCenter(center);
 
-    // Calcular la dimensión máxima para determinar la escala general
-    const maxDimension = Math.max(size.x, size.y, size.z);
     
-    // Ajustar la posición de la cámara basada en el tamaño del modelo
-    // Usamos un factor de 2 para asegurarnos que la cámara esté lo suficientemente lejos
-    const distance = maxDimension * 2;
-    camera.position.set(
-        center.x + distance,
-        center.y + distance * 0.5,
-        center.z + distance
-    );
+    // 
+
+    const fov = camera.fov * ( Math.PI/180 );
+    const fovh = 2*Math.atan(Math.tan(fov/2) * camera.aspect);
+    let dx = size.z / 2 + Math.abs( size.x / 2 / Math.tan( fovh / 2 ) );
+    let dy = size.z / 2 + Math.abs( size.y / 2 / Math.tan( fov / 2 ) );
+    let cameraZ = Math.max(dx, dy); 
     
+    camera.position.set( 0, 0, cameraZ );
+
     // Hacer que la cámara mire al centro del modelo
     camera.lookAt(center);
+
+    const minZ = boundingBox.min.z;
+    const cameraToFarEdge = ( minZ < 0 ) ? -minZ + cameraZ : cameraZ - minZ;
+
+    camera.far = cameraToFarEdge * 3;
+    camera.updateProjectionMatrix();
+
+    if ( orbitControls !== undefined ) {
+        // set camera to rotate around the center
+        orbitControls.target = new THREE.Vector3(0, 0, 0);
+
+        // prevent camera from zooming out far enough to create far plane cutoff
+        orbitControls.maxDistance = cameraToFarEdge * 2;
+    }
+
     
     // Ajustar el near y far de la cámara para asegurar que el modelo sea visible
     camera.near = distance * 0.01;
