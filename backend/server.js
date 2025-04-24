@@ -6,19 +6,15 @@ import { fileURLToPath } from 'url';
 import { upload, updateModelsJson } from './src/components/uploadController.js';
 import { verifyCredentials, generateToken, verifyToken } from './src/components/auth.js';
 
-
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const allowedOrigins = process.env.ALLOWED_ORIGIN
-
 // Middleware con opciones de CORS mejoradas
 app.use(cors({
-    origin: allowedOrigins,
+    origin: ['https://trabajo-3d-backend.onrender.com', 'https://3dsoulschoolvisor.netlify.app' ],
     methods: ['GET', 'POST', 'OPTIONS, DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
