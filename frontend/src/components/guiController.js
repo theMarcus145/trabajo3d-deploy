@@ -13,7 +13,7 @@ const guiParams = {
     removeTextures: false,  
     animation: false,
     directionalLightIntensity: 1.6,
-    castShadows: false,
+    castShadows: true,
 };
 
 const defaultSettings = structuredClone(guiParams);
