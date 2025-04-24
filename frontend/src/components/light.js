@@ -5,7 +5,7 @@ const targetOrigin = new THREE.Object3D();
 targetOrigin.position.set(0, 0, 0);
 
 // Función para crear cada luz direccional
-function createDirectionalLight(x, y, z) {
+function createDirectionalLight() {
     const light = new THREE.DirectionalLight(0xffffff, 1.6);
     light.position.set(x, y, z);
     light.castShadow = false;
@@ -29,21 +29,21 @@ function createDirectionalLight(x, y, z) {
 // Crear 8 luces direccionales en las esquinas de un cubo imaginario
 // Las coordenadas representan las 8 esquinas de un cubo
 // Esquina superior frontal izquierda
-const directionalLight1 = createDirectionalLight(-15, 15, 15);
+const directionalLight1 = createDirectionalLight();
 // Esquina superior frontal derecha
-const directionalLight2 = createDirectionalLight(15, 15, 15);
+const directionalLight2 = createDirectionalLight();
 // Esquina superior trasera izquierda
-const directionalLight3 = createDirectionalLight(-15, 15, -15);
+const directionalLight3 = createDirectionalLight();
 // Esquina superior trasera derecha
-const directionalLight4 = createDirectionalLight(15, 15, -15);
+const directionalLight4 = createDirectionalLight();
 // Esquina inferior frontal izquierda
-const directionalLight5 = createDirectionalLight(-15, -15, 15);
+const directionalLight5 = createDirectionalLight();
 // Esquina inferior frontal derecha
-const directionalLight6 = createDirectionalLight(15, -15, 15);
+const directionalLight6 = createDirectionalLight();
 // Esquina inferior trasera izquierda
-const directionalLight7 = createDirectionalLight(-15, -15, -15);
+const directionalLight7 = createDirectionalLight();
 // Esquina inferior trasera derecha
-const directionalLight8 = createDirectionalLight(15, -15, -15);
+const directionalLight8 = createDirectionalLight();
 
 function adjustLights(model) {
     // Crear una bounding box del objeto
