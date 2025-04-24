@@ -2,10 +2,10 @@ import * as THREE from '/node_modules/three/build/three.module.js';
 import { OrbitControls } from '/node_modules/three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from '/node_modules/three/examples/jsm/loaders/GLTFLoader.js';
 import { directionalLight1, directionalLight2, directionalLight3, directionalLight4, 
-         directionalLight5, directionalLight6, directionalLight7, directionalLight8, 
-         targetOrigin} from './components/light.js';
+    directionalLight5, directionalLight6, directionalLight7, directionalLight8, 
+    targetOrigin, adjustLights } from './components/light.js';
 import { initializeModelNavigation } from './components/arrowController.js';
-import { camera } from './components/camera.js';
+import { camera, adjustCamera } from './components/camera.js';
 import { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers, resetSettings } from './components/guiController.js';
 import { createLoadingScreen } from './components/loadingScreen.js';
 import { cleanupVertexNormals, updateModelAppearance, initModelController } from './components/modelController.js';
@@ -330,117 +330,16 @@ function loadModel(modelFolder) {
     });
 }
 
+
 function adjustCameraAndLights(model) {
     if (!model) return;
-
-    // Crear una bounding box del objeto
-    const boundingBox = new THREE.Box3().setFromObject(model);
     
-    // Obtener el tamaño y el centro del modelo
-    const size = new THREE.Vector3();
-    boundingBox.getSize(size);
+    const cameraData = adjustCamera(model, controls);
     
-    const center = new THREE.Vector3();
-    boundingBox.getCenter(center);
-    
-    // Calcular la dimensión máxima para luego posicionar las luces
-    const maxDimension = Math.max(size.x, size.y, size.z);
-    
-    // Calcular la posición de la cámara (fórmula sacada de https://wejn.org/2020/12/cracking-the-threejs-object-fitting-nut/)
-    const fov = camera.fov * (Math.PI/180);
-    const fovh = 2 * Math.atan(Math.tan(fov/2) * camera.aspect);
-    let dx = size.z / 2 + Math.abs(size.x / 2 / Math.tan(fovh / 2));
-    let dy = size.z / 2 + Math.abs(size.y / 2 / Math.tan(fov / 2));
-    let cameraZ = Math.max(dx, dy) * 1.2; // Add a small margin
-    
-    // Posicionar la cámara
-    camera.position.set(0, size.y/4, cameraZ);
-    
-    // Hacer que la cámara mire al centro
-    camera.lookAt(center);
-    
-    const minZ = boundingBox.min.z;
-    const cameraToFarEdge = (minZ < 0) ? -minZ + cameraZ : cameraZ - minZ;
-    
-    // Ajustar el cono de visión
-    camera.near = cameraToFarEdge * 0.01;
-    camera.far = cameraToFarEdge * 3;
-    camera.updateProjectionMatrix();
-    
-    // Update orbit controls to target the center of the model
-    if (controls !== undefined) {
-        controls.target.copy(center);
-        controls.maxDistance = cameraToFarEdge * 2;
-        controls.update();
-    }
-    
-    // Posicionar las luces alrededor del modelo
-    targetOrigin.position.copy(center);
-    
-    // Calcular la distancia de la luz
-    const lightDistance = maxDimension * 1.5;
-    
-    // Posicionar las luces en un cubo imaginario alrededor del objeto
-    directionalLight1.position.set(
-        center.x - lightDistance,
-        center.y + lightDistance,
-        center.z + lightDistance
-    );
-    
-    directionalLight2.position.set(
-        center.x + lightDistance,
-        center.y + lightDistance,
-        center.z + lightDistance
-    );
-
-    directionalLight3.position.set(
-        center.x - lightDistance,
-        center.y + lightDistance,
-        center.z - lightDistance
-    );
-    
-    directionalLight4.position.set(
-        center.x + lightDistance,
-        center.y + lightDistance,
-        center.z - lightDistance
-    );
-    
-    directionalLight5.position.set(
-        center.x - lightDistance,
-        center.y - lightDistance,
-        center.z + lightDistance
-    );
-
-    directionalLight6.position.set(
-        center.x + lightDistance,
-        center.y - lightDistance,
-        center.z + lightDistance
-    );
-    
-    directionalLight7.position.set(
-        center.x - lightDistance,
-        center.y - lightDistance,
-        center.z - lightDistance
-    );
-    
-    directionalLight8.position.set(
-        center.x + lightDistance,
-        center.y - lightDistance,
-        center.z - lightDistance
-    );
-    
-    // Ajustar las sombras dependiendo del tamaño del objeto
-    [directionalLight1, directionalLight2, directionalLight3, directionalLight4,
-     directionalLight5, directionalLight6, directionalLight7, directionalLight8].forEach(light => {
-        light.shadow.camera.left = -maxDimension;
-        light.shadow.camera.right = maxDimension;
-        light.shadow.camera.top = maxDimension;
-        light.shadow.camera.bottom = -maxDimension;
-        light.shadow.camera.near = 0.5;
-        light.shadow.camera.far = lightDistance * 4;
-        light.shadow.camera.updateProjectionMatrix();
-    });
+    // Usar los datos de la cámara para ajustar las luces
+    adjustLights(cameraData.center, cameraData.maxDimension);
 }
+
 // Manejar el redimensionamiento
 function onWindowResize() {
     camera.aspect = renderContainer.clientWidth / renderContainer.clientHeight;
