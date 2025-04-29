@@ -8,13 +8,14 @@ import { verifyCredentials, generateToken, verifyToken } from './src/components/
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://3dsoulschoolvisor.netlify.app';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Middleware con opciones de CORS mejoradas
 app.use(cors({
-    origin: ['https://trabajo-3d-backend.onrender.com', 'https://3dsoulschoolvisor.netlify.app' ],
+    origin: ALLOWED_ORIGIN,
     methods: ['GET', 'POST', 'OPTIONS, DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
