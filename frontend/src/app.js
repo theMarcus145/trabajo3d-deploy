@@ -6,7 +6,7 @@ import { directionalLight1, directionalLight2, directionalLight3, directionalLig
     targetOrigin, adjustLights } from './components/light.js';
 import { initializeModelNavigation } from './components/arrowController.js';
 import { camera, adjustCamera } from './components/camera.js';
-import { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers, resetSettings } from './components/guiController.js';
+import { initializeGUI, guiParams, updateMaterialControllers, resetSettings } from './components/guiController.js';
 import { createLoadingScreen } from './components/loadingScreen.js';
 import { cleanupVertexNormals, updateModelAppearance, initModelController } from './components/modelController.js';
 
@@ -128,7 +128,6 @@ function handleMeshUpdate(type, data) {
             if (data.value && enableAnimation) {
                 enableAnimation = false;
                 guiParams.animation = false;
-                updateGuiControllers();
                 if (mixer && animationActions.length > 0) {
                     animationActions.forEach(action => {
                         action.paused = true;
@@ -142,7 +141,6 @@ function handleMeshUpdate(type, data) {
             enableAnimation = data;
             if (enableAnimation && guiParams.vertexNormals) {
                 guiParams.vertexNormals = false;
-                updateGuiControllers();
                 cleanupVertexNormals(vertexNormalsGroup);
             }
 
@@ -400,7 +398,6 @@ document.addEventListener('resetSettings', function() {
     
     // Después de reiniciar los ajustes, actualizar el modelo
     updateModelAppearance(mesh, colorMap, matcapTexture, vertexNormalsGroup, originalMaterials, originalTextures);
-    updateGuiControllers();
 });
 
 // Animación

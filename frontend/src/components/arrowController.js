@@ -8,7 +8,7 @@ export function initializeModelNavigation(loadModel, url) {
     // URL base para las peticiones API
     const API_URL = url;
     
-    // Bandera para rastrear el estado de carga
+    // Flag para rastrear el estado de carga
     let isLoading = false;
     // Referencia al cargador actual para cancelación
     let currentLoader = null;

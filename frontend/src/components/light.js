@@ -8,7 +8,7 @@ targetOrigin.position.set(0, 0, 0);
 function createDirectionalLight(x, y, z) {
     const light = new THREE.DirectionalLight(0xffffff, 1.6);
     light.position.set(x, y, z);
-    light.castShadow = false;
+    light.castShadow = true;
 
     // Sombras
     light.shadow.mapSize.width = 1024;
