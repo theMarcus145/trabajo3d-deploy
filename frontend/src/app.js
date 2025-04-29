@@ -350,6 +350,18 @@ document.addEventListener('clearScene', function() {
 });
 
 function clearScene(){
+    // Disposición de geometrías y materiales antes de eliminar objetos
+    scene.traverse((object) => {
+        if (object.geometry) object.geometry.dispose();
+        if (object.material) {
+            if (Array.isArray(object.material)) {
+                object.material.forEach(material => material.dispose());
+            } else {
+                object.material.dispose();
+            }
+        }
+    });
+    
     scene.children = scene.children.filter(child => 
         child === directionalLight1 || 
         child === directionalLight2 ||
