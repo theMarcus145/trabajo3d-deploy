@@ -48,7 +48,7 @@ const upload = multer({
             }
             cb(new Error('Solo se permiten archivos GLB para modelos 3D'));
         } else if (file.fieldname === 'preview') {
-            // Check for valid image types
+            // Comprobar el tipo de imagen 
             const allowedTypes = ['.png', '.jpg', '.jpeg', '.webp'];
             const ext = path.extname(file.originalname).toLowerCase();
             if (allowedTypes.includes(ext)) {
@@ -106,7 +106,7 @@ async function updateModelsJson(modelName, modelFile, previewFile) {
         };
 
         if (existingModelIndex !== -1) {
-            // If updating existing model, remove old preview if different
+            // Resolver conflictos si ya existe
             const oldModel = modelsData.models[existingModelIndex];
             if (oldModel.imagePath !== modelEntry.imagePath) {
                 try {
@@ -128,7 +128,7 @@ async function updateModelsJson(modelName, modelFile, previewFile) {
         return modelEntry;
     } catch (error) {
         console.error('Error updating models.json:', error);
-        // Attempt to clean up any partial uploads
+        // Intento de limpiar subidas cortadas
         try {
             if (modelFile && modelFile.path) {
                 await fs.unlink(modelFile.path);

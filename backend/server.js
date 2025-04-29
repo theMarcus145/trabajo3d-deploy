@@ -21,26 +21,26 @@ app.use(cors({
 
 app.use(express.json());
 
-// Serve archivos estáticos para modelos, la preview...
+// Servir archivos estáticos para modelos, previsualizaciones, etc.
 app.use('/models', express.static(path.join(__dirname, 'public', 'models')));
 app.use('/models.json', express.static(path.join(__dirname, 'public', 'models.json')));
 app.use('/previews', express.static(path.join(__dirname, 'public', 'previews')));
 
 // Endpoint para verificar si el servidor está funcionando
 app.get('/api/status', (req, res) => {
-    res.json({ status: 'ok', message: 'Server running' });
+    res.json({ status: 'ok', message: 'Servidor en funcionamiento' });
 });
 
-// Ruta de login 
+// Ruta de inicio de sesión
 app.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
         
-        console.log('Login request:', { username });
+        console.log('Solicitud de inicio de sesión:', { username });
         
         // Validar entrada
         if (!username || !password) {
-            console.log('Missing username or password');
+            console.log('Falta usuario o contraseña');
             return res.status(400).json({
                 error: 'Se requiere usuario y contraseña'
             });
@@ -49,7 +49,7 @@ app.post('/login', async (req, res) => {
         // Verificar credenciales
         const isValid = await verifyCredentials(username, password);
         
-        console.log('Credentials valid:', isValid);
+        console.log('Credenciales válidas:', isValid);
         
         if (!isValid) {
             return res.status(401).json({
@@ -82,63 +82,63 @@ app.get('/verify-token', verifyToken, (req, res) => {
     });
 });
 
-// Upload route for 3D model and preview
+// Ruta para subir modelo 3D y previsualización
 app.post('/upload', verifyToken, upload.fields([
     { name: 'model', maxCount: 1 },
     { name: 'preview', maxCount: 1 }
 ]), async (req, res) => {
     try {
-        console.log('Upload request received:', req.body);
-        console.log('Files received:', req.files ? Object.keys(req.files) : 'No files');
+        console.log('Solicitud de subida recibida:', req.body);
+        console.log('Archivos recibidos:', req.files ? Object.keys(req.files) : 'Sin archivos');
         
         const { modelName } = req.body;
         
         if (!req.files || !req.files['model'] || !req.files['preview']) {
             return res.status(400).json({ 
-                error: 'Both model and preview files are required' 
+                error: 'Se requieren ambos archivos: modelo y previsualización' 
             });
         }
         
         const modelFile = req.files['model'][0];
         const previewFile = req.files['preview'][0];
 
-        // Validate inputs
+        // Validar entradas
         if (!modelName) {
             return res.status(400).json({ 
-                error: 'Model name is required' 
+                error: 'Se requiere el nombre del modelo' 
             });
         }
 
-        console.log('Processing upload for model:', modelName);
+        console.log('Procesando subida del modelo:', modelName);
 
-        // Update models.json and move files
+        // Actualizar models.json y mover archivos
         const updatedModel = await updateModelsJson(
             modelName, 
             modelFile, 
             previewFile
         );
 
-        console.log('Upload successful:', updatedModel);
+        console.log('Subida exitosa:', updatedModel);
 
         res.json({
             message: 'Modelo correctamente subido',
             model: updatedModel
         });
     } catch (error) {
-        console.error('Upload error:', error);
+        console.error('Error al subir:', error);
         res.status(500).json({ 
-            error: 'Upload failed',
+            error: 'Error al subir el modelo',
             message: error.message 
         });
     }
 });
 
-// Serve models.json from the public directory
+// Servir models.json desde el directorio público
 app.get('/models.json', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'models.json'));
 });
 
-// Create necessary directories on startup
+// Crear directorios necesarios al iniciar
 async function ensureDirectories() {
     const dirs = [
         path.join(__dirname, 'public'),
@@ -150,48 +150,48 @@ async function ensureDirectories() {
     for (const dir of dirs) {
         try {
             await fs.mkdir(dir, { recursive: true });
-            console.log(`Directory ensured: ${dir}`);
+            console.log(`Directorio asegurado: ${dir}`);
         } catch (err) {
-            console.warn(`Could not create directory ${dir}:`, err);
+            console.warn(`No se pudo crear el directorio ${dir}:`, err);
         }
     }
     
-    // Ensure models.json exists
+    // Asegurarse de que models.json exista
     const modelsJsonPath = path.join(__dirname, 'public', 'models.json');
     try {
         await fs.access(modelsJsonPath);
     } catch (err) {
-        // File doesn't exist, create it
+        // El archivo no existe, se crea
         await fs.writeFile(modelsJsonPath, JSON.stringify({ models: [] }, null, 2));
-        console.log('Created initial models.json file');
+        console.log('Archivo inicial models.json creado');
     }
 }
 
-// Start server
+// Iniciar servidor
 ensureDirectories().then(() => {
     app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-        console.log(`Access the backend at https://trabajo-3d-backend.onrender.com:${PORT}`);
+        console.log(`Servidor en ejecución en el puerto ${PORT}`);
+        console.log(`Accede al backend en https://trabajo-3d-backend.onrender.com:${PORT}`);
     });
 }).catch(err => {
-    console.error('Failed to initialize server:', err);
+    console.error('No se pudo inicializar el servidor:', err);
 });
 
-// Delete model route
+// Ruta para eliminar modelo
 app.post('/delete-model', verifyToken, async (req, res) => {
     try {
         const { modelName, modelPath, imagePath } = req.body;
         
-        console.log('Delete request received:', { modelName, modelPath, imagePath });
+        console.log('Solicitud de eliminación recibida:', { modelName, modelPath, imagePath });
         
-        // Validate input
+        // Validar entrada
         if (!modelName || !modelPath || !imagePath) {
             return res.status(400).json({ 
-                error: 'Missing model information' 
+                error: 'Falta información del modelo' 
             });
         }
         
-        // Read models.json
+        // Leer models.json
         const modelsJsonPath = path.join(__dirname, 'public', 'models.json');
         let modelsData;
         
@@ -199,67 +199,67 @@ app.post('/delete-model', verifyToken, async (req, res) => {
             const existingData = await fs.readFile(modelsJsonPath, 'utf8');
             modelsData = JSON.parse(existingData);
         } catch (error) {
-            console.error('Error reading models.json:', error);
+            console.error('Error al leer models.json:', error);
             return res.status(500).json({ 
-                error: 'Could not read models file' 
+                error: 'No se pudo leer el archivo de modelos' 
             });
         }
         
-        // Find model in the models array
+        // Buscar el modelo en el array
         const modelIndex = modelsData.models.findIndex(
             model => model.name.toLowerCase() === modelName.toLowerCase()
         );
         
         if (modelIndex === -1) {
             return res.status(404).json({ 
-                error: 'Model not found' 
+                error: 'Modelo no encontrado' 
             });
         }
         
-        // Get model data before removal
+        // Obtener datos del modelo antes de eliminar
         const modelToDelete = modelsData.models[modelIndex];
         
-        // Get absolute paths
+        // Rutas absolutas
         const modelDir = path.join(__dirname, 'public', 'models', modelName);
         const previewFile = path.join(__dirname, 'public', imagePath);
         
-        // Delete the model directory
+        // Eliminar directorio del modelo
         try {
             await fs.rm(modelDir, { recursive: true, force: true });
-            console.log('Model directory deleted:', modelDir);
+            console.log('Directorio del modelo eliminado:', modelDir);
         } catch (error) {
-            console.warn('Error deleting model directory:', error);
-            // Continue even if we couldn't delete the directory
+            console.warn('Error al eliminar directorio del modelo:', error);
+            // Continuar aunque falle la eliminación del directorio
         }
         
-        // Delete the preview image
+        // Eliminar imagen de previsualización
         try {
             await fs.unlink(previewFile);
-            console.log('Preview image deleted:', previewFile);
+            console.log('Imagen de previsualización eliminada:', previewFile);
         } catch (error) {
-            console.warn('Error deleting preview image:', error);
-            // Continue even if we couldn't delete the image
+            console.warn('Error al eliminar imagen de previsualización:', error);
+            // Continuar aunque falle la eliminación de la imagen
         }
         
-        // Remove model from the models array
+        // Eliminar modelo del array
         modelsData.models.splice(modelIndex, 1);
         
-        // Write updated models.json
+        // Escribir models.json actualizado
         await fs.writeFile(
             modelsJsonPath, 
             JSON.stringify(modelsData, null, 2)
         );
         
-        console.log('Model deleted successfully:', modelName);
+        console.log('Modelo eliminado correctamente:', modelName);
         
         res.json({
             message: `Modelo "${modelName}" eliminado correctamente`,
             deleted: modelToDelete
         });
     } catch (error) {
-        console.error('Error deleting model:', error);
+        console.error('Error al eliminar el modelo:', error);
         res.status(500).json({ 
-            error: 'Failed to delete model',
+            error: 'Fallo al eliminar el modelo',
             message: error.message 
         });
     }
