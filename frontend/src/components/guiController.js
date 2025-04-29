@@ -225,26 +225,6 @@ function updateColorButtonBackground(colorHex, colorValue) {
     }
 }
 
-function updateGuiControllers() {
-    // referenciar a la gui
-    const gui = materialFolder.__gui;
-    
-    // Actualizar todos los controladores en todas las carpetas
-    for (var i = 0; i < Object.keys(gui.__folders).length; i++) {
-        var key = Object.keys(gui.__folders)[i];
-        for (var j = 0; j < gui.__folders[key].__controllers.length; j++) {
-            gui.__folders[key].__controllers[j].updateDisplay();
-        }
-    }
-    
-    // Actualizar los controladores que no estén en carpetas
-    if (gui.__controllers) {
-        for (var k = 0; k < gui.__controllers.length; k++) {
-            gui.__controllers[k].updateDisplay();
-        }
-    }
-}
-
 
 function resetSettings() {
     // Reiniciar todos los parámetros a sus valores iniciales
@@ -307,10 +287,7 @@ function resetSettings() {
         }
     }
 
-    // Actualizar los controllers para que se apliquen sus valores por defecto visualmente
-    updateGuiControllers();
-
     meshUpdateCallback('resetMaterials', true);
 }
 
-export { initializeGUI, guiParams, updateGuiControllers, updateMaterialControllers, resetSettings };
+export { initializeGUI, guiParams, updateMaterialControllers, resetSettings };
