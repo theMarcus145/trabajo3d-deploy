@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 // Middleware con opciones de CORS mejoradas
 app.use(cors({
     origin: ALLOWED_ORIGIN,
-    methods: ['GET', 'POST', 'OPTIONS, DELETE'],
+    methods: ['GET', 'POST', 'OPTIONS', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
