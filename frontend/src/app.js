@@ -11,7 +11,7 @@ import { createLoadingScreen } from './components/loadingScreen.js';
 import { cleanupVertexNormals, updateModelAppearance, initModelController } from './components/modelController.js';
 
 // URL base para las peticiones API
-const API_URL = 'https://trabajo-3d-backend.onrender.com'
+const API_URL = 'https://www.3dsoulschool.es/VISOR3D/back-end'
 
 // Crear el renderer
 const renderer = new THREE.WebGLRenderer({ 
@@ -67,8 +67,9 @@ scene.add(directionalLight8);
 let mesh = null; // Variable global para almacenar el modelo cargado
 let originalMaterials = new Map(); // Guardar materiales originales
 let originalTextures = new Map(); // Guardar texturas originales
-let isModelLoading = false; // Variable para saber si se está cargando un modelo 
-let currentLoadingManager = null;
+let hasAnimation = false; // Esta variable almacena si el modelo tiene una animación o no
+let animationActions = []; // Este array almacena todas las acciones de las animaciones del modelo actualmente cargado
+let enableAnimation = false; // Almacenar si la animación del modelo se encuentra activa
 
 // Definir el matcap
 let matcapTexture = null;
@@ -83,8 +84,6 @@ function loadMatcapTexture() {
 // Inicializar el model controller
 initModelController(mesh, vertexNormalsGroup, colorMap, matcapTexture, originalMaterials, originalTextures);
 
-
-let enableAnimation = false;
 // Funcion que maneja las peticiones de la GUI, se le pasa un tipo y un valor (como un código de color)
 function handleMeshUpdate(type, data) {
     switch (type) {
@@ -185,12 +184,6 @@ initializeGUI(renderContainer, handleMeshUpdate, {
     directionalLight7,
     directionalLight8
 });
-
-// Esta variable almacena si el modelo tiene una animación o no
-let hasAnimation = false;
-
-// Este array almacena todas las acciones de las animaciones del modelo actualmente cargado
-let animationActions = []; 
 
 function loadModel(modelFolder, loaderController = null) {
     // 1- Mostrar pantalla de carga

@@ -50,4 +50,5 @@ export function createLoadingScreen() {
             progressText.textContent = `${Math.round(percent)}%`;
         }
     };
+    
 }
