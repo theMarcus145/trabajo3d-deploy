@@ -8,7 +8,7 @@ import { verifyCredentials, generateToken, verifyToken } from './src/components/
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://3dsoulschoolvisor.netlify.app';
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -172,7 +172,6 @@ async function ensureDirectories() {
 ensureDirectories().then(() => {
     app.listen(PORT, () => {
         console.log(`Servidor en ejecución en el puerto ${PORT}`);
-        console.log(`Accede al backend en https://trabajo-3d-backend.onrender.com:${PORT}`);
     });
 }).catch(err => {
     console.error('No se pudo inicializar el servidor:', err);
