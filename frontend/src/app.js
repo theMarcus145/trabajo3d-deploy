@@ -78,7 +78,7 @@ loadMatcapTexture();
 
 // cargar la textura al inicializar
 function loadMatcapTexture() {
-    matcapTexture = textureLoader.load('/textures/matcap.jpg');
+    matcapTexture = textureLoader.load('./textures/matcap.jpg');
 }
 
 // Inicializar el model controller
