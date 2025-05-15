@@ -9,9 +9,10 @@ import { camera, adjustCamera } from './components/camera.js';
 import { initializeGUI, guiParams, updateMaterialControllers, resetSettings } from './components/guiController.js';
 import { createLoadingScreen } from './components/loadingScreen.js';
 import { cleanupVertexNormals, updateModelAppearance, initModelController } from './components/modelController.js';
+import matcapPath from './textures/matcap.jpg'
 
 // URL base para las peticiones API
-const API_URL = 'https://www.3dsoulschool.es/VISOR3D/back-end'
+const API_URL = 'http://localhost:8000'
 
 // Crear el renderer
 const renderer = new THREE.WebGLRenderer({ 
@@ -78,7 +79,7 @@ loadMatcapTexture();
 
 // cargar la textura al inicializar
 function loadMatcapTexture() {
-    matcapTexture = textureLoader.load('./textures/matcap.jpg');
+    matcapTexture = textureLoader.load(matcapPath);
 }
 
 // Inicializar el model controller
@@ -259,6 +260,7 @@ function loadModel(modelFolder, loaderController = null) {
         
         mesh.traverse((child) => {
             if (child.isMesh) {
+
                 // Guardar materiales originales y configurar sombras
                 originalMaterials.set(child.uuid, child.material.clone());
                 child.castShadow = true;

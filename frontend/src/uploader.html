@@ -340,7 +340,7 @@
         let currentModelToDelete = null;
 
         // URL base para las peticiones API - esta debería coincidir con la del backend
-        const API_URL = 'https://www.3dsoulschool.es/VISOR3D/back-end'
+        const API_URL = 'http://localhost:8000'
     
         console.log('API URL:', API_URL);
 
@@ -638,7 +638,7 @@
             formData.append('modelName', modelName);
             formData.append('model', modelFile);
             formData.append('preview', previewFile);
-            
+    
             showMessage(uploadMessage, 'Subiendo modelo...', '');
             
             try {
@@ -651,6 +651,7 @@
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`
+                        
                     },
                     body: formData
                 });
