@@ -24,6 +24,10 @@ const renderer = new THREE.WebGLRenderer({
 const scene = new THREE.Scene();
 scene.add(camera);
 
+// Configurar ambiente básico de la escena (ayuda con materiales sin textura)
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+scene.add(ambientLight);
+
 // Controles de cámara
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enablePan = true;
@@ -84,6 +88,37 @@ function loadMatcapTexture() {
 
 // Inicializar el model controller
 initModelController(mesh, vertexNormalsGroup, colorMap, matcapTexture, originalMaterials, originalTextures);
+
+// Función para mejorar la visibilidad de materiales sin textura
+function improveMaterialVisibility(material) {
+    if (!material) return material;
+    
+    // Si es un material simple sin textura, mejorarlo
+    if (!material.map) {
+        if (material instanceof THREE.MeshBasicMaterial) {
+            // Cambiar a MeshStandardMaterial para mejor respuesta a la luz
+            const color = material.color ? material.color.clone() : new THREE.Color(0xffffff);
+            const newMaterial = new THREE.MeshStandardMaterial({
+                color: color,
+                roughness: 0.7,
+                metalness: 0.2,
+                transparent: material.transparent,
+                opacity: material.opacity
+            });
+            return newMaterial;
+        }
+        
+        // Configurar propiedades estándar para materiales PBR
+        if (material instanceof THREE.MeshStandardMaterial || 
+            material instanceof THREE.MeshPhysicalMaterial) {
+            material.roughness = 0.7;
+            material.metalness = 0.2;
+            material.needsUpdate = true;
+        }
+    }
+    
+    return material;
+}
 
 // Funcion que maneja las peticiones de la GUI, se le pasa un tipo y un valor (como un código de color)
 function handleMeshUpdate(type, data) {
@@ -260,11 +295,27 @@ function loadModel(modelFolder, loaderController = null) {
         
         mesh.traverse((child) => {
             if (child.isMesh) {
-
                 // Guardar materiales originales y configurar sombras
-                originalMaterials.set(child.uuid, child.material.clone());
                 child.castShadow = true;
                 child.receiveShadow = true;
+                
+                // Si no existe material, crear uno básico
+                if (!child.material) {
+                    child.material = new THREE.MeshStandardMaterial({
+                        color: 0xcccccc,
+                        roughness: .7,
+                        metalness: 0.2
+                    });
+                }
+                
+                // Mejorar la visibilidad del material si no tiene textura
+                const improvedMaterial = improveMaterialVisibility(child.material);
+                if (improvedMaterial !== child.material) {
+                    child.material = improvedMaterial;
+                }
+                
+                // Guardar material original
+                originalMaterials.set(child.uuid, child.material.clone());
                 
                 // Almacenar texturas originales (si existen)
                 if (child.material.map) {
@@ -367,6 +418,7 @@ function clearScene(){
         child === camera ||
         child === vertexNormalsGroup ||
         child === targetOrigin ||
+        child === ambientLight ||
         child.isMesh && child.material instanceof THREE.ShadowMaterial
     );
 }
